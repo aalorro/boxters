@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Lexicon</title>
+    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+    var _infoContent = {
+        about: '<p><strong>Lexicon</strong> is a word puzzle game where you trace paths across a hexagonal board to form words.</p><p>Challenge yourself across four unique game modes, each with its own twist on word-finding strategy.</p><p>Built with HTML5 Canvas. No data is collected \u2014 your progress is stored locally on your device.</p><p style="margin-top:1rem; color: rgba(255,215,0,0.6); font-size:0.8rem;">Version 1.0.0</p>',
+        gameplay: '<h3>Basics</h3><ul><li>Trace a path through adjacent hexagonal tiles to spell a word (minimum 3 letters).</li><li>Each tile can only be used once per word.</li><li>Words must be in the dictionary to count.</li><li>Invalid words (3+ letters, not in dictionary) cost a move.</li></ul><h3>Modes</h3><ul><li><strong>Simple</strong> \u2014 Form the required words to complete each level. Tiles stay on the board and can be reused across words.</li><li style="color:rgba(255,215,0,0.7); font-size:0.82rem; margin-left:1rem;"><em>Tip: Focus on longer words for higher scores. Plan your path before tracing.</em></li><li><strong>Clear</strong> \u2014 Sweep the board clean. Each word you form removes those tiles from the board.</li><li style="color:rgba(255,215,0,0.7); font-size:0.82rem; margin-left:1rem;"><em>Tip: If only 1\u20132 tiles remain in a cluster with no valid word, the game auto-clears them for you.</em></li><li><strong>Chain</strong> \u2014 Form words one at a time. After each word, the tiles you used get new random letters. To build combos, make your next word pass through the same tile positions (shown with a blue pulse). Chain consecutive words to increase your multiplier.</li><li style="color:rgba(255,215,0,0.7); font-size:0.82rem; margin-left:1rem;"><em>Tip: If the blue tiles don\u2019t form a usable word, play elsewhere \u2014 you\u2019ll lose the combo but can start a new chain.</em></li><li><strong>Illuminate</strong> \u2014 Light up the board. Each word permanently illuminates the tiles it passes through. Cover every tile to win.</li><li style="color:rgba(255,215,0,0.7); font-size:0.82rem; margin-left:1rem;"><em>Tip: Prioritize unlit tiles at the edges \u2014 they\u2019re harder to reach later.</em></li></ul><h3>Anchors</h3><p>Some levels have <strong style="color:#ff6b6b;">Anchor cells</strong> (red rim). Every word you form must pass through an Anchor tile.</p><h3>Scoring</h3><ul><li>Points are based on letter values and word length.</li><li>Harder modes have higher score multipliers.</li><li>Earn 1\u20133 stars per level based on your score.</li></ul><h3>Lives</h3><p>You start with 3 lives. Failing a level costs a life. Lose all 3 lives and you\u2019ll need to wait 5 minutes before retrying with fresh lives.</p>',
+        privacy: '<p>Lexicon respects your privacy.</p><ul><li>All game progress is stored locally in your browser using <code style="color:#ffd700;">localStorage</code>.</li><li>No personal data is collected, transmitted, or shared.</li><li>No cookies, analytics, or tracking of any kind.</li><li>No account or internet connection is required to play.</li></ul><p>To clear your saved data, open your browser\'s developer console and run: <code style="color:#ffd700;">localStorage.removeItem(\'lexicon_player\')</code></p>'
+    };
+    function showInfoTab(tab) {
+        var body = document.getElementById('info-dialog-body');
+        var tabs = document.querySelectorAll('#info-dialog .info-tab');
+        body.innerHTML = _infoContent[tab] || _infoContent.about;
+        tabs.forEach(function(t) { t.classList.toggle('active', t.dataset.tab === tab); });
+    }
+    function showInfoDialog(tab) {
+        showInfoTab(tab);
+        document.getElementById('info-dialog').showModal();
+    }
+    </script>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+
+
+        <div id="loading-screen">
+            <h1 class="title">Lexicon</h1>
+            <p class="tagline">Find words. Unlock modes. Master the board.</p>
+            <div class="loader"></div>
+        </div>
+
+        <div id="register-screen" class="overlay hidden">
+            <h1 class="title">Lexicon</h1>
+            <p class="tagline">Find words. Unlock modes. Master the board.</p>
+            <form id="register-form" autocomplete="off">
+                <label for="player-name">Enter your name</label>
+                <input type="text" id="player-name" maxlength="20" placeholder="Stargazer" required>
+                <button type="submit" class="btn-primary">Begin Journey</button>
+            </form>
+        </div>
+
+        <div id="welcome-screen" class="overlay hidden">
+            <h1 class="title">Lexicon</h1>
+            <p class="welcome-greeting">Welcome back, <span id="welcome-name"></span></p>
+            <div class="player-stats">
+                <div class="stat"><span class="stat-value" id="stat-games">0</span><span class="stat-label">Games</span></div>
+                <div class="stat"><span class="stat-value" id="stat-levels">0</span><span class="stat-label">Levels</span></div>
+                <div class="stat"><span class="stat-value" id="stat-score">0</span><span class="stat-label">Best Score</span></div>
+            </div>
+            <div id="mode-select" class="mode-buttons"></div>
+            <button id="play-btn" class="btn-primary">Play</button>
+            <button id="info-btn" class="info-btn" aria-label="Info" type="button" onclick="showInfoDialog('about')" style="margin-top: 2rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+            </button>
+        </div>
+
+        <div id="solution-modal" class="hidden">
+            <div class="solution-panel">
+                <h2 class="solution-title">Words You Could Have Played</h2>
+                <div id="solution-word-list" class="solution-words"></div>
+                <p class="solution-hint">Hover over a word to see its path</p>
+                <button id="solution-continue-btn" class="btn-primary">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <dialog id="info-dialog">
+        <div class="info-dialog-inner">
+            <div class="info-tabs">
+                <button class="info-tab active" data-tab="about" type="button" onclick="showInfoTab('about')">About</button>
+                <button class="info-tab" data-tab="gameplay" type="button" onclick="showInfoTab('gameplay')">Game Play</button>
+                <button class="info-tab" data-tab="privacy" type="button" onclick="showInfoTab('privacy')">Privacy</button>
+            </div>
+            <div id="info-dialog-body"></div>
+            <button class="btn-primary" type="button" onclick="document.getElementById('info-dialog').close()">Close</button>
+        </div>
+    </dialog>
+
+    <script type="module" src="js/main.js?v=27"></script>
+</body>
+</html>
