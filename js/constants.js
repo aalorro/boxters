@@ -52,9 +52,9 @@ export const COLORS = {
 
 // Hex geometry
 export const HEX = {
-    defaultSize: 43,
-    minSize: 27,
-    maxSize: 56,
+    defaultSize: 47,
+    minSize: 30,
+    maxSize: 62,
     padding: 4,
     letterSize: 0.675,
     glowRadius: 12,

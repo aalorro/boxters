@@ -13,7 +13,8 @@
       "WebFetch(domain:www.thefreedictionary.com)",
       "WebFetch(domain:dictionary.cambridge.org)",
       "WebFetch(domain:www.collinsdictionary.com)",
-      "Bash(find C:\\\\Users\\\\arman\\\\OneDrive\\\\repos\\\\lexicon:*)"
+      "Bash(find C:\\\\Users\\\\arman\\\\OneDrive\\\\repos\\\\lexicon:*)",
+      "Bash(npx serve:*)"
     ]
   }
 }

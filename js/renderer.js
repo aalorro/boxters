@@ -49,7 +49,7 @@ export class Renderer {
     calculateHexSize(cellCount) {
         const minDim = Math.min(this.displayWidth, this.displayHeight);
         const radius = Math.ceil(Math.sqrt(cellCount / 3));
-        const maxFit = (minDim * 0.4275) / (radius * 1.8);
+        const maxFit = (minDim * 0.47) / (radius * 1.8);
         this.hexSize = Math.max(HEX.minSize, Math.min(HEX.maxSize, maxFit));
         return this.hexSize;
     }
