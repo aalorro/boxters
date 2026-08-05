@@ -10,7 +10,7 @@ import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
-const STORAGE_KEY = 'lexicon_player';
+const STORAGE_KEY = 'boxters_player';
 
 function loadProfile() {
     try {
@@ -831,7 +831,7 @@ class Game {
     }
 
     _boardStateKey(mode) {
-        return 'lexicon_board_state_' + (mode || this.selectedMode);
+        return 'boxters_board_state_' + (mode || this.selectedMode);
     }
 
     _saveBoardState() {

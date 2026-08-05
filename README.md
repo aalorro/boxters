@@ -1,4 +1,4 @@
-# Lexicon
+# Boxters
 
 A word puzzle game where you trace paths across a hexagonal board to form words. Challenge yourself across four unique game modes, each with its own twist on word-finding strategy.
 
@@ -29,7 +29,7 @@ You start with 3 lives. Failing a level costs a life. Lose all 3 and there's a 5
 
 ## Running Locally
 
-Lexicon is a static web app — no build step required.
+Boxters is a static web app — no build step required.
 
 1. Serve the project directory with any HTTP server:
    ```bash
@@ -46,7 +46,7 @@ Lexicon is a static web app — no build step required.
 ## Project Structure
 
 ```
-lexicon/
+boxters/
   index.html          # Entry point, info dialog, loading/register/welcome screens
   style.css           # All CSS (overlay screens, dialogs, buttons)
   sfx/                # Sound effects (fail, clapping, victory MP3s)
@@ -89,8 +89,8 @@ Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells),
 
 ### Persistence
 
-- **Player profile**: `localStorage` key `lexicon_player` — name, scores, levels completed, unlocked modes, cooldown
-- **Board state**: `localStorage` key `lexicon_board_state_<mode>` — per-mode snapshots preserve board, score, and objectives across menu navigation
+- **Player profile**: `localStorage` key `boxters_player` — name, scores, levels completed, unlocked modes, cooldown
+- **Board state**: `localStorage` key `boxters_board_state_<mode>` — per-mode snapshots preserve board, score, and objectives across menu navigation
 
 ### Audio
 
@@ -112,7 +112,7 @@ Info, logout, back, and forward buttons are drawn on the canvas by the renderer 
 
 ## Privacy
 
-No data is collected, transmitted, or shared. No cookies, analytics, or tracking. All progress is stored locally in your browser. To reset: `localStorage.removeItem('lexicon_player')`.
+No data is collected, transmitted, or shared. No cookies, analytics, or tracking. All progress is stored locally in your browser. To reset: `localStorage.removeItem('boxters_player')`.
 
 ## License
 

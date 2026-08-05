@@ -1,8 +1,8 @@
-# CLAUDE.md — Project Guide for Lexicon
+# CLAUDE.md — Project Guide for Boxters
 
 ## Overview
 
-Lexicon is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.1.0**.
+Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.1.0**.
 
 ## Key Commands
 
@@ -67,8 +67,8 @@ Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells, 
 Each level has a `scoreMult` field (0.4 for level 1, ramping to 1.0 by level 10) so early levels produce proportionally lower scores.
 
 ### Persistence
-- Player profile stored in `localStorage` key `lexicon_player`. Contains: name, gamesPlayed, levelsCompleted, totalScore, currentLevels, highestLevels, cooldownUntil, sessionActive, unlockedModes.
-- Board state stored per-mode in `localStorage` key `lexicon_board_state_<mode>`. Snapshots include score, cells, objectives.
+- Player profile stored in `localStorage` key `boxters_player`. Contains: name, gamesPlayed, levelsCompleted, totalScore, currentLevels, highestLevels, cooldownUntil, sessionActive, unlockedModes.
+- Board state stored per-mode in `localStorage` key `boxters_board_state_<mode>`. Snapshots include score, cells, objectives.
 
 ## Important Patterns
 

@@ -144,7 +144,7 @@ const LEVEL_DATA = [
         ]
     },
     {
-        id: 'simple_08', name: 'Deep Lexicon', mode: 'simple', tier: 'simple',
+        id: 'simple_08', name: 'Deep Boxters', mode: 'simple', tier: 'simple',
         maxMoves: 8, scoreMult: 0.9, twoStarTarget: 160, threeStarTarget: 240,
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
