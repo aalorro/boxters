@@ -3,8 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Boxters</title>
-    <link rel="stylesheet" href="style.css?v=9">
+    <title>Boxters — Hex Word Puzzle Game</title>
+    <meta name="description" content="Trace paths across hexagonal boards to form words. Four unique modes — Simple, Clear, Chain, and Illuminate — with 56 levels, 170,000+ word dictionary, and no internet required.">
+    <meta name="theme-color" content="#050520">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.boxters.com">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Boxters">
+    <meta property="og:title" content="Boxters — Hex Word Puzzle Game">
+    <meta property="og:description" content="Trace paths across hexagonal boards to form words. Four unique modes, 56 levels, and a 170,000+ word dictionary.">
+    <meta property="og:url" content="https://www.boxters.com">
+    <meta property="og:image" content="https://www.boxters.com/og-image.svg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Boxters — Hex Word Puzzle Game">
+    <meta name="twitter:description" content="Trace paths across hexagonal boards to form words. Four unique modes, 56 levels, and a 170,000+ word dictionary.">
+    <meta name="twitter:image" content="https://www.boxters.com/og-image.svg">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "Boxters",
+      "url": "https://www.boxters.com",
+      "description": "A hex-grid word puzzle game with four modes — Simple, Clear, Chain, and Illuminate — featuring 56 levels and a 170,000+ word dictionary.",
+      "genre": "Puzzle",
+      "gamePlatform": "Web Browser",
+      "applicationCategory": "Game",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <link rel="stylesheet" href="style.css?v=17">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -49,6 +89,7 @@
         </div>
 
         <div id="welcome-screen" class="overlay hidden">
+            <img src="favicon.svg" alt="" class="welcome-logo">
             <h1 class="title">Boxters</h1>
             <p class="welcome-greeting">Welcome back, <span id="welcome-name"></span></p>
             <div class="player-stats">
@@ -90,6 +131,6 @@
         </div>
     </dialog>
 
-    <script type="module" src="js/main.js?v=38"></script>
+    <script type="module" src="js/main.js?v=43"></script>
 </body>
 </html>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a2e"/>
+      <stop offset="100%" stop-color="#050520"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Decorative hex grid (faded) -->
+  <g opacity="0.15" stroke="#ffd700" stroke-width="1.5" fill="none">
+    <polygon points="200,200 230,183 260,200 260,234 230,251 200,234"/>
+    <polygon points="260,200 290,183 320,200 320,234 290,251 260,234"/>
+    <polygon points="320,200 350,183 380,200 380,234 350,251 320,234"/>
+    <polygon points="230,251 260,234 290,251 290,285 260,302 230,285"/>
+    <polygon points="290,251 320,234 350,251 350,285 320,302 290,285"/>
+    <polygon points="260,302 290,285 320,302 320,336 290,353 260,336"/>
+    <polygon points="820,200 850,183 880,200 880,234 850,251 820,234"/>
+    <polygon points="880,200 910,183 940,200 940,234 910,251 880,234"/>
+    <polygon points="940,200 970,183 1000,200 1000,234 970,251 940,234"/>
+    <polygon points="850,251 880,234 910,251 910,285 880,302 850,285"/>
+    <polygon points="910,251 940,234 970,251 970,285 940,302 910,285"/>
+    <polygon points="880,302 910,285 940,302 940,336 910,353 880,336"/>
+    <polygon points="200,350 230,333 260,350 260,384 230,401 200,384"/>
+    <polygon points="260,350 290,333 320,350 320,384 290,401 260,384"/>
+    <polygon points="820,350 850,333 880,350 880,384 850,401 820,384"/>
+    <polygon points="880,350 910,333 940,350 940,384 910,401 880,384"/>
+  </g>
+  <!-- Central hex icon -->
+  <polygon points="600,220 660,255 660,325 600,360 540,325 540,255" fill="none" stroke="#ffd700" stroke-width="4" opacity="0.8"/>
+  <text x="600" y="310" text-anchor="middle" font-family="serif" font-weight="bold" font-size="72" fill="#ffd700">B</text>
+  <!-- Title -->
+  <text x="600" y="440" text-anchor="middle" font-family="serif" font-weight="bold" font-size="64" fill="#fdf4e3" letter-spacing="8">BOXTERS</text>
+  <!-- Tagline -->
+  <text x="600" y="490" text-anchor="middle" font-family="sans-serif" font-size="24" fill="rgba(253,244,227,0.6)">Find words. Unlock modes. Master the board.</text>
+  <!-- Gold accent line -->
+  <line x1="400" y1="455" x2="800" y2="455" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+</svg>

@@ -76,6 +76,13 @@ html, body {
     margin-bottom: 0.5rem;
 }
 
+.welcome-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 0.5rem;
+    pointer-events: none;
+}
+
 .tagline {
     font-family: 'Inter', sans-serif;
     font-size: clamp(0.9rem, 2vw, 1.2rem);
@@ -334,7 +341,9 @@ html, body {
 }
 
 .mode-btn.locked {
-    opacity: 0.35;
+    opacity: 0.5;
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    padding: 0.6rem 1.3rem;
     cursor: not-allowed;
 }
 
