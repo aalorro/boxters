@@ -118,6 +118,13 @@ export class Renderer {
         } else if (gameState.state === 'cooldown') {
             this._drawCooldownOverlay(ctx, gameState);
         }
+
+        // Version footer
+        ctx.font = "16px 'Inter', sans-serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillStyle = 'rgba(255, 215, 0, 0.75)';
+        ctx.fillText('v1.1.0', this.displayWidth / 2, this.displayHeight - 6);
     }
 
     _drawBackground(ctx) {
@@ -616,32 +623,82 @@ export class Renderer {
 
         const centerX = this.displayWidth / 2;
         const centerY = this.displayHeight / 2;
+        const isUltimate = gameState.isUltimateVictory;
 
-        const modeNames = { simple: 'COMPLETE', clear: 'CLEARED', chain: 'CHAINED', illuminate: 'ILLUMINATED' };
-        const mode = gameState.board?.mode || 'simple';
+        if (isUltimate) {
+            // Mode completion — final level of any mode
+            const mode = gameState.board?.mode || 'simple';
+            const titles = {
+                simple: 'WORD MASTER',
+                clear: 'BOARD SWEEPER',
+                chain: 'CHAIN LEGEND',
+                illuminate: 'MASTER OF LIGHT'
+            };
+            const subtitles = {
+                simple: 'You have conquered every Simple challenge!',
+                clear: 'You have swept every Clear challenge!',
+                chain: 'You have chained every Chain challenge!',
+                illuminate: 'You have conquered every Illuminate challenge!'
+            };
+            const accent = COLORS.modes[mode]?.accent || '#ffd700';
+            const glow = COLORS.modes[mode]?.glow || 'rgba(255, 215, 0, 0.8)';
+            const pulse = 0.5 + 0.5 * Math.sin(this.time * 2);
 
-        ctx.font = "bold 54px 'Cinzel', serif";
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = COLORS.modes[mode]?.accent || COLORS.ui.accent;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = COLORS.modes[mode]?.glow || COLORS.board.glow;
-        ctx.fillText(modeNames[mode] || 'COMPLETE', centerX, centerY - 55);
-        ctx.shadowBlur = 0;
+            ctx.font = "bold 44px 'Cinzel', serif";
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = accent;
+            ctx.shadowBlur = 25 + 10 * pulse;
+            ctx.shadowColor = glow;
+            ctx.fillText(titles[mode], centerX, centerY - 80);
+            ctx.shadowBlur = 0;
 
-        ctx.font = "30px 'Inter', sans-serif";
-        ctx.fillStyle = COLORS.ui.text;
-        ctx.fillText(`Score: ${gameState.score || 0}`, centerX, centerY + 5);
+            ctx.font = "20px 'Inter', sans-serif";
+            ctx.fillStyle = accent;
+            ctx.globalAlpha = 0.8;
+            ctx.fillText(subtitles[mode], centerX, centerY - 30);
+            ctx.globalAlpha = 1;
 
-        const stars = gameState.stars || 1;
-        ctx.font = "42px sans-serif";
-        const starText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
-        ctx.fillStyle = COLORS.ui.accent;
-        ctx.fillText(starText, centerX, centerY + 60);
+            ctx.font = "30px 'Inter', sans-serif";
+            ctx.fillStyle = COLORS.ui.text;
+            ctx.fillText(`Score: ${gameState.score || 0}`, centerX, centerY + 20);
 
-        ctx.font = "21px 'Inter', sans-serif";
-        ctx.fillStyle = COLORS.ui.textDim;
-        ctx.fillText('Click anywhere to continue', centerX, centerY + 115);
+            const stars = gameState.stars || 1;
+            ctx.font = "42px sans-serif";
+            const starText = '\u2605'.repeat(stars) + '\u2606'.repeat(3 - stars);
+            ctx.fillStyle = COLORS.ui.accent;
+            ctx.fillText(starText, centerX, centerY + 75);
+
+            ctx.font = "21px 'Inter', sans-serif";
+            ctx.fillStyle = COLORS.ui.textDim;
+            ctx.fillText('Click anywhere to continue', centerX, centerY + 130);
+        } else {
+            const modeNames = { simple: 'COMPLETE', clear: 'CLEARED', chain: 'CHAINED', illuminate: 'ILLUMINATED' };
+            const mode = gameState.board?.mode || 'simple';
+
+            ctx.font = "bold 54px 'Cinzel', serif";
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = COLORS.modes[mode]?.accent || COLORS.ui.accent;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = COLORS.modes[mode]?.glow || COLORS.board.glow;
+            ctx.fillText(modeNames[mode] || 'COMPLETE', centerX, centerY - 55);
+            ctx.shadowBlur = 0;
+
+            ctx.font = "30px 'Inter', sans-serif";
+            ctx.fillStyle = COLORS.ui.text;
+            ctx.fillText(`Score: ${gameState.score || 0}`, centerX, centerY + 5);
+
+            const stars = gameState.stars || 1;
+            ctx.font = "42px sans-serif";
+            const starText = '\u2605'.repeat(stars) + '\u2606'.repeat(3 - stars);
+            ctx.fillStyle = COLORS.ui.accent;
+            ctx.fillText(starText, centerX, centerY + 60);
+
+            ctx.font = "21px 'Inter', sans-serif";
+            ctx.fillStyle = COLORS.ui.textDim;
+            ctx.fillText('Click anywhere to continue', centerX, centerY + 115);
+        }
     }
 
     _hexToPixel(q, r) {
@@ -694,7 +751,7 @@ export class Renderer {
     }
 
     _drawDefeatOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(5, 5, 32, 0.7)';
+        ctx.fillStyle = 'rgba(5, 5, 32, 0.45)';
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         if (gameState.board) {
@@ -707,7 +764,7 @@ export class Renderer {
     }
 
     _drawGameOverOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(5, 5, 32, 0.85)';
+        ctx.fillStyle = 'rgba(5, 5, 32, 0.5)';
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         if (gameState.board) {
@@ -748,9 +805,9 @@ export class Renderer {
                 ctx.shadowBlur = 8 * pulse;
                 ctx.shadowColor = 'rgba(255, 80, 80, 0.6)';
             } else {
-                ctx.fillStyle = 'rgba(253, 244, 227, 0.05)';
+                ctx.fillStyle = 'rgba(253, 244, 227, 0.08)';
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(253, 244, 227, 0.2)';
+                ctx.strokeStyle = 'rgba(253, 244, 227, 0.35)';
                 ctx.lineWidth = HEX.rimWidth;
             }
             ctx.stroke();
@@ -765,7 +822,7 @@ export class Renderer {
                 if (unlit) {
                     ctx.fillStyle = `rgba(255, 100, 100, ${0.6 + 0.4 * pulse})`;
                 } else {
-                    ctx.fillStyle = 'rgba(255, 221, 0, 0.45)';
+                    ctx.fillStyle = 'rgba(255, 221, 0, 0.65)';
                 }
                 ctx.fillText(cell.letter, cx, cy);
             }

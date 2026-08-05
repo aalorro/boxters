@@ -8,6 +8,10 @@ export class AudioManager {
         this.initialized = false;
         // Pentatonic scale frequencies mapped to letters
         this.letterFreqs = this._buildFrequencyMap();
+        // SFX buffers (loaded on init)
+        this.failBuffers = [];
+        this.clapBuffers = [];
+        this.victoryBuffer = null;
     }
 
     init() {
@@ -18,9 +22,42 @@ export class AudioManager {
             this.masterGain.gain.value = 0.3;
             this.masterGain.connect(this.ctx.destination);
             this.initialized = true;
+            this._loadFailSfx();
+            this._loadClapSfx();
+            this._loadVictorySfx();
         } catch (e) {
             this.enabled = false;
         }
+    }
+
+    _loadFailSfx() {
+        const files = ['sfx/fails01.MP3', 'sfx/fails02.MP3', 'sfx/fails03.MP3'];
+        for (const file of files) {
+            fetch(file)
+                .then(r => r.arrayBuffer())
+                .then(buf => this.ctx.decodeAudioData(buf))
+                .then(decoded => this.failBuffers.push(decoded))
+                .catch(() => {});
+        }
+    }
+
+    _loadClapSfx() {
+        const files = ['sfx/clapping01.MP3', 'sfx/clapping02.MP3', 'sfx/clapping03.MP3'];
+        for (const file of files) {
+            fetch(file)
+                .then(r => r.arrayBuffer())
+                .then(buf => this.ctx.decodeAudioData(buf))
+                .then(decoded => this.clapBuffers.push(decoded))
+                .catch(() => {});
+        }
+    }
+
+    _loadVictorySfx() {
+        fetch('sfx/victory.mp3')
+            .then(r => r.arrayBuffer())
+            .then(buf => this.ctx.decodeAudioData(buf))
+            .then(decoded => { this.victoryBuffer = decoded; })
+            .catch(() => {});
     }
 
     resume() {
@@ -206,6 +243,35 @@ export class AudioManager {
                 osc.stop(start + 0.4);
             }
         }
+
+        // Play a random clapping SFX alongside the fanfare
+        if (this.clapBuffers.length > 0) {
+            const buffer = this.clapBuffers[Math.floor(Math.random() * this.clapBuffers.length)];
+            const source = this.ctx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(this.masterGain);
+            source.start(now + 0.5);
+        }
+    }
+
+    playUltimateVictory() {
+        this.playVictory();
+        if (!this.enabled || !this.initialized || !this.victoryBuffer) return;
+        this.resume();
+        const source = this.ctx.createBufferSource();
+        source.buffer = this.victoryBuffer;
+        source.connect(this.masterGain);
+        source.start(this.ctx.currentTime + 0.3);
+    }
+
+    playFail() {
+        if (!this.enabled || !this.initialized || this.failBuffers.length === 0) return;
+        this.resume();
+        const buffer = this.failBuffers[Math.floor(Math.random() * this.failBuffers.length)];
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.masterGain);
+        source.start();
     }
 
     toggle() {

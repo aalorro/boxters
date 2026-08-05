@@ -10,7 +10,7 @@ import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
-const STORAGE_KEY = 'lexicon_player';
+const STORAGE_KEY = 'boxters_player';
 
 function loadProfile() {
     try {
@@ -19,6 +19,20 @@ function loadProfile() {
         const profile = JSON.parse(raw);
         if (!profile.currentLevels) {
             profile.currentLevels = {};
+        }
+        // Migrate: compute unlockedModes from existing progress
+        if (!profile.unlockedModes) {
+            const modes = ['simple'];
+            const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+            if (profile.highestLevels) {
+                for (const mode of modeOrder) {
+                    if (profile.highestLevels[mode] !== undefined && !modes.includes(mode)) {
+                        modes.push(mode);
+                    }
+                }
+            }
+            profile.unlockedModes = modes;
+            saveProfile(profile);
         }
         return profile;
     } catch { return null; }
@@ -36,7 +50,8 @@ function createProfile(name) {
         bestScore: 0,
         levelsCompleted: 0,
         gamesPlayed: 0,
-        currentLevels: {}
+        currentLevels: {},
+        unlockedModes: ['simple']
     };
     saveProfile(profile);
     return profile;
@@ -153,8 +168,10 @@ class Game {
         document.getElementById('stat-levels').textContent = this.player.levelsCompleted;
         document.getElementById('stat-score').textContent = this.player.totalScore || 0;
 
-        // Restore last played mode, or default to simple
-        this.selectedMode = this.player.lastMode || MODES.SIMPLE;
+        // Restore last played mode, or default to simple (must be unlocked)
+        const lastMode = this.player.lastMode || MODES.SIMPLE;
+        this.selectedMode = (this.player.unlockedModes && this.player.unlockedModes.includes(lastMode))
+            ? lastMode : MODES.SIMPLE;
 
         // Setup mode buttons
         this._setupModeButtons();
@@ -170,24 +187,28 @@ class Game {
 
     _setupModeButtons() {
         const modeOrder = [MODES.SIMPLE, MODES.CLEAR, MODES.CHAIN, MODES.ILLUMINATE];
+        const unlocked = this.player.unlockedModes || ['simple'];
         const container = document.getElementById('mode-select');
         if (!container) return;
 
         container.innerHTML = '';
         for (const mode of modeOrder) {
             const btn = document.createElement('button');
-            btn.className = 'mode-btn unlocked';
+            const isUnlocked = unlocked.includes(mode);
+            btn.className = 'mode-btn ' + (isUnlocked ? 'unlocked' : 'locked');
             btn.dataset.mode = mode;
             btn.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
 
-            if (mode === this.selectedMode) {
+            if (isUnlocked && mode === this.selectedMode) {
                 btn.classList.add('active');
             }
-            btn.addEventListener('click', () => {
-                this.selectedMode = mode;
-                container.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
+            if (isUnlocked) {
+                btn.addEventListener('click', () => {
+                    this.selectedMode = mode;
+                    container.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            }
 
             container.appendChild(btn);
         }
@@ -246,16 +267,18 @@ class Game {
         const modeLevels = getLevelsForMode(this.selectedMode);
         const modeEnd = modeLevels.length > 0 ? modeLevels[modeLevels.length - 1].index + 1 : getLevelCount();
         if (index >= modeEnd || index >= getLevelCount()) {
-            // Advance to the next mode
+            // Advance to the next mode if unlocked
             const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+            const unlocked = this.player.unlockedModes || ['simple'];
             const currentModeIdx = modeOrder.indexOf(this.selectedMode);
-            if (currentModeIdx < modeOrder.length - 1) {
-                this.selectedMode = modeOrder[currentModeIdx + 1];
+            const nextMode = currentModeIdx < modeOrder.length - 1 ? modeOrder[currentModeIdx + 1] : null;
+            if (nextMode && unlocked.includes(nextMode)) {
+                this.selectedMode = nextMode;
                 this.player.lastMode = this.selectedMode;
                 index = getFirstLevelForMode(this.selectedMode);
                 this._showFeedback(`Advancing to ${this.selectedMode.toUpperCase()} mode!`);
             } else {
-                // Last mode — wrap back to start
+                // Mode not unlocked or last mode — wrap back to current mode start
                 index = getFirstLevelForMode(this.selectedMode);
             }
         }
@@ -400,6 +423,11 @@ class Game {
 
             if (this.state === STATES.VICTORY) {
                 if (this.levelTransitionTimer <= 0) {
+                    this.isUltimateVictory = false;
+                    if (this._confettiInterval) {
+                        clearInterval(this._confettiInterval);
+                        this._confettiInterval = null;
+                    }
                     this._loadLevel(this.levelIndex + 1);
                 }
                 return;
@@ -575,16 +603,46 @@ class Game {
 
         saveProfile(this.player);
 
-        this.audio.playVictory();
         const cx = this.renderer.displayWidth / 2;
         const cy = this.renderer.displayHeight / 2;
-        this.particles.emitVictoryBurst(cx, cy);
+
+        // Check if this is the final level of any mode (level 14)
+        const finalLevels = ['simple_14', 'clear_14', 'chain_14', 'illuminate_14'];
+        this.isUltimateVictory = finalLevels.includes(this.levelData.id);
+
+        if (this.isUltimateVictory) {
+            // Unlock the next mode
+            const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+            const idx = modeOrder.indexOf(this.board.mode);
+            if (idx >= 0 && idx < modeOrder.length - 1) {
+                const nextMode = modeOrder[idx + 1];
+                if (!this.player.unlockedModes) this.player.unlockedModes = ['simple'];
+                if (!this.player.unlockedModes.includes(nextMode)) {
+                    this.player.unlockedModes.push(nextMode);
+                    saveProfile(this.player);
+                }
+            }
+            this.audio.playUltimateVictory();
+            this.particles.emitVictoryBurst(cx, cy);
+            this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
+            this._confettiInterval = setInterval(() => {
+                if (this.state === STATES.VICTORY) {
+                    this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
+                } else {
+                    clearInterval(this._confettiInterval);
+                    this._confettiInterval = null;
+                }
+            }, 2000);
+        } else {
+            this.audio.playVictory();
+            this.particles.emitVictoryBurst(cx, cy);
+        }
     }
 
     _handleDefeat() {
         this._clearBoardState();
         // Find solution words filtered by objectives
-        const maxSolutions = this.board.mode === 'illuminate' ? 30 : 12;
+        const maxSolutions = this.board.mode === 'illuminate' ? 999 : 12;
         let solutions = this.board.field.findWordsWithPaths(dictionary, maxSolutions);
 
         const objectives = this.levelData.objectives.filter(o => o.isPrimary !== false);
@@ -625,7 +683,8 @@ class Game {
             solutions = solutions.filter(sol => sol.word.length >= minLength);
         }
 
-        this.solutionWords = solutions.slice(0, 6);
+        const displayLimit = this.board.mode === 'illuminate' ? 12 : 6;
+        this.solutionWords = solutions.slice(0, displayLimit);
 
         // Don't lose a life if the board had no valid solutions
         if (this.solutionWords.length > 0) {
@@ -643,7 +702,7 @@ class Game {
             this.state = STATES.DEFEAT;
         }
         this.levelTransitionTimer = 2.0;
-        this.audio.playError();
+        this.audio.playFail();
 
         this._showSolutionModal();
     }
@@ -772,7 +831,7 @@ class Game {
     }
 
     _boardStateKey(mode) {
-        return 'lexicon_board_state_' + (mode || this.selectedMode);
+        return 'boxters_board_state_' + (mode || this.selectedMode);
     }
 
     _saveBoardState() {
@@ -931,7 +990,8 @@ class Game {
                 && this.levelIndex < this.player.highestLevels[this.selectedMode],
             hoveredSolution: this.hoveredSolution,
             cooldownUntil: this.cooldownUntil,
-            hasMovesInProgress: this._hasMovesInProgress()
+            hasMovesInProgress: this._hasMovesInProgress(),
+            isUltimateVictory: this.isUltimateVictory || false
         };
 
         this.renderer.render(gameState, dt, this.particles);

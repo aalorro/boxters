@@ -7,7 +7,13 @@
       "Bash(do node:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(python:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:www.merriam-webster.com)",
+      "WebFetch(domain:en.wiktionary.org)",
+      "WebFetch(domain:www.thefreedictionary.com)",
+      "WebFetch(domain:dictionary.cambridge.org)",
+      "WebFetch(domain:www.collinsdictionary.com)",
+      "Bash(find C:\\\\Users\\\\arman\\\\OneDrive\\\\repos\\\\lexicon:*)"
     ]
   }
 }
