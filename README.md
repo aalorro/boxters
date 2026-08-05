@@ -2,6 +2,8 @@
 
 A word puzzle game where you trace paths across a hexagonal board to form words. Challenge yourself across four unique game modes, each with its own twist on word-finding strategy.
 
+Built with HTML5 Canvas. No frameworks, no dependencies, no build tools.
+
 ## How to Play
 
 Drag through adjacent hexagonal tiles to spell words. Each tile can only be used once per word. Words must be at least 3 letters and exist in the dictionary.
@@ -47,26 +49,64 @@ Lexicon is a static web app — no build step required.
 lexicon/
   index.html          # Entry point, info dialog, loading/register/welcome screens
   style.css           # All CSS (overlay screens, dialogs, buttons)
+  sfx/                # Sound effects (fail, clapping, victory MP3s)
   js/
-    main.js           # Game loop, state machine, event handling
-    renderer.js       # Canvas rendering (board, UI, effects, tooltips)
-    input.js          # Pointer/touch input handling
-    levels.js         # 56 level definitions + board generation
+    main.js           # Game loop, state machine, event handling, board persistence
+    renderer.js       # Canvas rendering (board, UI, effects, overlays, ghost board, version footer)
+    input.js          # Pointer/touch input handling with pointer capture
+    levels.js         # 56 level definitions + board generation (word-first & retry-based)
     board.js          # HexCell, Field, Board data structures
-    hex.js            # Hex math (axial coords, pixel conversion, neighbors)
+    hex.js            # Hex math (axial coords, pixel conversion, neighbors, spiral)
     scoring.js        # Score calculation, star ratings
-    objectives.js     # Objective tracking (formWord, clearAll, combos, etc.)
-    constants.js      # Colors, hex geometry, letter values, scoring config
+    objectives.js     # Objective tracking (formWord, clearAll, combos, illuminate, etc.)
+    constants.js      # Modes, colors, hex geometry, letter values, scoring config, states
     tracer.js         # Word tracing path logic
-    particles.js      # Particle effect system
-    audio.js          # Audio manager (placeholder)
-    dictionary.js     # Word list and lookup
+    particles.js      # Particle effects (burst, clear, chain, illuminate, confetti)
+    audio.js          # Web Audio API (synth tones, fanfare) + MP3 SFX (fail, clap, victory)
+    dictionary.js     # 170K+ word list (ENABLE1-based) and Trie lookup
 ```
+
+## Architecture
+
+### Game States
+
+`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN`
+
+### Board Generation
+
+Each game mode uses a tailored board generation strategy:
+
+| Mode | Generator | Strategy |
+|------|-----------|----------|
+| Simple | `buildBoardWordFirst` | Places real dictionary words on the grid, fills gaps with frequency-weighted letters |
+| Clear | `buildBoardClearMode` | Dedicated generator for clearable boards |
+| Chain | `buildBoard` | Random letters (35% vowel floor) + solvability retry loop |
+| Illuminate | `buildBoardIlluminate` | Word-first + safe letter fills (excludes J/Q/V/X/Z) + solvability verification |
+
+### Hex System
+
+Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells), hex2 (19 cells), hex3 (37 cells).
+
+### Persistence
+
+- **Player profile**: `localStorage` key `lexicon_player` — name, scores, levels completed, unlocked modes, cooldown
+- **Board state**: `localStorage` key `lexicon_board_state_<mode>` — per-mode snapshots preserve board, score, and objectives across menu navigation
+
+### Audio
+
+- **Synth sounds** (Web Audio API oscillators): letter tones, word chords, error buzz, 6-second victory fanfare with harmony pads
+- **SFX files** (preloaded MP3 AudioBuffers): 3 random fail sounds on defeat, 3 random clapping sounds on victory, special victory SFX on mode completion
+- **Mode completion** (level 14 of any mode): fanfare + clapping + victory SFX + confetti
+
+### Canvas UI
+
+Info, logout, back, and forward buttons are drawn on the canvas by the renderer and hit-tested in the game loop — they are not DOM elements. DPR scaling is handled via canvas transform; all coordinates are in CSS pixels.
 
 ## Tech Stack
 
 - Vanilla JavaScript (ES modules)
 - HTML5 Canvas 2D with DPR-aware rendering
+- Web Audio API for synth sounds and MP3 playback
 - No frameworks, no dependencies, no build tools
 - localStorage for persistence
 

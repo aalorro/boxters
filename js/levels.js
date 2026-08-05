@@ -568,7 +568,7 @@ const LEVEL_DATA = [
     {
         id: 'illuminate_09', name: 'Solar Flare', mode: 'illuminate', tier: 'illuminate',
         maxMoves: 13, scoreMult: 0.95, twoStarTarget: 500, threeStarTarget: 780,
-        tutorial: { message: 'Tip: With 11 moves, mix long words for coverage with shorter words to mop up isolated tiles.' },
+        tutorial: { message: 'Tip: Mix long words for coverage with shorter words to mop up isolated tiles.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'useAllCells', description: 'Illuminate all cells', target: 1, params: {} },
@@ -578,7 +578,7 @@ const LEVEL_DATA = [
     {
         id: 'illuminate_10', name: 'Supernova', mode: 'illuminate', tier: 'illuminate',
         maxMoves: 13, twoStarTarget: 560, threeStarTarget: 860,
-        tutorial: { message: '10 moves for 37 tiles. Aim for long words that zigzag through dark areas. Every tile covered counts.' },
+        tutorial: { message: 'Moves are getting tight. Aim for long words that zigzag through dark areas. Every tile covered counts.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'useAllCells', description: 'Illuminate all cells', target: 1, params: {} },
@@ -598,7 +598,7 @@ const LEVEL_DATA = [
     {
         id: 'illuminate_12', name: 'Blinding', mode: 'illuminate', tier: 'illuminate',
         maxMoves: 12, twoStarTarget: 640, threeStarTarget: 980,
-        tutorial: { message: '8 moves for 37 tiles. You need long words almost every turn. Scan the whole board before each move.' },
+        tutorial: { message: 'You need long words almost every turn. Scan the whole board before each move.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'useAllCells', description: 'Illuminate all cells', target: 1, params: {} },
@@ -608,7 +608,7 @@ const LEVEL_DATA = [
     {
         id: 'illuminate_13', name: 'White Dwarf', mode: 'illuminate', tier: 'illuminate',
         maxMoves: 11, twoStarTarget: 680, threeStarTarget: 1040,
-        tutorial: { message: 'Tip: 7 moves — almost every move must be a long word. Don\'t waste moves on short words.' },
+        tutorial: { message: 'Tip: Almost every move must be a long word. Don\'t waste moves on short words.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'useAllCells', description: 'Illuminate all cells', target: 1, params: {} },
@@ -618,7 +618,7 @@ const LEVEL_DATA = [
     {
         id: 'illuminate_14', name: 'Eternal Light', mode: 'illuminate', tier: 'illuminate',
         maxMoves: 11, twoStarTarget: 720, threeStarTarget: 1100,
-        tutorial: { message: 'The ultimate illuminate challenge. 6 moves and 5 words of 5+ letters. Plan every move before you trace!' },
+        tutorial: { message: 'The ultimate illuminate challenge. Every move counts — plan your path carefully before you trace!' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'useAllCells', description: 'Illuminate all cells', target: 1, params: {} },

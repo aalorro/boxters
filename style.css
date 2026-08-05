@@ -223,8 +223,10 @@ html, body {
 
 .solution-panel {
     pointer-events: auto;
-    background: rgba(10, 10, 46, 0.95);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: rgba(10, 10, 46, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 215, 0, 0.25);
     border-radius: 16px 16px 0 0;
     padding: 1rem 1.5rem 1.2rem;
     max-width: 400px;
@@ -233,7 +235,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     gap: 0.6rem;
-    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.05);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .solution-title {

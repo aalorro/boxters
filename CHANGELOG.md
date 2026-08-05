@@ -5,6 +5,27 @@ All notable changes to Lexicon will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-08-05
+
+### Added
+- **Sound effects** — fail SFX (3 random clips) on level defeat, clapping SFX on victory, and a special victory SFX for mode completion.
+- **Victory fanfare** — 6-second celebratory music with harmony pads, shimmer effects, and clapping on every win.
+- **Mode completion celebration** — completing level 14 of any mode triggers a special overlay with confetti, victory SFX, and mode-specific title (Word Master, Board Sweeper, Chain Legend, Master of Light).
+- **Confetti particle effect** — falling multicolored confetti with continuous waves during mode completion.
+- **Solution panel improvements** — illuminate mode now shows 3/4/5-letter words with unlit tiles (not just 6+), up to 12 solutions sorted by unlit tile coverage.
+- **Solution panel translucency** — panel background reduced to 35% opacity so the board is visible behind it.
+- **Ghost board enhancements** — brighter hex outlines and letters behind defeat/game-over overlays.
+- **Version footer** — v1.1.0 displayed in gold at the bottom of every screen.
+- **SFX assets** — `sfx/` folder with fail, clapping, and victory MP3 files.
+
+### Changed
+- **Illuminate tutorial wording** — removed hardcoded move counts from levels 9-14 tutorials to prevent staleness when moves are adjusted.
+- **Defeat overlay** — reduced darkness (0.7 → 0.45) for better board visibility.
+- **Game-over overlay** — reduced darkness (0.85 → 0.5) for better board visibility.
+
+### Fixed
+- **Illuminate solutions missing short words** — `findWordsWithPaths` was capping results by length before the unlit-tile filter ran; now returns all words for illuminate mode filtering.
+
 ## [1.0.0] - 2026-08-01
 
 ### Added
