@@ -104,6 +104,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_03', name: 'Stretch', mode: 'simple', tier: 'simple',
         maxMoves: 6, scoreMult: 0.6, twoStarTarget: 100, threeStarTarget: 155,
+        tutorial: { message: 'Look for common prefixes and suffixes like RE-, UN-, -ING, or -TION to build longer words.' },
         layout: { shape: 'hex2', cellTypes: {} },
         objectives: [
             { type: 'formWord', description: 'Form a 4+ letter word', target: 1, params: { minLength: 4 } }
@@ -130,6 +131,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_06', name: 'Wordsmith', mode: 'simple', tier: 'simple',
         maxMoves: 8, scoreMult: 0.8, twoStarTarget: 135, threeStarTarget: 200,
+        tutorial: { message: 'Scan the whole board before tracing. The best word isn\'t always the most obvious one.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 4+ letters', target: 3, params: { minLength: 4 } }
@@ -138,6 +140,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_07', name: 'Twin Anchors', mode: 'simple', tier: 'simple',
         maxMoves: 8, scoreMult: 0.85, twoStarTarget: 145, threeStarTarget: 220,
+        tutorial: { message: 'With two anchors, every word must pass through at least one. Plan paths that connect them.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'illuminateAnchors', description: 'Must use both Anchors (use each in a word)', target: 2, params: {} }
@@ -146,6 +149,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_08', name: 'Deep Boxters', mode: 'simple', tier: 'simple',
         maxMoves: 8, scoreMult: 0.9, twoStarTarget: 160, threeStarTarget: 240,
+        tutorial: { message: '5-letter words score big. Look for paths that zigzag through the center of the board.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'formWord', description: 'Form 2 words of 5+ letters', target: 2, params: { minLength: 5 } }
@@ -154,6 +158,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_09', name: 'Under Pressure', mode: 'simple', tier: 'simple',
         maxMoves: 8, scoreMult: 0.95, twoStarTarget: 175, threeStarTarget: 260,
+        tutorial: { message: 'Every word must use the anchor. Start or end your path at the red-rimmed tile.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 1 },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 4+ letters', target: 3, params: { minLength: 4 } },
@@ -163,6 +168,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_10', name: 'Proving Ground', mode: 'simple', tier: 'simple',
         maxMoves: 6, twoStarTarget: 190, threeStarTarget: 280,
+        tutorial: { message: 'Fewer moves means every word counts. Aim for 5+ letters on each move.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
@@ -173,6 +179,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_11', name: 'Sharp Focus', mode: 'simple', tier: 'simple',
         maxMoves: 7, twoStarTarget: 200, threeStarTarget: 300,
+        tutorial: { message: 'Don\'t waste moves on guesses. Invalid words still cost a move!' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
@@ -182,6 +189,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_12', name: 'Final Exam', mode: 'simple', tier: 'simple',
         maxMoves: 7, twoStarTarget: 210, threeStarTarget: 320,
+        tutorial: { message: 'Need a 6-letter word? Try extending a shorter word with a prefix or suffix.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'formWord', description: 'Form 2 words of 5+ letters', target: 2, params: { minLength: 5 } },
@@ -192,6 +200,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_13', name: 'Endurance', mode: 'simple', tier: 'simple',
         maxMoves: 6, twoStarTarget: 220, threeStarTarget: 340,
+        tutorial: { message: 'Four words in six moves — no room for errors. Plan all your paths before you start.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'formWord', description: 'Form 4 words of 4+ letters', target: 4, params: { minLength: 4 } },
@@ -201,6 +210,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_14', name: 'Masterclass', mode: 'simple', tier: 'simple',
         maxMoves: 6, twoStarTarget: 240, threeStarTarget: 360,
+        tutorial: { message: 'The final challenge. Three anchors, four 5-letter words, six moves. You\'ve got this.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
             { type: 'formWord', description: 'Form 4 words of 5+ letters', target: 4, params: { minLength: 5 } },
