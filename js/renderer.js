@@ -900,11 +900,9 @@ export class Renderer {
 
     _drawInfoButton(ctx) {
         const r = 14;
-        // Position to the left of the right-column scores
-        ctx.font = "16px 'Inter', sans-serif";
-        const sampleWidth = ctx.measureText('Total: 00000').width;
-        const cx = this.displayWidth - 20 - sampleWidth - r - 10;
-        const cy = 54;
+        // Position above the share button on the bottom-right
+        const cx = this.displayWidth - 24;
+        const cy = this.displayHeight - 108 - r * 2 - 12;
         this._infoBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
@@ -929,10 +927,12 @@ export class Renderer {
     }
 
     _drawLogoutButton(ctx) {
-        if (!this._infoBtnPos) return;
         const r = 14;
-        const cx = this._infoBtnPos.x - r * 2 - 8;
-        const cy = this._infoBtnPos.y;
+        // Position at top-right area
+        ctx.font = "16px 'Inter', sans-serif";
+        const sampleWidth = ctx.measureText('Total: 00000').width;
+        const cx = this.displayWidth - 20 - sampleWidth - r - 10;
+        const cy = 54;
         this._logoutBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
