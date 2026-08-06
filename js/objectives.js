@@ -110,10 +110,34 @@ export class ObjectiveTracker {
     }
 
     checkAll(board, lastMove) {
+        // For formWord objectives, a word should only count toward ONE objective
+        // (the most specific matching incomplete one, i.e. highest minLength first)
+        const allObjs = [...this.primary, ...this.secondary];
+        const formWordObjs = allObjs.filter(o =>
+            (o.type === 'formWord' || o.type === 'formWordLength') && !o.completed
+        );
+
+        let wordClaimed = false;
+        if (lastMove && formWordObjs.length > 1) {
+            // Sort by minLength descending so most specific matches first
+            const sorted = [...formWordObjs].sort((a, b) =>
+                ((b.params && b.params.minLength) || 3) - ((a.params && a.params.minLength) || 3)
+            );
+            for (const obj of sorted) {
+                const minLen = (obj.params && obj.params.minLength) || 3;
+                if (lastMove.word.length >= minLen && !wordClaimed) {
+                    obj.check(board, lastMove);
+                    wordClaimed = true;
+                }
+            }
+        }
+
         for (const obj of this.primary) {
+            if (wordClaimed && (obj.type === 'formWord' || obj.type === 'formWordLength')) continue;
             obj.check(board, lastMove);
         }
         for (const obj of this.secondary) {
+            if (wordClaimed && (obj.type === 'formWord' || obj.type === 'formWordLength')) continue;
             obj.check(board, lastMove);
         }
     }

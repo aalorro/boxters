@@ -172,11 +172,11 @@ const LEVEL_DATA = [
 
     {
         id: 'simple_11', name: 'Sharp Focus', mode: 'simple', tier: 'simple',
-        maxMoves: 8, twoStarTarget: 200, threeStarTarget: 300,
-        layout: { shape: 'hex3', cellTypes: {}, anchors: 1 },
+        maxMoves: 7, twoStarTarget: 200, threeStarTarget: 300,
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
-            { type: 'formWord', description: 'Form 3 words of 4+ letters', target: 3, params: { minLength: 4 } },
-            { type: 'illuminateAnchors', description: 'Must use the Anchor cell (each word)', target: 1, params: {} }
+            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
+            { type: 'illuminateAnchors', description: 'Must use both Anchors (use each in a word)', target: 2, params: {} }
         ]
     },
     {
@@ -184,7 +184,8 @@ const LEVEL_DATA = [
         maxMoves: 7, twoStarTarget: 210, threeStarTarget: 320,
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
-            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
+            { type: 'formWord', description: 'Form 2 words of 5+ letters', target: 2, params: { minLength: 5 } },
+            { type: 'formWord', description: 'Form 1 word of 6+ letters', target: 1, params: { minLength: 6 } },
             { type: 'illuminateAnchors', description: 'Must use both Anchors (use each in a word)', target: 2, params: {} }
         ]
     },
