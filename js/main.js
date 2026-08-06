@@ -468,7 +468,7 @@ class Game {
             .filter(o => (o.type === 'formWord' || o.type === 'formWordLength') && !o.completed);
         if (wordLenObjectives.length > 0) {
             const minLength = wordLenObjectives
-                .reduce((max, o) => Math.max(max, (o.params && o.params.minLength) || 3), 3);
+                .reduce((min, o) => Math.min(min, (o.params && o.params.minLength) || 3), Infinity);
             if (word.length < minLength) {
                 this._showFeedback(`Words must be at least ${minLength} letters!`);
                 this.audio.playError();

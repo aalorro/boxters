@@ -120,9 +120,12 @@ export class Renderer {
         }
 
         // Version footer
-        ctx.font = "16px 'Inter', sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
+        ctx.font = "12px 'Inter', sans-serif";
+        ctx.fillStyle = 'rgba(192, 192, 220, 0.45)';
+        ctx.fillText('\u00A9 2026 ArtMondo \u2014 MIT License', this.displayWidth / 2, this.displayHeight - 22);
+        ctx.font = "16px 'Inter', sans-serif";
         ctx.fillStyle = 'rgba(255, 215, 0, 0.75)';
         ctx.fillText('v1.1.0', this.displayWidth / 2, this.displayHeight - 6);
     }
@@ -468,7 +471,7 @@ export class Renderer {
             ctx.fillStyle = obj.completed ? COLORS.ui.success : COLORS.ui.text;
             ctx.fillText(obj.description, ox + 24, oy);
 
-            if (obj.target > 1) {
+            if (obj.type === 'formWord' || obj.type === 'formWordLength' || obj.target > 1) {
                 ctx.fillStyle = obj.completed ? COLORS.ui.success : COLORS.ui.accent;
                 ctx.textAlign = 'right';
                 ctx.fillText(`(${obj.progress}/${obj.target})`, this.displayWidth - padding, oy);
