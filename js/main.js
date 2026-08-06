@@ -5,7 +5,8 @@ import { WordTracer } from './tracer.js';
 import { ParticleSystem } from './particles.js';
 import { AudioManager } from './audio.js';
 import { initDictionary, dictionary } from './dictionary.js';
-import { loadLevel, getLevelCount, getFirstLevelForMode, getLevelsForMode } from './levels.js';
+import { loadLevel, loadLevelWithBoard, getLevelCount, getLevelData, getFirstLevelForMode, getLevelsForMode } from './levels.js';
+import { hexSpiral, hexKey } from './hex.js';
 import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
 
@@ -98,6 +99,7 @@ class Game {
     async init() {
         initDictionary();
         this.audio.init();
+        this._checkSharedBoardParams();
 
         // Prevent browser refresh while a game is in progress (moves made)
         window.addEventListener('keydown', (e) => {
@@ -131,9 +133,27 @@ class Game {
     }
 
     // ── Entry flow ──────────────────────────────────────────────
+    _checkSharedBoardParams() {
+        const params = new URLSearchParams(window.location.search);
+        const l = params.get('l');
+        const b = params.get('b');
+        if (l !== null && b) {
+            this._sharedBoard = {
+                levelIndex: parseInt(l),
+                letters: b.toUpperCase(),
+                anchors: params.get('a') ? params.get('a').split(',').map(Number) : []
+            };
+            // Clear URL params without reload
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }
+
     _showEntryScreen() {
         this.player = loadProfile();
         if (this.player) {
+            if (this._sharedBoard) {
+                this.selectedMode = getLevelData(this._sharedBoard.levelIndex).mode;
+            }
             this._showWelcomeScreen();
         } else {
             this._showRegisterScreen();
@@ -235,6 +255,11 @@ class Game {
             this.cooldownUntil = this.player.cooldownUntil;
             this.lives = 0;
             this.state = STATES.COOLDOWN;
+        } else if (this._sharedBoard) {
+            // Load shared board directly
+            this._clearBoardState();
+            this._loadLevel(this._sharedBoard.levelIndex);
+            this.state = STATES.PLAYING;
         } else {
             // Try to restore an in-progress board from a previous session
             const snapshot = this._loadBoardState();
@@ -282,7 +307,13 @@ class Game {
                 index = getFirstLevelForMode(this.selectedMode);
             }
         }
-        const result = loadLevel(index);
+        let result;
+        if (this._sharedBoard && this._sharedBoard.levelIndex === index) {
+            result = loadLevelWithBoard(index, this._sharedBoard.letters, this._sharedBoard.anchors);
+            this._sharedBoard = null;
+        } else {
+            result = loadLevel(index);
+        }
         if (!result) {
             this.state = STATES.MENU;
             return;
@@ -343,6 +374,20 @@ class Game {
             if (this.renderer.isLogoutButtonHit(data.pos.x, data.pos.y)) {
                 this.input.cancelTrace();
                 this._returnToWelcome();
+                return;
+            }
+
+            // Check if sound button was tapped
+            if (this.renderer.isSoundButtonHit(data.pos.x, data.pos.y)) {
+                this.input.cancelTrace();
+                this.audio.toggle();
+                return;
+            }
+
+            // Check if share button was tapped
+            if (this.renderer.isShareButtonHit(data.pos.x, data.pos.y)) {
+                this.input.cancelTrace();
+                this._shareBoard();
                 return;
             }
 
@@ -792,6 +837,34 @@ class Game {
         }
     }
 
+    _shareBoard() {
+        if (!this.board) return;
+        const cells = this.board.field.getAllCells();
+        const radius = parseInt(this.levelData.layout.shape.replace('hex', ''));
+        const positions = hexSpiral({ q: 0, r: 0 }, radius);
+
+        let letters = '';
+        const anchors = [];
+        for (let i = 0; i < positions.length; i++) {
+            const pos = positions[i];
+            const cell = this.board.field.getCell(pos.q, pos.r);
+            letters += cell ? (cell.letter || 'A') : 'A';
+            if (cell && cell.isAnchor) anchors.push(i);
+        }
+
+        const params = new URLSearchParams();
+        params.set('l', this.levelIndex);
+        params.set('b', letters);
+        if (anchors.length > 0) params.set('a', anchors.join(','));
+
+        const url = window.location.origin + window.location.pathname + '?' + params.toString();
+        navigator.clipboard.writeText(url).then(() => {
+            this._showFeedback('Link copied!');
+        }).catch(() => {
+            this._showFeedback('Could not copy link');
+        });
+    }
+
     _returnToWelcome() {
         // Save board state if moves in progress, otherwise clear it
         if (this._hasMovesInProgress()) {
@@ -991,7 +1064,8 @@ class Game {
             hoveredSolution: this.hoveredSolution,
             cooldownUntil: this.cooldownUntil,
             hasMovesInProgress: this._hasMovesInProgress(),
-            isUltimateVictory: this.isUltimateVictory || false
+            isUltimateVictory: this.isUltimateVictory || false,
+            audioEnabled: this.audio.enabled
         };
 
         this.renderer.render(gameState, dt, this.particles);
