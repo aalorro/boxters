@@ -44,7 +44,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css?v=17">
+    <link rel="stylesheet" href="style.css?v=18">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -119,6 +119,7 @@
     </div>
 
     <dialog id="info-dialog">
+        <button class="info-close-x" type="button" onclick="document.getElementById('info-dialog').close()" aria-label="Close">&times;</button>
         <div class="info-dialog-inner">
             <div class="info-tabs">
                 <button class="info-tab active" data-tab="about" type="button" onclick="showInfoTab('about')">About</button>
@@ -131,6 +132,6 @@
         </div>
     </dialog>
 
-    <script type="module" src="js/main.js?v=53"></script>
+    <script type="module" src="js/main.js?v=54"></script>
 </body>
 </html>
