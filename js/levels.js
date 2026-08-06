@@ -903,11 +903,23 @@ function buildBoardWordFirst(data, seed) {
         }
     }
 
-    // Create cells: placed letters + fill remaining with frequency-weighted randoms
+    // Create cells: placed letters + fill remaining (guarantee ≥35% vowels in unfilled)
+    const unfilledPos = positions.filter(p => !letterMap.has(hexKey(p.q, p.r)));
+    const _vowels = 'AEIOU';
+    const _minV = Math.ceil(unfilledPos.length * 0.35);
+    let _vc = 0;
+    const _fills = [];
+    for (let i = 0; i < unfilledPos.length; i++) {
+        let l = randomLetter(rng);
+        if (_minV - _vc >= unfilledPos.length - i) l = _vowels[Math.floor(rng() * _vowels.length)];
+        if (_vowels.includes(l)) _vc++;
+        _fills.push(l);
+    }
+    let _fi = 0;
     for (const pos of positions) {
         const key = hexKey(pos.q, pos.r);
         const cellType = randomCellTypes[key] || 'plain';
-        const letter = letterMap.has(key) ? letterMap.get(key) : randomLetter(rng);
+        const letter = letterMap.has(key) ? letterMap.get(key) : _fills[_fi++];
         const cell = new HexCell({ q: pos.q, r: pos.r, letter, cellType });
         board.field.addCell(cell);
     }
@@ -1065,11 +1077,23 @@ function buildBoardClearMode(data, seed) {
         if (!placed) break;
     }
 
-    // Create cells: placed letters + fill remaining with frequency-weighted randoms
+    // Create cells: placed letters + fill remaining (guarantee ≥35% vowels in unfilled)
+    const unfilledPosClear = positions.filter(p => !letterMap.has(hexKey(p.q, p.r)));
+    const vowelsClear = 'AEIOU';
+    const minVClear = Math.ceil(unfilledPosClear.length * 0.35);
+    let vcClear = 0;
+    const fillsClear = [];
+    for (let i = 0; i < unfilledPosClear.length; i++) {
+        let l = randomLetter(rng);
+        if (minVClear - vcClear >= unfilledPosClear.length - i) l = vowelsClear[Math.floor(rng() * vowelsClear.length)];
+        if (vowelsClear.includes(l)) vcClear++;
+        fillsClear.push(l);
+    }
+    let fiClear = 0;
     for (const pos of positions) {
         const key = hexKey(pos.q, pos.r);
         const cellType = randomCellTypes[key] || 'plain';
-        const letter = letterMap.has(key) ? letterMap.get(key) : randomLetter(rng);
+        const letter = letterMap.has(key) ? letterMap.get(key) : fillsClear[fiClear++];
         const cell = new HexCell({ q: pos.q, r: pos.r, letter, cellType });
         board.field.addCell(cell);
     }
