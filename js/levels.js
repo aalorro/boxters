@@ -1427,6 +1427,31 @@ export function getLevelData(index) {
     return LEVEL_DATA[index];
 }
 
+export function loadLevelWithBoard(levelIndex, letters, anchorIndices) {
+    if (levelIndex >= LEVEL_DATA.length) levelIndex = levelIndex % LEVEL_DATA.length;
+    const data = LEVEL_DATA[levelIndex];
+    if (!data) return null;
+
+    const board = new Board();
+    board.maxMoves = data.maxMoves;
+    board.movesRemaining = data.maxMoves;
+    board.mode = data.mode;
+
+    const radius = parseInt(data.layout.shape.replace('hex', ''));
+    const positions = hexSpiral({ q: 0, r: 0 }, radius);
+    const anchorSet = new Set(anchorIndices);
+
+    for (let i = 0; i < positions.length; i++) {
+        const pos = positions[i];
+        const cell = new HexCell(pos.q, pos.r);
+        cell.letter = letters[i] || 'A';
+        cell.cellType = anchorSet.has(i) ? 'anchor' : 'plain';
+        board.field.addCell(cell);
+    }
+
+    return { board, levelData: data, levelIndex };
+}
+
 // Get levels filtered by mode
 export function getLevelsForMode(mode) {
     return LEVEL_DATA

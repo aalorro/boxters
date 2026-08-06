@@ -102,8 +102,10 @@ export class Renderer {
         if (gameState.state === 'playing') {
             this._drawInfoButton(ctx);
             this._drawLogoutButton(ctx);
+            this._drawSoundButton(ctx, gameState);
             this._drawBackButton(ctx, gameState);
             this._drawForwardButton(ctx, gameState);
+            this._drawShareButton(ctx);
             if (gameState.hoveredButton) {
                 this._drawButtonTooltip(ctx, gameState.hoveredButton);
             }
@@ -968,6 +970,123 @@ export class Renderer {
         ctx.restore();
     }
 
+    _drawSoundButton(ctx, gameState) {
+        if (!this._logoutBtnPos) return;
+        const r = 14;
+        const cx = this._logoutBtnPos.x - r * 2 - 8;
+        const cy = this._logoutBtnPos.y;
+        this._soundBtnPos = { x: cx, y: cy, r: r };
+        const muted = !gameState.audioEnabled;
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Speaker icon
+        ctx.strokeStyle = '#ffd700';
+        ctx.fillStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        // Speaker body
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy - 3);
+        ctx.lineTo(cx - 1, cy - 3);
+        ctx.lineTo(cx + 3, cy - 6);
+        ctx.lineTo(cx + 3, cy + 6);
+        ctx.lineTo(cx - 1, cy + 3);
+        ctx.lineTo(cx - 4, cy + 3);
+        ctx.closePath();
+        ctx.fill();
+
+        if (muted) {
+            // X mark for muted
+            ctx.strokeStyle = COLORS.ui.error;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx + 5, cy - 4);
+            ctx.lineTo(cx + 10, cy + 4);
+            ctx.moveTo(cx + 10, cy - 4);
+            ctx.lineTo(cx + 5, cy + 4);
+            ctx.stroke();
+        } else {
+            // Sound waves
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(cx + 5, cy, 3, -Math.PI / 4, Math.PI / 4);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx + 5, cy, 6, -Math.PI / 4, Math.PI / 4);
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+
+    isSoundButtonHit(x, y) {
+        if (!this._soundBtnPos) return false;
+        const dx = x - this._soundBtnPos.x;
+        const dy = y - this._soundBtnPos.y;
+        return (dx * dx + dy * dy) <= (this._soundBtnPos.r + 8) * (this._soundBtnPos.r + 8);
+    }
+
+    _drawShareButton(ctx) {
+        const r = 14;
+        const cx = this.displayWidth - 24;
+        const cy = this.displayHeight - 108;
+        this._shareBtnPos = { x: cx, y: cy, r: r };
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Share icon (arrow pointing up from a tray)
+        ctx.strokeStyle = '#ffd700';
+        ctx.fillStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        // Upward arrow
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 6);
+        ctx.lineTo(cx, cy + 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy - 3);
+        ctx.lineTo(cx, cy - 7);
+        ctx.lineTo(cx + 4, cy - 3);
+        ctx.stroke();
+        // Tray
+        ctx.beginPath();
+        ctx.moveTo(cx - 5, cy + 1);
+        ctx.lineTo(cx - 5, cy + 6);
+        ctx.lineTo(cx + 5, cy + 6);
+        ctx.lineTo(cx + 5, cy + 1);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    isShareButtonHit(x, y) {
+        if (!this._shareBtnPos) return false;
+        const dx = x - this._shareBtnPos.x;
+        const dy = y - this._shareBtnPos.y;
+        return (dx * dx + dy * dy) <= (this._shareBtnPos.r + 8) * (this._shareBtnPos.r + 8);
+    }
+
     _drawBackButton(ctx, gameState) {
         if (!this._logoutBtnPos) return;
         // Hide when on first level or when moves are in progress
@@ -976,8 +1095,8 @@ export class Renderer {
             return;
         }
         const r = 14;
-        const cx = this._logoutBtnPos.x - r * 2 - 8;
-        const cy = this._logoutBtnPos.y;
+        const cx = this._soundBtnPos.x - r * 2 - 8;
+        const cy = this._soundBtnPos.y;
         this._backBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
