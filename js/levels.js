@@ -1477,9 +1477,12 @@ export function loadLevelWithBoard(levelIndex, letters, anchorIndices) {
 
     for (let i = 0; i < positions.length; i++) {
         const pos = positions[i];
-        const cell = new HexCell(pos.q, pos.r);
-        cell.letter = letters[i] || 'A';
-        cell.cellType = anchorSet.has(i) ? 'anchor' : 'plain';
+        const cell = new HexCell({
+            q: pos.q,
+            r: pos.r,
+            letter: letters[i] || 'A',
+            cellType: anchorSet.has(i) ? 'anchor' : 'plain'
+        });
         board.field.addCell(cell);
     }
 
