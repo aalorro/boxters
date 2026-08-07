@@ -431,7 +431,7 @@ html, body {
     font-family: 'Inter', sans-serif;
     font-size: 0.88rem;
     line-height: 1.65;
-    color: rgba(192, 192, 220, 0.85);
+    color: rgba(210, 210, 230, 0.95);
     width: 100%;
 }
 
@@ -439,7 +439,7 @@ html, body {
     font-family: 'Cinzel', serif;
     font-size: 0.95rem;
     font-weight: 700;
-    color: rgba(255, 215, 0, 0.85);
+    color: rgba(255, 215, 0, 0.95);
     margin: 1rem 0 0.4rem;
 }
 
@@ -472,8 +472,8 @@ html, body {
     font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
-    color: rgba(192, 192, 220, 0.6);
-    background: rgba(255, 255, 255, 0.04);
+    color: rgba(210, 210, 230, 0.8);
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 6px;
     cursor: pointer;
@@ -498,4 +498,22 @@ html, body {
     margin-top: 0.5rem;
     padding: 0.6rem 2rem;
     font-size: 0.9rem;
+}
+
+#contact-dialog {
+    position: relative;
+    background: rgba(10, 10, 46, 0.98);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 16px;
+    padding: 0;
+    max-width: 420px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    color: inherit;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.05);
+}
+
+#contact-dialog::backdrop {
+    background: rgba(5, 5, 32, 0.85);
 }

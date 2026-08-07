@@ -369,6 +369,14 @@ class Game {
         this.input.on('traceStart', (data) => {
             if (this.state !== STATES.PLAYING) return;
 
+            // Check if contact button was tapped
+            if (this.renderer.isContactButtonHit(data.pos.x, data.pos.y)) {
+                this.input.cancelTrace();
+                const dlg = document.getElementById('contact-dialog');
+                if (dlg) dlg.showModal();
+                return;
+            }
+
             // Check if info button was tapped
             if (this.renderer.isInfoButtonHit(data.pos.x, data.pos.y)) {
                 this.input.cancelTrace();
@@ -431,7 +439,9 @@ class Game {
                 this.hoveredButton = null;
                 return;
             }
-            if (this.renderer.isInfoButtonHit(data.pos.x, data.pos.y)) {
+            if (this.renderer.isContactButtonHit(data.pos.x, data.pos.y)) {
+                this.hoveredButton = 'contact';
+            } else if (this.renderer.isInfoButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'info';
             } else if (this.renderer.isLogoutButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'logout';
@@ -439,6 +449,8 @@ class Game {
                 this.hoveredButton = 'back';
             } else if (!this._hasMovesInProgress() && this.renderer.isForwardButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'forward';
+            } else if (this.renderer.isShareButtonHit(data.pos.x, data.pos.y)) {
+                this.hoveredButton = 'share';
             } else {
                 this.hoveredButton = null;
             }
