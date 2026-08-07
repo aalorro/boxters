@@ -67,7 +67,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css?v=18">
+    <link rel="stylesheet" href="style.css?v=19">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -155,6 +155,71 @@
         </div>
     </dialog>
 
-    <script type="module" src="js/main.js?v=56"></script>
+    <dialog id="contact-dialog">
+        <button class="info-close-x" type="button" onclick="document.getElementById('contact-dialog').close()" aria-label="Close">&times;</button>
+        <div class="info-dialog-inner" id="contact-dialog-inner">
+            <h3 style="font-family:'Cinzel',serif; color:rgba(255,215,0,0.95); margin:0 0 0.3rem;">Contact Us</h3>
+            <p style="font-size:0.85rem; color:rgba(210,210,230,0.9); line-height:1.5; margin-bottom:0.5rem;">Report a bug, suggest a word for the dictionary, share feature ideas, or send us feedback.</p>
+            <form id="contact-form" style="width:100%;">
+                <label style="display:block; margin-bottom:0.3rem; color:rgba(255,215,0,0.9); font-size:0.85rem;">Your email (optional)</label>
+                <input type="email" name="email" placeholder="player@example.com" style="width:100%; padding:0.5rem; margin-bottom:0.8rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,215,0,0.3); border-radius:6px; color:#e0e0f0; font-family:Inter,sans-serif; font-size:0.85rem; box-sizing:border-box;">
+                <label style="display:block; margin-bottom:0.3rem; color:rgba(255,215,0,0.9); font-size:0.85rem;">Message</label>
+                <textarea name="message" rows="4" required placeholder="Describe the bug, suggest a word, or share your feedback..." style="width:100%; padding:0.5rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,215,0,0.3); border-radius:6px; color:#e0e0f0; font-family:Inter,sans-serif; font-size:0.85rem; resize:vertical; box-sizing:border-box;"></textarea>
+                <button type="submit" class="btn-primary" style="margin-top:0.8rem; width:100%;">Send</button>
+            </form>
+            <p style="margin-top:0.6rem; font-size:0.78rem; color:rgba(192,192,220,0.5);">Powered by Formspree. No account needed.</p>
+        </div>
+    </dialog>
+    <script>
+    (function() {
+        var dlg = document.getElementById('contact-dialog');
+        var inner = document.getElementById('contact-dialog-inner');
+        var originalHTML = inner.innerHTML;
+
+        function showThankYou() {
+            inner.innerHTML = '<h3 style="font-family:\'Cinzel\',serif; color:rgba(255,215,0,0.95); margin:0 0 1rem;">Thank You!</h3>' +
+                '<p style="font-size:0.95rem; color:rgba(210,210,230,0.95); line-height:1.6; text-align:center; margin-bottom:1.5rem;">Your message has been sent.<br>We appreciate your feedback!</p>' +
+                '<button class="btn-primary" id="contact-back-btn" type="button">Back to Game</button>';
+            document.getElementById('contact-back-btn').onclick = function() { dlg.close(); };
+        }
+
+        function attachFormHandler() {
+            var form = document.getElementById('contact-form');
+            if (!form) return;
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                var btn = form.querySelector('button[type="submit"]');
+                btn.textContent = 'Sending...';
+                btn.disabled = true;
+                fetch('https://formspree.io/f/mgawvrkq', {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                }).then(function(res) {
+                    if (res.ok) {
+                        showThankYou();
+                    } else {
+                        btn.textContent = 'Send';
+                        btn.disabled = false;
+                        alert('Something went wrong. Please try again.');
+                    }
+                }).catch(function() {
+                    btn.textContent = 'Send';
+                    btn.disabled = false;
+                    alert('Network error. Please try again.');
+                });
+            };
+        }
+
+        attachFormHandler();
+
+        dlg.addEventListener('close', function() {
+            inner.innerHTML = originalHTML;
+            attachFormHandler();
+        });
+    })();
+    </script>
+
+    <script type="module" src="js/main.js?v=59"></script>
 </body>
 </html>

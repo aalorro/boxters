@@ -101,6 +101,7 @@ export class Renderer {
         // Draw info, logout, back, and forward buttons on canvas
         if (gameState.state === 'playing') {
             this._drawInfoButton(ctx);
+            this._drawContactButton(ctx);
             this._drawLogoutButton(ctx);
             this._drawSoundButton(ctx, gameState);
             this._drawBackButton(ctx, gameState);
@@ -926,6 +927,49 @@ export class Renderer {
         ctx.restore();
     }
 
+    _drawContactButton(ctx) {
+        if (!this._infoBtnPos) return;
+        const r = 14;
+        const cx = this._infoBtnPos.x;
+        const cy = this._infoBtnPos.y - r * 2 - 12;
+        this._contactBtnPos = { x: cx, y: cy, r: r };
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Envelope icon
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        // Envelope body
+        ctx.beginPath();
+        ctx.rect(cx - 6, cy - 4, 12, 9);
+        ctx.stroke();
+        // Flap
+        ctx.beginPath();
+        ctx.moveTo(cx - 6, cy - 4);
+        ctx.lineTo(cx, cy + 1);
+        ctx.lineTo(cx + 6, cy - 4);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    isContactButtonHit(x, y) {
+        if (!this._contactBtnPos) return false;
+        const dx = x - this._contactBtnPos.x;
+        const dy = y - this._contactBtnPos.y;
+        return (dx * dx + dy * dy) <= (this._contactBtnPos.r + 8) * (this._contactBtnPos.r + 8);
+    }
+
     _drawLogoutButton(ctx) {
         const r = 14;
         // Position at top-right area
@@ -1184,9 +1228,11 @@ export class Renderer {
     _drawButtonTooltip(ctx, which) {
         let pos, label;
         if (which === 'info') { pos = this._infoBtnPos; label = 'Info'; }
+        else if (which === 'contact') { pos = this._contactBtnPos; label = 'Contact'; }
         else if (which === 'logout') { pos = this._logoutBtnPos; label = 'Menu'; }
         else if (which === 'back') { pos = this._backBtnPos; label = 'Prev Level'; }
         else if (which === 'forward') { pos = this._forwardBtnPos; label = 'Next Level'; }
+        else if (which === 'share') { pos = this._shareBtnPos; label = 'Share Board'; }
         if (!pos) return;
 
         ctx.save();
@@ -1196,7 +1242,10 @@ export class Renderer {
 
         const tw = ctx.measureText(label).width + 12;
         const th = 22;
-        const tx = pos.x;
+        let tx = pos.x;
+        // Clamp so tooltip doesn't overflow canvas edges
+        if (tx + tw / 2 > this.displayWidth - 4) tx = this.displayWidth - 4 - tw / 2;
+        if (tx - tw / 2 < 4) tx = 4 + tw / 2;
         const ty = pos.y + pos.r + 6;
 
         ctx.fillStyle = 'rgba(10, 10, 46, 0.95)';
