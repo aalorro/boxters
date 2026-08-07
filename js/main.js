@@ -653,9 +653,12 @@ class Game {
 
         // Check if this is the final level of any mode (level 14)
         const finalLevels = ['simple_14', 'clear_14', 'chain_14', 'illuminate_14'];
-        this.isUltimateVictory = finalLevels.includes(this.levelData.id);
+        const isFinalLevel = finalLevels.includes(this.levelData.id);
+        if (!this.player.celebratedModes) this.player.celebratedModes = [];
+        const alreadyCelebrated = this.player.celebratedModes.includes(this.board.mode);
+        this.isUltimateVictory = isFinalLevel && !alreadyCelebrated;
 
-        if (this.isUltimateVictory) {
+        if (isFinalLevel) {
             // Unlock the next mode
             const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
             const idx = modeOrder.indexOf(this.board.mode);
@@ -664,9 +667,16 @@ class Game {
                 if (!this.player.unlockedModes) this.player.unlockedModes = ['simple'];
                 if (!this.player.unlockedModes.includes(nextMode)) {
                     this.player.unlockedModes.push(nextMode);
-                    saveProfile(this.player);
                 }
             }
+            // Mark mode as celebrated so it only happens once
+            if (!alreadyCelebrated) {
+                this.player.celebratedModes.push(this.board.mode);
+            }
+            saveProfile(this.player);
+        }
+
+        if (this.isUltimateVictory) {
             this.audio.playUltimateVictory();
             this.particles.emitVictoryBurst(cx, cy);
             this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
