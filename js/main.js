@@ -288,6 +288,12 @@ class Game {
 
     // ── Level management ────────────────────────────────────────
     _loadLevel(index) {
+        // Clear any lingering particles/confetti from previous level
+        this.particles.particles = [];
+        if (this._confettiInterval) {
+            clearInterval(this._confettiInterval);
+            this._confettiInterval = null;
+        }
         // Check if we've gone past the current mode's last level
         const modeLevels = getLevelsForMode(this.selectedMode);
         const modeEnd = modeLevels.length > 0 ? modeLevels[modeLevels.length - 1].index + 1 : getLevelCount();
@@ -469,10 +475,6 @@ class Game {
             if (this.state === STATES.VICTORY) {
                 if (this.levelTransitionTimer <= 0) {
                     this.isUltimateVictory = false;
-                    if (this._confettiInterval) {
-                        clearInterval(this._confettiInterval);
-                        this._confettiInterval = null;
-                    }
                     this._loadLevel(this.levelIndex + 1);
                 }
                 return;
@@ -888,6 +890,11 @@ class Game {
         saveProfile(this.player);
 
         // Reset game state
+        this.particles.particles = [];
+        if (this._confettiInterval) {
+            clearInterval(this._confettiInterval);
+            this._confettiInterval = null;
+        }
         this.state = STATES.MENU;
         this.board = null;
         this.tracer = null;

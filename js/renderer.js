@@ -608,7 +608,7 @@ export class Renderer {
             Math.max(...lines.map(l => ctx.measureText(l).width)) + paddingX * 2);
         const boxH = lines.length * lineHeight + paddingY * 2;
 
-        ctx.fillStyle = 'rgba(10, 10, 46, 0.9)';
+        ctx.fillStyle = 'rgba(10, 10, 46, 0.3)';
         ctx.beginPath();
         ctx.roundRect(centerX - boxW / 2, topY, boxW, boxH, 12);
         ctx.fill();
