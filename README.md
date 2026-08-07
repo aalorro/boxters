@@ -19,6 +19,10 @@ Drag through adjacent hexagonal tiles to spell words. Each tile can only be used
 
 Some levels have **Anchor cells** (red rim). Every word must pass through an anchor tile.
 
+### Share a Board
+
+Tap the share button (bottom-right of the board) to copy a link. Anyone who opens it gets the exact same board layout — compare scores with friends!
+
 ### Scoring
 
 Points are based on letter values, word length, unused moves, and mode difficulty. Each level has a difficulty multiplier that scales with progression — early levels produce lower scores, harder levels reward more. Earn 1-3 stars per level.
@@ -100,7 +104,7 @@ Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells),
 
 ### Canvas UI
 
-Info, logout, back, and forward buttons are drawn on the canvas by the renderer and hit-tested in the game loop — they are not DOM elements. DPR scaling is handled via canvas transform; all coordinates are in CSS pixels.
+Info, logout, sound, back, forward, and share buttons are drawn on the canvas by the renderer and hit-tested in the game loop — they are not DOM elements. DPR scaling is handled via canvas transform; all coordinates are in CSS pixels.
 
 ## Tech Stack
 
@@ -112,7 +116,7 @@ Info, logout, back, and forward buttons are drawn on the canvas by the renderer 
 
 ## Privacy
 
-No data is collected, transmitted, or shared. No cookies, analytics, or tracking. All progress is stored locally in your browser. To reset: `localStorage.removeItem('boxters_player')`.
+Game progress is stored locally in your browser via `localStorage`. Google Analytics is used for anonymous usage data (page views, session duration). No personal data is collected. To reset progress: `localStorage.removeItem('boxters_player')`.
 
 ## License
 

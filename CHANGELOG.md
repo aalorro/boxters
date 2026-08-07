@@ -5,6 +5,34 @@ All notable changes to Boxters will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-08-07
+
+### Added
+- **Board sharing** — Share button (bottom-right of board) copies a URL to the clipboard. Opening the link loads the exact same board layout so friends can compare scores.
+- **Sound toggle** — Mute/unmute button on the board to control audio.
+- **Google Analytics** — Anonymous usage tracking via Google Analytics (gtag.js).
+- **Tutorial tips** — All Simple mode levels now have tutorial tips with strategic advice.
+- **SEO improvements** — Keywords, author meta, Apple mobile web app tags, expanded Open Graph and structured data, OG image converted to PNG for social platform compatibility.
+- **Info dialog X button** — Close button at top-right of info panel for quick dismissal without scrolling.
+- **Hex logo** — SVG favicon displayed on welcome screen above the title.
+- **Copyright footer** — "© 2026 ArtMondo — MIT License" above version number.
+
+### Changed
+- **Mode celebration** — Confetti, fanfare, and special overlay only trigger the first time a player completes level 14 of each mode. Replaying shows normal victory.
+- **Info button repositioned** — Moved from top-left area to bottom-right of the board, above the share button.
+- **Locked mode buttons** — Gold-tinted border and increased opacity for better visibility.
+- **Hex tile size** — Increased ~23% for better mobile usability.
+- **Privacy policy** — Updated to disclose Google Analytics usage and cookies.
+- **Version footer** — Updated to v1.2.0.
+
+### Fixed
+- **Blank shared boards** — `HexCell` constructor was called with positional args instead of object destructuring, causing empty boards when loading shared URLs.
+- **No-vowel boards** — Board generation now guarantees ≥35% vowels in unfilled cells (Simple & Clear modes).
+- **formWord double-counting** — A word no longer counts toward multiple formWord objectives simultaneously; routed to the most specific matching incomplete objective.
+- **formWord min length** — Changed from `Math.max` to `Math.min` across incomplete objectives so valid shorter words are accepted.
+- **Missing objective counter** — formWord objectives with target=1 now show progress counter.
+- **Level balance** — Swapped Simple levels 11/12 objectives so difficulty ramps correctly. Differentiated level 11 from level 9.
+
 ## [1.1.0] - 2026-08-05
 
 ### Added
@@ -50,4 +78,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Solution viewer** — shows playable words after level failure.
 - **Session tracking** — games count only increments on fresh sessions, not browser reloads.
 - **Responsive canvas** with DPR-aware rendering, dynamic board positioning when tutorials are shown.
-- **Privacy-first design** — no analytics, no cookies, no data collection. Everything stored locally.
+- **Privacy-first design** — all progress stored locally in browser.
