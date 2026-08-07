@@ -110,13 +110,13 @@ export class ParticleSystem {
 
     emitConfetti(width, height) {
         const colors = ['#ffd700', '#ff6b6b', '#4ade80', '#60a5fa', '#c084fc', '#f97316', '#ec4899', '#22d3ee'];
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 60; i++) {
             const x = Math.random() * width;
             this.particles.push(new Particle(x, -10 - Math.random() * 200, {
                 vx: (Math.random() - 0.5) * 2,
                 vy: 1.5 + Math.random() * 2.5,
                 life: 1.0,
-                decay: 0.003,
+                decay: 0.008,
                 size: Math.random() * 4 + 2,
                 color: colors[Math.floor(Math.random() * colors.length)],
                 gravity: 0.03,
