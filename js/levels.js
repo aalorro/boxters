@@ -166,9 +166,9 @@ const LEVEL_DATA = [
         ]
     },
     {
-        id: 'simple_10', name: 'Proving Ground', mode: 'simple', tier: 'simple',
-        maxMoves: 6, twoStarTarget: 190, threeStarTarget: 280,
-        tutorial: { message: 'Fewer moves means every word counts. Aim for 5+ letters on each move.' },
+        id: 'simple_10', name: 'Sharp Focus', mode: 'simple', tier: 'simple',
+        maxMoves: 7, twoStarTarget: 200, threeStarTarget: 300,
+        tutorial: { message: 'Don\'t waste moves on guesses. Invalid words still cost a move!' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
@@ -177,9 +177,9 @@ const LEVEL_DATA = [
     },
 
     {
-        id: 'simple_11', name: 'Sharp Focus', mode: 'simple', tier: 'simple',
-        maxMoves: 7, twoStarTarget: 200, threeStarTarget: 300,
-        tutorial: { message: 'Don\'t waste moves on guesses. Invalid words still cost a move!' },
+        id: 'simple_11', name: 'Proving Ground', mode: 'simple', tier: 'simple',
+        maxMoves: 6, twoStarTarget: 190, threeStarTarget: 280,
+        tutorial: { message: 'Fewer moves means every word counts. Aim for 5+ letters on each move.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
