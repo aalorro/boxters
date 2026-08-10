@@ -256,8 +256,10 @@ class Game {
             this.lives = 0;
             this.state = STATES.COOLDOWN;
         } else if (this._sharedBoard) {
-            // Load shared board directly
+            // Load shared board directly — switch to the level's mode
             this._clearBoardState();
+            const sharedLevelData = getLevelData(this._sharedBoard.levelIndex);
+            if (sharedLevelData) this.selectedMode = sharedLevelData.mode;
             this._loadLevel(this._sharedBoard.levelIndex);
             this.state = STATES.PLAYING;
         } else {
@@ -911,8 +913,15 @@ class Game {
                     return;
                 }
                 const levelIndex = parseInt(l);
+                const levelData = getLevelData(levelIndex);
+                if (!levelData) {
+                    this._showFeedback('No valid board link');
+                    return;
+                }
                 const anchors = params.get('a') ? params.get('a').split(',').map(Number) : [];
                 this._sharedBoard = { levelIndex, letters: b.toUpperCase(), anchors };
+                // Switch to the shared level's mode so _loadLevel doesn't redirect
+                this.selectedMode = levelData.mode;
                 this._isSharedBoardLoad = true;
                 this._loadLevel(levelIndex);
                 this._isSharedBoardLoad = false;
