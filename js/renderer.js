@@ -100,15 +100,17 @@ export class Renderer {
 
         // Draw info, logout, back, and forward buttons on canvas
         if (gameState.state === 'playing') {
+            // Bottom-right stack first (always)
+            this._drawShareButton(ctx);
+            this._drawLoadButton(ctx);
+            this._drawInfoButton(ctx);
+            this._drawContactButton(ctx);
+            // Nav buttons — stacked above contact on mobile, top-right row on desktop
             this._drawLogoutButton(ctx);
             this._drawSoundButton(ctx, gameState);
             this._drawThemeButton(ctx, gameState);
             this._drawBackButton(ctx, gameState);
             this._drawForwardButton(ctx, gameState);
-            this._drawShareButton(ctx);
-            this._drawLoadButton(ctx);
-            this._drawInfoButton(ctx);
-            this._drawContactButton(ctx);
             if (gameState.hoveredButton) {
                 this._drawButtonTooltip(ctx, gameState.hoveredButton);
             }
@@ -1032,13 +1034,24 @@ export class Renderer {
         return (dx * dx + dy * dy) <= (this._contactBtnPos.r + 8) * (this._contactBtnPos.r + 8);
     }
 
+    get _isMobile() {
+        return this.displayWidth < 600;
+    }
+
     _drawLogoutButton(ctx) {
         const r = 14;
-        // Position at top-right area
-        ctx.font = "16px 'Inter', sans-serif";
-        const sampleWidth = ctx.measureText('Total: 00000').width;
-        const cx = this.displayWidth - 20 - sampleWidth - r - 10;
-        const cy = 54;
+        let cx, cy;
+        if (this._isMobile && this._contactBtnPos) {
+            // Stack above contact button on mobile
+            cx = this._contactBtnPos.x;
+            cy = this._contactBtnPos.y - r * 2 - 12;
+        } else {
+            // Top-right area on desktop
+            ctx.font = "16px 'Inter', sans-serif";
+            const sampleWidth = ctx.measureText('Total: 00000').width;
+            cx = this.displayWidth - 20 - sampleWidth - r - 10;
+            cy = 54;
+        }
         this._logoutBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
@@ -1079,8 +1092,8 @@ export class Renderer {
     _drawSoundButton(ctx, gameState) {
         if (!this._logoutBtnPos) return;
         const r = 14;
-        const cx = this._logoutBtnPos.x - r * 2 - 8;
-        const cy = this._logoutBtnPos.y;
+        const cx = this._isMobile ? this._logoutBtnPos.x : this._logoutBtnPos.x - r * 2 - 8;
+        const cy = this._isMobile ? this._logoutBtnPos.y - r * 2 - 12 : this._logoutBtnPos.y;
         this._soundBtnPos = { x: cx, y: cy, r: r };
         const muted = !gameState.audioEnabled;
 
@@ -1146,8 +1159,8 @@ export class Renderer {
     _drawThemeButton(ctx, gameState) {
         if (!this._soundBtnPos) return;
         const r = 14;
-        const cx = this._soundBtnPos.x - r * 2 - 8;
-        const cy = this._soundBtnPos.y;
+        const cx = this._isMobile ? this._soundBtnPos.x : this._soundBtnPos.x - r * 2 - 8;
+        const cy = this._isMobile ? this._soundBtnPos.y - r * 2 - 12 : this._soundBtnPos.y;
         this._themeBtnPos = { x: cx, y: cy, r: r };
         const isLight = gameState.themeMode === 'light';
 
@@ -1258,8 +1271,8 @@ export class Renderer {
             return;
         }
         const r = 14;
-        const cx = this._themeBtnPos.x - r * 2 - 8;
-        const cy = this._themeBtnPos.y;
+        const cx = this._isMobile ? this._themeBtnPos.x : this._themeBtnPos.x - r * 2 - 8;
+        const cy = this._isMobile ? this._themeBtnPos.y - r * 2 - 12 : this._themeBtnPos.y;
         this._backBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
@@ -1304,10 +1317,10 @@ export class Renderer {
             return;
         }
         const r = 14;
-        // Position to the left of back button (or theme if back is hidden)
+        // Position relative to back button (or theme if back is hidden)
         const anchor = this._backBtnPos || this._themeBtnPos;
-        const cx = anchor.x - r * 2 - 8;
-        const cy = anchor.y;
+        const cx = this._isMobile ? anchor.x : anchor.x - r * 2 - 8;
+        const cy = this._isMobile ? anchor.y - r * 2 - 12 : anchor.y;
         this._forwardBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
