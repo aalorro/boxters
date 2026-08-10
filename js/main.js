@@ -331,7 +331,8 @@ class Game {
         this.score = 0;
 
         // Save current level for resume, and track highest reached
-        if (this.player) {
+        // Skip progress update for shared board loads beyond player's highest level
+        if (this.player && !this._isSharedBoardLoad) {
             this.player.currentLevels[this.selectedMode] = index;
             if (!this.player.highestLevels) this.player.highestLevels = {};
             const prev = this.player.highestLevels[this.selectedMode];
@@ -405,6 +406,13 @@ class Game {
                 return;
             }
 
+            // Check if load button was tapped
+            if (this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
+                this.input.cancelTrace();
+                this._loadSharedBoard();
+                return;
+            }
+
             // Check if back button was tapped (disabled when moves in progress)
             if (!this._hasMovesInProgress() && this.renderer.isBackButtonHit(data.pos.x, data.pos.y)) {
                 this.input.cancelTrace();
@@ -451,6 +459,8 @@ class Game {
                 this.hoveredButton = 'forward';
             } else if (this.renderer.isShareButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'share';
+            } else if (this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
+                this.hoveredButton = 'load';
             } else {
                 this.hoveredButton = null;
             }
@@ -886,6 +896,32 @@ class Game {
             this._showFeedback('Link copied!');
         }).catch(() => {
             this._showFeedback('Could not copy link');
+        });
+    }
+
+    _loadSharedBoard() {
+        navigator.clipboard.readText().then(text => {
+            try {
+                const url = new URL(text.trim());
+                const params = url.searchParams;
+                const l = params.get('l');
+                const b = params.get('b');
+                if (l === null || !b) {
+                    this._showFeedback('No valid board link');
+                    return;
+                }
+                const levelIndex = parseInt(l);
+                const anchors = params.get('a') ? params.get('a').split(',').map(Number) : [];
+                this._sharedBoard = { levelIndex, letters: b.toUpperCase(), anchors };
+                this._isSharedBoardLoad = true;
+                this._loadLevel(levelIndex);
+                this._isSharedBoardLoad = false;
+                this._showFeedback('Board loaded!');
+            } catch {
+                this._showFeedback('No valid board link');
+            }
+        }).catch(() => {
+            this._showFeedback('Could not read clipboard');
         });
     }
 

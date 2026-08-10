@@ -100,13 +100,14 @@ export class Renderer {
 
         // Draw info, logout, back, and forward buttons on canvas
         if (gameState.state === 'playing') {
-            this._drawInfoButton(ctx);
-            this._drawContactButton(ctx);
             this._drawLogoutButton(ctx);
             this._drawSoundButton(ctx, gameState);
             this._drawBackButton(ctx, gameState);
             this._drawForwardButton(ctx, gameState);
             this._drawShareButton(ctx);
+            this._drawLoadButton(ctx);
+            this._drawInfoButton(ctx);
+            this._drawContactButton(ctx);
             if (gameState.hoveredButton) {
                 this._drawButtonTooltip(ctx, gameState.hoveredButton);
             }
@@ -899,11 +900,63 @@ export class Renderer {
         ctx.restore();
     }
 
-    _drawInfoButton(ctx) {
+    _drawLoadButton(ctx) {
+        if (!this._shareBtnPos) return;
         const r = 14;
-        // Position above the share button on the bottom-right
-        const cx = this.displayWidth - 24;
-        const cy = this.displayHeight - 108 - r * 2 - 12;
+        const cx = this._shareBtnPos.x;
+        const cy = this._shareBtnPos.y - r * 2 - 12;
+        this._loadBtnPos = { x: cx, y: cy, r: r };
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Load icon (arrow pointing down into a tray — inverse of share)
+        ctx.strokeStyle = '#ffd700';
+        ctx.fillStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        // Downward arrow
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 2);
+        ctx.lineTo(cx, cy + 6);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy + 3);
+        ctx.lineTo(cx, cy + 7);
+        ctx.lineTo(cx + 4, cy + 3);
+        ctx.stroke();
+        // Tray
+        ctx.beginPath();
+        ctx.moveTo(cx - 5, cy + 1);
+        ctx.lineTo(cx - 5, cy + 6);
+        ctx.lineTo(cx + 5, cy + 6);
+        ctx.lineTo(cx + 5, cy + 1);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    isLoadButtonHit(x, y) {
+        if (!this._loadBtnPos) return false;
+        const dx = x - this._loadBtnPos.x;
+        const dy = y - this._loadBtnPos.y;
+        return (dx * dx + dy * dy) <= (this._loadBtnPos.r + 8) * (this._loadBtnPos.r + 8);
+    }
+
+    _drawInfoButton(ctx) {
+        if (!this._loadBtnPos) return;
+        const r = 14;
+        // Position above the load button on the bottom-right
+        const cx = this._loadBtnPos.x;
+        const cy = this._loadBtnPos.y - r * 2 - 12;
         this._infoBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
@@ -1233,6 +1286,7 @@ export class Renderer {
         else if (which === 'back') { pos = this._backBtnPos; label = 'Prev Level'; }
         else if (which === 'forward') { pos = this._forwardBtnPos; label = 'Next Level'; }
         else if (which === 'share') { pos = this._shareBtnPos; label = 'Share Board'; }
+        else if (which === 'load') { pos = this._loadBtnPos; label = 'Load Board'; }
         if (!pos) return;
 
         ctx.save();
