@@ -51,6 +51,12 @@ export class ParticleSystem {
         }
     }
 
+    updateStarColors() {
+        for (const star of this.stars) {
+            star.color = COLORS.stars[Math.floor(Math.random() * COLORS.stars.length)];
+        }
+    }
+
     emit(x, y, count, config = {}) {
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;

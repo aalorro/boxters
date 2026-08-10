@@ -517,3 +517,210 @@ html, body {
 #contact-dialog::backdrop {
     background: rgba(5, 5, 32, 0.85);
 }
+
+/* ── Light Theme ────────────────────────────────────────── */
+body.light-theme {
+    background: #f0f6ff;
+}
+
+.light-theme .overlay {
+    background: radial-gradient(ellipse at center, #f0f6ff 0%, #e8f0fe 100%);
+}
+
+.light-theme #loading-screen {
+    background: radial-gradient(ellipse at center, #f0f6ff 0%, #e8f0fe 100%);
+}
+
+.light-theme .title {
+    color: #ff8c00;
+    text-shadow: 0 0 30px rgba(255, 140, 0, 0.3), 0 0 60px rgba(255, 140, 0, 0.15);
+}
+
+.light-theme .tagline {
+    color: rgba(45, 45, 68, 0.7);
+}
+
+.light-theme .loader {
+    border-color: rgba(255, 140, 0, 0.2);
+    border-top-color: #ff8c00;
+}
+
+.light-theme #register-form label {
+    color: rgba(45, 45, 68, 0.7);
+}
+
+.light-theme #register-form input {
+    color: #2d2d44;
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(255, 140, 0, 0.3);
+}
+
+.light-theme #register-form input::placeholder {
+    color: rgba(45, 45, 68, 0.35);
+}
+
+.light-theme #register-form input:focus {
+    border-color: #ff8c00;
+    box-shadow: 0 0 16px rgba(255, 140, 0, 0.2);
+}
+
+.light-theme .btn-primary {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+    box-shadow: 0 4px 20px rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .btn-primary:hover {
+    box-shadow: 0 6px 28px rgba(255, 140, 0, 0.4);
+}
+
+.light-theme .welcome-greeting {
+    color: rgba(45, 45, 68, 0.8);
+}
+
+.light-theme .welcome-greeting span {
+    color: #ff8c00;
+}
+
+.light-theme .stat-value {
+    color: #ff8c00;
+    text-shadow: none;
+}
+
+.light-theme .stat-label {
+    color: rgba(45, 45, 68, 0.5);
+}
+
+.light-theme .mode-btn {
+    color: rgba(45, 45, 68, 0.5);
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light-theme .mode-btn.unlocked {
+    color: rgba(45, 45, 68, 0.8);
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .mode-btn.unlocked:hover {
+    background: rgba(255, 140, 0, 0.08);
+    border-color: rgba(255, 140, 0, 0.4);
+    box-shadow: 0 0 12px rgba(255, 140, 0, 0.1);
+}
+
+.light-theme .mode-btn.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+    border-color: #ff8c00;
+    box-shadow: 0 0 16px rgba(255, 140, 0, 0.3);
+}
+
+.light-theme .mode-btn.locked {
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .info-btn {
+    border-color: rgba(255, 140, 0, 0.5);
+    background: rgba(255, 140, 0, 0.08);
+    color: #ff8c00;
+}
+
+.light-theme .info-btn:hover {
+    color: #ff8c00;
+    border-color: rgba(255, 140, 0, 0.5);
+    background: rgba(255, 140, 0, 0.08);
+    box-shadow: 0 0 16px rgba(255, 140, 0, 0.15);
+}
+
+.light-theme #info-dialog,
+.light-theme #contact-dialog {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(255, 140, 0, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 40px rgba(255, 140, 0, 0.05);
+}
+
+.light-theme #info-dialog::backdrop,
+.light-theme #contact-dialog::backdrop {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.light-theme .info-close-x {
+    color: rgba(255, 140, 0, 0.7);
+}
+
+.light-theme .info-close-x:hover {
+    color: #ff8c00;
+}
+
+.light-theme #info-dialog-body {
+    color: rgba(45, 45, 68, 0.9);
+}
+
+.light-theme #info-dialog-body h3 {
+    color: #ff8c00;
+}
+
+.light-theme .info-tab {
+    color: rgba(45, 45, 68, 0.7);
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light-theme .info-tab:hover {
+    color: rgba(45, 45, 68, 0.9);
+    background: rgba(255, 140, 0, 0.06);
+    border-color: rgba(255, 140, 0, 0.2);
+}
+
+.light-theme .info-tab.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+    border-color: #ff8c00;
+}
+
+.light-theme .solution-panel {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .solution-title {
+    color: rgba(45, 45, 68, 0.8);
+}
+
+.light-theme .solution-word-item {
+    color: #2d2d44;
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+.light-theme .solution-word-item:hover {
+    background: rgba(255, 140, 0, 0.1);
+    border-color: rgba(255, 140, 0, 0.4);
+    color: #ff8c00;
+    box-shadow: 0 0 16px rgba(255, 140, 0, 0.15);
+}
+
+.light-theme .solution-hint {
+    color: rgba(45, 45, 68, 0.4);
+}
+
+/* Override inline styles in dialogs */
+.light-theme #contact-dialog [style*="color:rgba(255,215,0"] {
+    color: #ff8c00 !important;
+}
+
+.light-theme #contact-dialog [style*="color:rgba(210,210,230"] {
+    color: rgba(45, 45, 68, 0.85) !important;
+}
+
+.light-theme #contact-dialog [style*="color:#e0e0f0"] {
+    color: #2d2d44 !important;
+}
+
+.light-theme #contact-dialog [style*="background:rgba(255,255,255,0.08)"] {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light-theme #contact-dialog [style*="border:1px solid rgba(255,215,0"] {
+    border-color: rgba(255, 140, 0, 0.3) !important;
+}
