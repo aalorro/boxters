@@ -1,4 +1,4 @@
-import { STATES, MODES, COMBO } from './constants.js';
+import { STATES, MODES, COMBO, setTheme } from './constants.js';
 import { Renderer } from './renderer.js';
 import { InputManager } from './input.js';
 import { WordTracer } from './tracer.js';
@@ -90,6 +90,7 @@ class Game {
         this.hoveredSolution = null;
         this.selectedMode = MODES.SIMPLE;
         this.hoveredButton = null; // 'info' | 'logout' | null
+        this.themeMode = 'dark';
 
         // Timing
         this.lastTime = 0;
@@ -99,6 +100,7 @@ class Game {
     async init() {
         initDictionary();
         this.audio.init();
+        this._applyTheme(localStorage.getItem('boxters_theme') || 'dark');
         this._checkSharedBoardParams();
 
         // Prevent browser refresh while a game is in progress (moves made)
@@ -370,6 +372,14 @@ class Game {
     // ── Input handlers ──────────────────────────────────────────
     _setupInputHandlers() {
         this.input.on('traceStart', (data) => {
+            // Allow info button during cooldown
+            if (this.state === STATES.COOLDOWN) {
+                if (this.renderer.isInfoButtonHit(data.pos.x, data.pos.y)) {
+                    this.input.cancelTrace();
+                    if (window.showInfoDialog) window.showInfoDialog('gameplay');
+                }
+                return;
+            }
             if (this.state !== STATES.PLAYING) return;
 
             // Check if contact button was tapped
@@ -398,6 +408,13 @@ class Game {
             if (this.renderer.isSoundButtonHit(data.pos.x, data.pos.y)) {
                 this.input.cancelTrace();
                 this.audio.toggle();
+                return;
+            }
+
+            // Check if theme button was tapped
+            if (this.renderer.isThemeButtonHit(data.pos.x, data.pos.y)) {
+                this.input.cancelTrace();
+                this._toggleTheme();
                 return;
             }
 
@@ -445,6 +462,10 @@ class Game {
         });
 
         this.input.on('hover', (data) => {
+            if (this.state === STATES.COOLDOWN) {
+                this.hoveredButton = this.renderer.isInfoButtonHit(data.pos.x, data.pos.y) ? 'info' : null;
+                return;
+            }
             if (this.state !== STATES.PLAYING) {
                 this.hoveredButton = null;
                 return;
@@ -463,6 +484,8 @@ class Game {
                 this.hoveredButton = 'share';
             } else if (this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'load';
+            } else if (this.renderer.isThemeButtonHit(data.pos.x, data.pos.y)) {
+                this.hoveredButton = 'theme';
             } else {
                 this.hoveredButton = null;
             }
@@ -901,6 +924,20 @@ class Game {
         });
     }
 
+    _applyTheme(theme) {
+        this.themeMode = theme;
+        setTheme(theme);
+        document.body.classList.toggle('light-theme', theme === 'light');
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f0f6ff' : '#050520');
+        if (this.particles) this.particles.updateStarColors();
+        localStorage.setItem('boxters_theme', theme);
+    }
+
+    _toggleTheme() {
+        this._applyTheme(this.themeMode === 'dark' ? 'light' : 'dark');
+    }
+
     _loadSharedBoard() {
         navigator.clipboard.readText().then(text => {
             try {
@@ -1139,7 +1176,8 @@ class Game {
             cooldownUntil: this.cooldownUntil,
             hasMovesInProgress: this._hasMovesInProgress(),
             isUltimateVictory: this.isUltimateVictory || false,
-            audioEnabled: this.audio.enabled
+            audioEnabled: this.audio.enabled,
+            themeMode: this.themeMode
         };
 
         this.renderer.render(gameState, dt, this.particles);

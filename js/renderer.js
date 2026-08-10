@@ -102,6 +102,7 @@ export class Renderer {
         if (gameState.state === 'playing') {
             this._drawLogoutButton(ctx);
             this._drawSoundButton(ctx, gameState);
+            this._drawThemeButton(ctx, gameState);
             this._drawBackButton(ctx, gameState);
             this._drawForwardButton(ctx, gameState);
             this._drawShareButton(ctx);
@@ -120,6 +121,10 @@ export class Renderer {
         } else if (gameState.state === 'defeat') {
             this._drawDefeatOverlay(ctx, gameState);
         } else if (gameState.state === 'cooldown') {
+            this._drawInfoButton(ctx);
+            if (gameState.hoveredButton === 'info') {
+                this._drawButtonTooltip(ctx, 'info');
+            }
             this._drawCooldownOverlay(ctx, gameState);
         }
 
@@ -127,10 +132,10 @@ export class Renderer {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
         ctx.font = "12px 'Inter', sans-serif";
-        ctx.fillStyle = 'rgba(192, 192, 220, 0.45)';
+        ctx.fillStyle = COLORS.footer.copyright;
         ctx.fillText('\u00A9 2026 ArtMondo \u2014 MIT License', this.displayWidth / 2, this.displayHeight - 22);
         ctx.font = "16px 'Inter', sans-serif";
-        ctx.fillStyle = 'rgba(255, 215, 0, 0.75)';
+        ctx.fillStyle = COLORS.footer.version;
         ctx.fillText('v1.2.0', this.displayWidth / 2, this.displayHeight - 6);
     }
 
@@ -173,16 +178,16 @@ export class Renderer {
 
         // Fill based on state
         if (isInTrace) {
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.fillStyle = COLORS.hex.traceFill;
         } else if (isLastWordCell) {
             const pulse = 0.12 + 0.06 * Math.sin(this.time * 3);
-            ctx.fillStyle = `rgba(100, 200, 255, ${pulse})`;
+            ctx.fillStyle = COLORS.hex.chainPulse.replace('0.5)', `${pulse})`);
         } else if (cell.isIlluminated && mode === 'illuminate') {
             ctx.fillStyle = COLORS.modes.illuminate.lit;
         } else if (cell.isIlluminated) {
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+            ctx.fillStyle = COLORS.hex.illuminatedFill;
         } else {
-            ctx.fillStyle = 'rgba(253, 244, 227, 0.08)';
+            ctx.fillStyle = COLORS.hex.defaultFill;
         }
         ctx.fill();
 
@@ -200,7 +205,7 @@ export class Renderer {
             ctx.lineWidth = HEX.rimWidth + 1.5;
         } else if (isLastWordCell) {
             const pulseAlpha = 0.5 + 0.3 * Math.sin(this.time * 3);
-            ctx.strokeStyle = `rgba(100, 200, 255, ${pulseAlpha})`;
+            ctx.strokeStyle = COLORS.hex.chainPulseStroke.replace('0.5)', `${pulseAlpha})`);
             ctx.lineWidth = HEX.rimWidth + 1.5;
         } else {
             ctx.strokeStyle = this._getCellRimColor(cell);
@@ -221,11 +226,11 @@ export class Renderer {
             ctx.textBaseline = 'middle';
 
             if (isInTrace) {
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = COLORS.hex.letterTrace;
                 ctx.shadowBlur = 8;
                 ctx.shadowColor = COLORS.board.glow;
             } else {
-                ctx.fillStyle = '#ffdd00';
+                ctx.fillStyle = COLORS.hex.letterDefault;
                 ctx.shadowBlur = 4;
                 ctx.shadowColor = COLORS.board.glow;
             }
@@ -306,7 +311,7 @@ export class Renderer {
                 const hy = points[segIdx].y + (points[segIdx + 1].y - points[segIdx].y) * segT;
                 ctx.beginPath();
                 ctx.arc(hx, hy, 7, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = COLORS.hex.letterTrace;
                 ctx.shadowBlur = 25;
                 ctx.shadowColor = traceColor;
                 ctx.fill();
@@ -326,7 +331,7 @@ export class Renderer {
             // White center dot
             ctx.beginPath();
             ctx.arc(points[i].x, points[i].y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = COLORS.hex.letterTrace;
             ctx.shadowBlur = 0;
             ctx.fill();
         }
@@ -534,11 +539,11 @@ export class Renderer {
             let x = centerX - rowWidth / 2;
 
             for (const pill of row) {
-                ctx.fillStyle = 'rgba(10, 10, 46, 0.75)';
+                ctx.fillStyle = COLORS.canvas.panelBgMedium;
                 ctx.beginPath();
                 ctx.roundRect(x, drawY, pill.width, pillHeight, pillHeight / 2);
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+                ctx.strokeStyle = COLORS.canvas.pillBorder;
                 ctx.lineWidth = 1;
                 ctx.stroke();
 
@@ -610,7 +615,7 @@ export class Renderer {
             Math.max(...lines.map(l => ctx.measureText(l).width)) + paddingX * 2);
         const boxH = lines.length * lineHeight + paddingY * 2;
 
-        ctx.fillStyle = 'rgba(10, 10, 46, 0.3)';
+        ctx.fillStyle = COLORS.canvas.panelBgLight;
         ctx.beginPath();
         ctx.roundRect(centerX - boxW / 2, topY, boxW, boxH, 12);
         ctx.fill();
@@ -625,7 +630,7 @@ export class Renderer {
     }
 
     _drawVictoryOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(5, 5, 32, 0.7)';
+        ctx.fillStyle = COLORS.canvas.overlayDim;
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         const centerX = this.displayWidth / 2;
@@ -725,12 +730,12 @@ export class Renderer {
             const pos = this._hexToPixel(solution.path[i].q, solution.path[i].r);
             ctx.lineTo(pos.x, pos.y);
         }
-        ctx.strokeStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.hex.solutionStroke;
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.shadowBlur = 12;
-        ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
+        ctx.shadowColor = COLORS.hex.solutionPathShadow;
         ctx.stroke();
 
         for (let i = 0; i < solution.path.length; i++) {
@@ -738,19 +743,19 @@ export class Renderer {
 
             ctx.beginPath();
             ctx.arc(pos.x, pos.y, this.hexSize * 0.42, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+            ctx.fillStyle = COLORS.hex.solutionFill;
             ctx.fill();
-            ctx.strokeStyle = '#ffd700';
+            ctx.strokeStyle = COLORS.hex.solutionStroke;
             ctx.lineWidth = 2.5;
             ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            ctx.shadowColor = COLORS.hex.solutionShadow;
             ctx.stroke();
 
             ctx.shadowBlur = 0;
             ctx.font = "bold 15px 'Inter', sans-serif";
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#ffd700';
+            ctx.fillStyle = COLORS.hex.solutionStroke;
             ctx.fillText(String(i + 1), pos.x + this.hexSize * 0.32, pos.y - this.hexSize * 0.32);
         }
 
@@ -758,7 +763,7 @@ export class Renderer {
     }
 
     _drawDefeatOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(5, 5, 32, 0.45)';
+        ctx.fillStyle = COLORS.canvas.overlayDimLight;
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         if (gameState.board) {
@@ -771,7 +776,7 @@ export class Renderer {
     }
 
     _drawGameOverOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(5, 5, 32, 0.5)';
+        ctx.fillStyle = COLORS.canvas.overlayDimLight;
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         if (gameState.board) {
@@ -805,16 +810,16 @@ export class Renderer {
             ctx.closePath();
 
             if (unlit) {
-                ctx.fillStyle = `rgba(255, 80, 80, ${0.08 + 0.12 * pulse})`;
+                ctx.fillStyle = COLORS.hex.unlitFill.replace(/[\d.]+\)$/, `${0.08 + 0.12 * pulse})`);
                 ctx.fill();
-                ctx.strokeStyle = `rgba(255, 80, 80, ${0.4 + 0.4 * pulse})`;
+                ctx.strokeStyle = COLORS.hex.unlitStroke.replace(/[\d.]+\)$/, `${0.4 + 0.4 * pulse})`);
                 ctx.lineWidth = HEX.rimWidth + 1;
                 ctx.shadowBlur = 8 * pulse;
-                ctx.shadowColor = 'rgba(255, 80, 80, 0.6)';
+                ctx.shadowColor = COLORS.hex.unlitShadow;
             } else {
-                ctx.fillStyle = 'rgba(253, 244, 227, 0.08)';
+                ctx.fillStyle = COLORS.hex.ghostFill;
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(253, 244, 227, 0.35)';
+                ctx.strokeStyle = COLORS.hex.ghostStroke;
                 ctx.lineWidth = HEX.rimWidth;
             }
             ctx.stroke();
@@ -827,9 +832,9 @@ export class Renderer {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 if (unlit) {
-                    ctx.fillStyle = `rgba(255, 100, 100, ${0.6 + 0.4 * pulse})`;
+                    ctx.fillStyle = COLORS.hex.unlitLetter.replace(/[\d.]+\)$/, `${0.6 + 0.4 * pulse})`);
                 } else {
-                    ctx.fillStyle = 'rgba(255, 221, 0, 0.65)';
+                    ctx.fillStyle = COLORS.hex.ghostLetter;
                 }
                 ctx.fillText(cell.letter, cx, cy);
             }
@@ -838,7 +843,7 @@ export class Renderer {
     }
 
     _drawCooldownOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(5, 5, 32, 0.92)';
+        ctx.fillStyle = COLORS.canvas.overlayDimHeavy;
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         const centerX = this.displayWidth / 2;
@@ -865,7 +870,7 @@ export class Renderer {
             ctx.font = "bold 48px 'Cinzel', serif";
             ctx.fillStyle = COLORS.ui.accent;
             ctx.shadowBlur = 16;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.3)';
+            ctx.shadowColor = COLORS.canvas.feedbackShadow;
             ctx.fillText(timeStr, centerX, centerY + 45);
             ctx.shadowBlur = 0;
         } else {
@@ -888,14 +893,14 @@ export class Renderer {
 
         const metrics = ctx.measureText(message);
         const tw = metrics.width + 36;
-        ctx.fillStyle = 'rgba(10, 10, 46, 0.85)';
+        ctx.fillStyle = COLORS.canvas.panelBg;
         ctx.beginPath();
         ctx.roundRect(centerX - tw / 2, y - 18, tw, 36, 18);
         ctx.fill();
 
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = COLORS.ui.accent;
         ctx.shadowBlur = 8;
-        ctx.shadowColor = 'rgba(255, 215, 0, 0.4)';
+        ctx.shadowColor = COLORS.canvas.feedbackShadow;
         ctx.fillText(message, centerX, y);
         ctx.restore();
     }
@@ -911,15 +916,15 @@ export class Renderer {
 
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Load icon (arrow pointing down into a tray — inverse of share)
-        ctx.strokeStyle = '#ffd700';
-        ctx.fillStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
+        ctx.fillStyle = COLORS.button.icon;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -952,11 +957,15 @@ export class Renderer {
     }
 
     _drawInfoButton(ctx) {
-        if (!this._loadBtnPos) return;
         const r = 14;
-        // Position above the load button on the bottom-right
-        const cx = this._loadBtnPos.x;
-        const cy = this._loadBtnPos.y - r * 2 - 12;
+        let cx, cy;
+        if (this._loadBtnPos) {
+            cx = this._loadBtnPos.x;
+            cy = this._loadBtnPos.y - r * 2 - 12;
+        } else {
+            cx = this.displayWidth - 24;
+            cy = this.displayHeight - 108;
+        }
         this._infoBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
@@ -964,15 +973,15 @@ export class Renderer {
         // Circle background
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 215, 0, 0.1)';
+        ctx.fillStyle = COLORS.button.infoBg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // "i" letter in gold
+        // "i" letter
         ctx.font = "bold 16px 'Inter', sans-serif";
-        ctx.fillStyle = '#ffd700';
+        ctx.fillStyle = COLORS.button.icon;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('i', cx, cy + 1);
@@ -991,14 +1000,14 @@ export class Renderer {
 
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Envelope icon
-        ctx.strokeStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -1037,14 +1046,14 @@ export class Renderer {
         // Circle background
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Door-exit arrow icon
-        ctx.strokeStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -1079,15 +1088,15 @@ export class Renderer {
 
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Speaker icon
-        ctx.strokeStyle = '#ffd700';
-        ctx.fillStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
+        ctx.fillStyle = COLORS.button.icon;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -1114,7 +1123,7 @@ export class Renderer {
             ctx.stroke();
         } else {
             // Sound waves
-            ctx.strokeStyle = '#ffd700';
+            ctx.strokeStyle = COLORS.button.icon;
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(cx + 5, cy, 3, -Math.PI / 4, Math.PI / 4);
@@ -1134,6 +1143,63 @@ export class Renderer {
         return (dx * dx + dy * dy) <= (this._soundBtnPos.r + 8) * (this._soundBtnPos.r + 8);
     }
 
+    _drawThemeButton(ctx, gameState) {
+        if (!this._soundBtnPos) return;
+        const r = 14;
+        const cx = this._soundBtnPos.x - r * 2 - 8;
+        const cy = this._soundBtnPos.y;
+        this._themeBtnPos = { x: cx, y: cy, r: r };
+        const isLight = gameState.themeMode === 'light';
+
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = COLORS.button.bg;
+        ctx.fill();
+        ctx.strokeStyle = COLORS.button.stroke;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        if (isLight) {
+            // Moon icon (crescent) — switch to dark
+            ctx.fillStyle = COLORS.button.icon;
+            ctx.beginPath();
+            ctx.arc(cx - 1, cy, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(cx + 3, cy - 3, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            // Sun icon — switch to light
+            ctx.fillStyle = COLORS.button.icon;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = COLORS.button.icon;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            for (let i = 0; i < 8; i++) {
+                const angle = (Math.PI * 2 * i) / 8;
+                ctx.beginPath();
+                ctx.moveTo(cx + Math.cos(angle) * 6, cy + Math.sin(angle) * 6);
+                ctx.lineTo(cx + Math.cos(angle) * 8, cy + Math.sin(angle) * 8);
+                ctx.stroke();
+            }
+        }
+
+        ctx.restore();
+    }
+
+    isThemeButtonHit(x, y) {
+        if (!this._themeBtnPos) return false;
+        const dx = x - this._themeBtnPos.x;
+        const dy = y - this._themeBtnPos.y;
+        return (dx * dx + dy * dy) <= (this._themeBtnPos.r + 8) * (this._themeBtnPos.r + 8);
+    }
+
     _drawShareButton(ctx) {
         const r = 14;
         const cx = this.displayWidth - 24;
@@ -1144,15 +1210,15 @@ export class Renderer {
 
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Share icon (arrow pointing up from a tray)
-        ctx.strokeStyle = '#ffd700';
-        ctx.fillStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
+        ctx.fillStyle = COLORS.button.icon;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -1185,15 +1251,15 @@ export class Renderer {
     }
 
     _drawBackButton(ctx, gameState) {
-        if (!this._logoutBtnPos) return;
+        if (!this._themeBtnPos) return;
         // Hide when on first level or when moves are in progress
         if (gameState.modeLevelNum <= 1 || gameState.hasMovesInProgress) {
             this._backBtnPos = null;
             return;
         }
         const r = 14;
-        const cx = this._soundBtnPos.x - r * 2 - 8;
-        const cy = this._soundBtnPos.y;
+        const cx = this._themeBtnPos.x - r * 2 - 8;
+        const cy = this._themeBtnPos.y;
         this._backBtnPos = { x: cx, y: cy, r: r };
 
         ctx.save();
@@ -1201,14 +1267,14 @@ export class Renderer {
         // Circle background
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Left arrow icon
-        ctx.strokeStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -1231,15 +1297,15 @@ export class Renderer {
     }
 
     _drawForwardButton(ctx, gameState) {
-        if (!this._logoutBtnPos) return;
+        if (!this._themeBtnPos) return;
         // Hide when at highest level or when moves are in progress
         if (!gameState.canGoForward || gameState.hasMovesInProgress) {
             this._forwardBtnPos = null;
             return;
         }
         const r = 14;
-        // Position to the left of back button (or logout if back is hidden)
-        const anchor = this._backBtnPos || this._logoutBtnPos;
+        // Position to the left of back button (or theme if back is hidden)
+        const anchor = this._backBtnPos || this._themeBtnPos;
         const cx = anchor.x - r * 2 - 8;
         const cy = anchor.y;
         this._forwardBtnPos = { x: cx, y: cy, r: r };
@@ -1249,14 +1315,14 @@ export class Renderer {
         // Circle background
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fillStyle = COLORS.button.bg;
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.strokeStyle = COLORS.button.stroke;
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Right arrow icon
-        ctx.strokeStyle = '#ffd700';
+        ctx.strokeStyle = COLORS.button.icon;
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -1287,6 +1353,7 @@ export class Renderer {
         else if (which === 'forward') { pos = this._forwardBtnPos; label = 'Next Level'; }
         else if (which === 'share') { pos = this._shareBtnPos; label = 'Share Board'; }
         else if (which === 'load') { pos = this._loadBtnPos; label = 'Load Board'; }
+        else if (which === 'theme') { pos = this._themeBtnPos; label = 'Theme'; }
         if (!pos) return;
 
         ctx.save();
@@ -1302,15 +1369,15 @@ export class Renderer {
         if (tx - tw / 2 < 4) tx = 4 + tw / 2;
         const ty = pos.y + pos.r + 6;
 
-        ctx.fillStyle = 'rgba(10, 10, 46, 0.95)';
+        ctx.fillStyle = COLORS.canvas.tooltipBg;
         ctx.beginPath();
         ctx.roundRect(tx - tw / 2, ty, tw, th, 4);
         ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+        ctx.strokeStyle = COLORS.canvas.tooltipBorder;
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        ctx.fillStyle = '#ffd700';
+        ctx.fillStyle = COLORS.button.icon;
         ctx.textBaseline = 'middle';
         ctx.fillText(label, tx, ty + th / 2);
         ctx.restore();
