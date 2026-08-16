@@ -61,8 +61,10 @@ export async function submitScore(player) {
         }
     }
 
+    const name = (player.name || 'Anonymous').substring(0, 20);
     const data = {
-        name: (player.name || 'Anonymous').substring(0, 20),
+        name,
+        nameLower: name.toLowerCase(),
         totalScore: Math.round(player.totalScore || 0),
         levelsCompleted: Math.round(player.levelsCompleted || 0),
         highestMode,
@@ -103,6 +105,30 @@ export async function fetchLeaderboard() {
     } catch (err) {
         console.warn('Leaderboard fetch failed:', err.message);
         return _getCachedLeaderboard();
+    }
+}
+
+// ── Check Name Availability ──────────────────────────────────
+export async function checkNameAvailable(name) {
+    if (!db) return { available: true };
+    try {
+        const lower = name.toLowerCase();
+        // Check nameLower field first (new documents)
+        let snapshot = await db.collection('leaderboard')
+            .where('nameLower', '==', lower)
+            .limit(1)
+            .get();
+        if (!snapshot.empty) return { available: false };
+        // Fallback: check all documents for legacy entries without nameLower
+        snapshot = await db.collection('leaderboard').get();
+        const taken = snapshot.docs.some(doc => {
+            const d = doc.data();
+            return !d.nameLower && d.name && d.name.toLowerCase() === lower;
+        });
+        return { available: !taken };
+    } catch (err) {
+        console.warn('Name check failed:', err.message);
+        return { available: true };
     }
 }
 
