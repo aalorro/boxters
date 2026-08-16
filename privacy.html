@@ -80,47 +80,57 @@
     <div class="container">
         <h1>Privacy Policy</h1>
         <p class="app-name">Boxters — Hex Word Puzzle Game</p>
-        <p class="effective-date">Effective Date: August 6, 2026</p>
+        <p class="effective-date">Effective Date: August 16, 2026</p>
 
         <p>Boxters is committed to protecting your privacy. This policy explains what data is stored, how it is used, and your rights regarding that data.</p>
 
-        <h2>Data Collection</h2>
-        <p>Boxters does not collect, transmit, or share any personal information.</p>
+        <h2>Analytics</h2>
+        <p>Boxters uses <strong>Google Analytics</strong> (Google tag / gtag.js) to collect anonymous usage data such as page views, session duration, and general device/browser information. This helps us understand how players interact with the game and improve the experience.</p>
         <ul>
-            <li>No personal data is collected, processed, or sent to any server.</li>
-            <li>No advertising SDKs are integrated.</li>
-            <li>No account creation or internet connection is required to play.</li>
-            <li>No analytics or tracking tools are used in this app.</li>
+            <li>Google Analytics may use cookies to distinguish unique users.</li>
+            <li>No personally identifiable information (name, email, etc.) is collected.</li>
+            <li>Data is processed by Google under their <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</li>
+            <li>You can opt out by using a browser extension such as <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out</a>.</li>
         </ul>
 
+        <h2>Leaderboard</h2>
+        <p>Boxters uses <strong>Firebase Firestore</strong> to store leaderboard data. When you complete a level, your player name and score are submitted to the leaderboard. This data includes:</p>
+        <ul>
+            <li>Your chosen player name</li>
+            <li>Your total score and levels completed</li>
+            <li>A randomly generated anonymous identifier (not linked to any personal account)</li>
+        </ul>
+        <p>During registration, your chosen name is checked against existing leaderboard entries to inform you if the name is already in use. This check queries Firebase Firestore but does not store any additional data.</p>
+        <p>No email, IP address, or other personal information is collected or stored by the leaderboard.</p>
+
         <h2>Contact Form</h2>
-        <p>If you choose to use the Contact form within the app, the name, email, and message you enter are sent to <a href="https://formspree.io" target="_blank" rel="noopener">Formspree</a> for delivery. This data is not stored by Boxters and is subject to Formspree's privacy policy. Submitting the form is entirely optional.</p>
+        <p>If you choose to use the Contact form within the app, the email and message you enter are sent to <a href="https://formspree.io" target="_blank" rel="noopener">Formspree</a> for delivery. This data is not stored by Boxters and is subject to Formspree's privacy policy. Submitting the form is entirely optional.</p>
 
         <h2>Local Storage</h2>
-        <p>Your game progress (player name, scores, level progress, and settings) is stored locally on your device using SharedPreferences. This data:</p>
+        <p>Your game progress (player name, scores, level progress, and settings) is stored locally in your browser using the Web Storage API (localStorage). This data:</p>
         <ul>
-            <li>Never leaves your device.</li>
-            <li>Is accessible only to you within this app.</li>
-            <li>Is not shared across devices or apps.</li>
+            <li>Never leaves your device (except leaderboard scores as described above).</li>
+            <li>Is accessible only to you within this browser.</li>
+            <li>Is not shared across devices, browsers, or profiles.</li>
             <li>Can be cleared at any time (see below).</li>
         </ul>
 
         <h2>Your Rights</h2>
         <p>You have full control over your data:</p>
         <ul>
-            <li><strong>Access:</strong> Your data is stored on your device and visible to you at any time.</li>
-            <li><strong>Deletion:</strong> Clear all saved data by going to Android Settings &gt; Apps &gt; Boxters &gt; Storage &gt; Clear Data.</li>
+            <li><strong>Access:</strong> Your data is stored in your browser and visible to you at any time.</li>
+            <li><strong>Deletion:</strong> Clear all saved data by opening your browser's developer console (F12) and running: <code style="color:#ffd700;">localStorage.removeItem('boxters_player')</code></li>
             <li><strong>Portability:</strong> No cloud data exists to export &mdash; all data is local.</li>
         </ul>
 
         <h2>Children's Privacy</h2>
-        <p>Boxters does not collect any personal data from any users, including children.</p>
+        <p>Boxters does not knowingly collect personal data from children. Google Analytics collects anonymous usage data from all visitors regardless of age.</p>
 
         <h2>Changes to This Policy</h2>
         <p>Any updates to this privacy policy will be reflected on this page with a revised effective date.</p>
 
         <div class="footer">
-            <p>Last updated: August 9, 2026</p>
+            <p>Last updated: August 16, 2026</p>
             <p>Developed by ArtMondo</p>
         </div>
     </div>

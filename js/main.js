@@ -9,7 +9,7 @@ import { loadLevel, loadLevelWithBoard, getLevelCount, getLevelData, getFirstLev
 import { hexSpiral, hexKey } from './hex.js';
 import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
-import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId } from './firebase.js';
+import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId, checkNameAvailable } from './firebase.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
 const STORAGE_KEY = 'boxters_player';
@@ -174,7 +174,38 @@ class Game {
 
         const form = document.getElementById('register-form');
         const input = document.getElementById('player-name');
+        const status = document.getElementById('name-status');
         input.focus();
+
+        let checkTimer = null;
+        let nameAvailable = false;
+
+        input.addEventListener('input', () => {
+            const name = input.value.trim();
+            if (checkTimer) clearTimeout(checkTimer);
+            if (!name) {
+                status.textContent = '';
+                status.className = 'name-status';
+                nameAvailable = false;
+                return;
+            }
+            status.textContent = 'Checking...';
+            status.className = 'name-status checking';
+            nameAvailable = false;
+            checkTimer = setTimeout(async () => {
+                const result = await checkNameAvailable(name);
+                if (input.value.trim() !== name) return;
+                if (result.available) {
+                    status.textContent = 'Name is available!';
+                    status.className = 'name-status available';
+                    nameAvailable = true;
+                } else {
+                    status.textContent = 'Name is already taken. You can still use it, but consider a unique name.';
+                    status.className = 'name-status taken';
+                    nameAvailable = true;
+                }
+            }, 500);
+        });
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();

@@ -725,6 +725,40 @@ body.light-theme {
     border-color: rgba(255, 140, 0, 0.3) !important;
 }
 
+/* ── Name Status ───────────────────────────────────────── */
+.name-status {
+    font-size: 0.78rem;
+    min-height: 1.2rem;
+    margin-top: 0.3rem;
+    text-align: center;
+    transition: color 0.2s;
+}
+
+.name-status.checking {
+    color: rgba(192, 192, 220, 0.5);
+    font-style: italic;
+}
+
+.name-status.available {
+    color: #4ade80;
+}
+
+.name-status.taken {
+    color: #ff6b6b;
+}
+
+.light-theme .name-status.checking {
+    color: rgba(45, 45, 68, 0.4);
+}
+
+.light-theme .name-status.available {
+    color: #16a34a;
+}
+
+.light-theme .name-status.taken {
+    color: #dc2626;
+}
+
 /* ── Welcome Actions ───────────────────────────────────── */
 .welcome-actions {
     display: flex;
