@@ -9,7 +9,7 @@ import { loadLevel, loadLevelWithBoard, getLevelCount, getLevelData, getFirstLev
 import { hexSpiral, hexKey } from './hex.js';
 import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
-import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId, checkNameAvailable } from './firebase.js';
+import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId, checkNameAvailable, syncProfile } from './firebase.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
 const STORAGE_KEY = 'boxters_player';
@@ -169,9 +169,14 @@ class Game {
         }
     }
 
-    _showEntryScreen() {
+    async _showEntryScreen() {
         this.player = loadProfile();
         if (this.player) {
+            const synced = await syncProfile(this.player);
+            if (synced) {
+                this.player = synced;
+                saveProfile(this.player);
+            }
             if (this._sharedBoard) {
                 this.selectedMode = getLevelData(this._sharedBoard.levelIndex).mode;
             }
