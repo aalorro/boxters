@@ -53,7 +53,9 @@ function createProfile(name) {
         levelsCompleted: 0,
         gamesPlayed: 0,
         currentLevels: {},
-        unlockedModes: ['simple']
+        unlockedModes: ['simple'],
+        gender: '',
+        ageGroup: ''
     };
     saveProfile(profile);
     return profile;
@@ -132,6 +134,8 @@ class Game {
         window.addEventListener('boxters-leaderboard-request', () => {
             this._populateLeaderboard();
         });
+
+        this._initSettingsDialog();
 
         const loading = document.getElementById('loading-screen');
         setTimeout(() => {
@@ -909,6 +913,94 @@ class Game {
         }
 
         containers.forEach(c => c.innerHTML = html);
+    }
+
+    _initSettingsDialog() {
+        const form = document.getElementById('settings-form');
+        const nameInput = document.getElementById('settings-name');
+        const nameStatus = document.getElementById('settings-name-status');
+        const genderSelect = document.getElementById('settings-gender');
+        const ageSelect = document.getElementById('settings-age');
+        const darkBtn = document.getElementById('theme-btn-dark');
+        const lightBtn = document.getElementById('theme-btn-light');
+
+        // Populate on open
+        window.addEventListener('boxters-settings-open', () => {
+            if (!this.player) return;
+            nameInput.value = this.player.name || '';
+            genderSelect.value = this.player.gender || '';
+            ageSelect.value = this.player.ageGroup || '';
+            nameStatus.textContent = '';
+            nameStatus.className = 'name-status';
+            this._updateThemeButtons();
+        });
+
+        // Debounced name check
+        let checkTimer = null;
+        nameInput.addEventListener('input', () => {
+            const name = nameInput.value.trim();
+            if (checkTimer) clearTimeout(checkTimer);
+            if (!name) {
+                nameStatus.textContent = '';
+                nameStatus.className = 'name-status';
+                return;
+            }
+            if (this.player && name.toLowerCase() === this.player.name.toLowerCase()) {
+                nameStatus.textContent = '';
+                nameStatus.className = 'name-status';
+                return;
+            }
+            nameStatus.textContent = 'Checking...';
+            nameStatus.className = 'name-status checking';
+            checkTimer = setTimeout(async () => {
+                const result = await checkNameAvailable(name);
+                if (nameInput.value.trim() !== name) return;
+                if (result.available) {
+                    nameStatus.textContent = 'Name is available!';
+                    nameStatus.className = 'name-status available';
+                } else {
+                    nameStatus.textContent = 'Name is already taken. You can still use it, but consider a unique name.';
+                    nameStatus.className = 'name-status taken';
+                }
+            }, 500);
+        });
+
+        // Theme buttons
+        darkBtn.addEventListener('click', () => {
+            this._applyTheme('dark');
+            this._updateThemeButtons();
+        });
+        lightBtn.addEventListener('click', () => {
+            this._applyTheme('light');
+            this._updateThemeButtons();
+        });
+
+        // Save
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newName = nameInput.value.trim();
+            if (!newName || !this.player) return;
+
+            const nameChanged = newName !== this.player.name;
+            this.player.name = newName;
+            this.player.gender = genderSelect.value;
+            this.player.ageGroup = ageSelect.value;
+            saveProfile(this.player);
+
+            if (nameChanged) {
+                submitScore(this.player);
+            }
+
+            document.getElementById('welcome-name').textContent = this.player.name;
+            document.getElementById('settings-dialog').close();
+        });
+    }
+
+    _updateThemeButtons() {
+        const darkBtn = document.getElementById('theme-btn-dark');
+        const lightBtn = document.getElementById('theme-btn-light');
+        darkBtn.classList.toggle('active', this.themeMode === 'dark');
+        lightBtn.classList.toggle('active', this.themeMode === 'light');
     }
 
     _showSolutionModal() {

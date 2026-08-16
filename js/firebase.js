@@ -68,6 +68,8 @@ export async function submitScore(player) {
         totalScore: Math.round(player.totalScore || 0),
         levelsCompleted: Math.round(player.levelsCompleted || 0),
         highestMode,
+        gender: player.gender || '',
+        ageGroup: player.ageGroup || '',
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
