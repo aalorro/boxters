@@ -196,6 +196,7 @@ class Game {
         document.getElementById('stat-games').textContent = this.player.gamesPlayed;
         document.getElementById('stat-levels').textContent = this.player.levelsCompleted;
         document.getElementById('stat-score').textContent = this.player.totalScore || 0;
+        document.getElementById('stat-best').textContent = this.player.bestScore || 0;
 
         // Restore last played mode, or default to simple (must be unlocked)
         const lastMode = this.player.lastMode || MODES.SIMPLE;
@@ -701,6 +702,9 @@ class Game {
 
         this.player.levelsCompleted++;
         this.player.totalScore = this.totalScore;
+        if (this.score > (this.player.bestScore || 0)) {
+            this.player.bestScore = this.score;
+        }
 
         saveProfile(this.player);
         submitScore(this.player);
