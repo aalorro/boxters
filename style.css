@@ -724,3 +724,204 @@ body.light-theme {
 .light-theme #contact-dialog [style*="border:1px solid rgba(255,215,0"] {
     border-color: rgba(255, 140, 0, 0.3) !important;
 }
+
+/* ── Welcome Actions ───────────────────────────────────── */
+.welcome-actions {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+/* ── Leaderboard Dialog ────────────────────────────────── */
+#leaderboard-dialog {
+    position: relative;
+    background: rgba(10, 10, 46, 0.98);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 16px;
+    padding: 0;
+    max-width: 420px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    color: inherit;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.05);
+}
+
+#leaderboard-dialog::backdrop {
+    background: rgba(5, 5, 32, 0.85);
+}
+
+.leaderboard-title {
+    font-family: 'Cinzel', serif;
+    color: rgba(255, 215, 0, 0.95);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+#leaderboard-dialog-body {
+    width: 100%;
+    max-height: 55vh;
+    overflow-y: auto;
+}
+
+.light-theme #leaderboard-dialog {
+    background: rgba(252, 250, 245, 0.98);
+    border-color: rgba(255, 140, 0, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(255, 140, 0, 0.05);
+}
+
+.light-theme #leaderboard-dialog::backdrop {
+    background: rgba(245, 240, 230, 0.85);
+}
+
+.light-theme .leaderboard-title {
+    color: rgba(255, 140, 0, 0.95);
+}
+
+/* ── Leaderboard ───────────────────────────────────────── */
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+}
+
+.leaderboard-table thead th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 215, 0, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+    text-align: left;
+}
+
+.leaderboard-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.2s;
+}
+
+.leaderboard-table tbody tr:hover {
+    background: rgba(255, 215, 0, 0.04);
+}
+
+.leaderboard-table td {
+    padding: 0.45rem 0.5rem;
+    color: rgba(210, 210, 230, 0.9);
+}
+
+.lb-rank {
+    width: 2.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: rgba(255, 215, 0, 0.7);
+}
+
+.lb-name {
+    font-weight: 500;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lb-score {
+    font-weight: 600;
+    color: #ffd700;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.lb-levels {
+    text-align: center;
+    color: rgba(192, 192, 220, 0.6);
+    font-size: 0.8rem;
+}
+
+.leaderboard-me {
+    background: rgba(255, 215, 0, 0.08) !important;
+}
+
+.leaderboard-me td {
+    color: #ffd700;
+}
+
+.lb-you {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+    letter-spacing: 0.05em;
+}
+
+.leaderboard-loading,
+.leaderboard-empty {
+    text-align: center;
+    color: rgba(192, 192, 220, 0.6);
+    font-style: italic;
+    padding: 2rem 0;
+    font-size: 0.88rem;
+}
+
+.leaderboard-hint {
+    text-align: center;
+    color: rgba(255, 215, 0, 0.6);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 0.8rem;
+}
+
+/* Light theme leaderboard */
+.light-theme .leaderboard-table thead th {
+    color: rgba(255, 140, 0, 0.8);
+    border-bottom-color: rgba(255, 140, 0, 0.15);
+}
+
+.light-theme .leaderboard-table tbody tr:hover {
+    background: rgba(255, 140, 0, 0.04);
+}
+
+.light-theme .leaderboard-table td {
+    color: rgba(45, 45, 68, 0.85);
+}
+
+.light-theme .lb-rank {
+    color: rgba(255, 140, 0, 0.7);
+}
+
+.light-theme .lb-score {
+    color: #ff8c00;
+}
+
+.light-theme .lb-levels {
+    color: rgba(45, 45, 68, 0.5);
+}
+
+.light-theme .leaderboard-me {
+    background: rgba(255, 140, 0, 0.08) !important;
+}
+
+.light-theme .leaderboard-me td {
+    color: #ff8c00;
+}
+
+.light-theme .lb-you {
+    background: rgba(255, 140, 0, 0.15);
+    color: #ff8c00;
+}
+
+.light-theme .leaderboard-loading,
+.light-theme .leaderboard-empty {
+    color: rgba(45, 45, 68, 0.5);
+}
+
+.light-theme .leaderboard-hint {
+    color: rgba(255, 140, 0, 0.6);
+}
