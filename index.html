@@ -67,7 +67,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style.css?v=24">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -234,6 +234,12 @@
                     </select>
                 </div>
                 <button type="submit" class="btn-primary settings-save-btn">Save</button>
+                <div class="settings-divider"></div>
+                <div class="settings-actions">
+                    <button type="button" id="export-profile-btn" class="btn-secondary">Export Profile</button>
+                    <button type="button" id="import-profile-btn" class="btn-secondary">Import Profile</button>
+                </div>
+                <input type="file" id="import-file-input" accept=".bxp" style="display:none;">
             </form>
         </div>
     </dialog>
@@ -307,6 +313,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    <script type="module" src="js/main.js?v=68"></script>
+    <script type="module" src="js/main.js?v=69"></script>
 </body>
 </html>

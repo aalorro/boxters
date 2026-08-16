@@ -62,6 +62,15 @@ function createProfile(name) {
 }
 
 
+// ── Profile signing ────────────────────────────────────────────
+const _SALT = 'bxp_k7m2q9w4';
+async function _hashData(data) {
+    const msgBuffer = new TextEncoder().encode(_SALT + data);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 // ── Game ────────────────────────────────────────────────────────
 class Game {
     constructor() {
@@ -993,6 +1002,83 @@ class Game {
 
             document.getElementById('welcome-name').textContent = this.player.name;
             document.getElementById('settings-dialog').close();
+        });
+
+        // Export profile
+        document.getElementById('export-profile-btn').addEventListener('click', async () => {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('boxters_')) {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            const json = JSON.stringify(data);
+            const encoded = btoa(unescape(encodeURIComponent(json)));
+            const hash = await _hashData(encoded);
+            const fileContent = hash + '.' + encoded;
+
+            const blob = new Blob([fileContent], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const name = (this.player && this.player.name) || 'player';
+            a.href = url;
+            a.download = `boxters-${name.toLowerCase().replace(/\s+/g, '-')}.bxp`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Import profile
+        const fileInput = document.getElementById('import-file-input');
+        document.getElementById('import-profile-btn').addEventListener('click', () => {
+            fileInput.click();
+        });
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const content = ev.target.result;
+                    const dotIdx = content.indexOf('.');
+                    if (dotIdx === -1) { alert('Invalid profile file.'); return; }
+
+                    const hash = content.substring(0, dotIdx);
+                    const encoded = content.substring(dotIdx + 1);
+                    const expectedHash = await _hashData(encoded);
+
+                    if (hash !== expectedHash) {
+                        alert('Profile file has been modified or is corrupt.');
+                        return;
+                    }
+
+                    const json = decodeURIComponent(escape(atob(encoded)));
+                    const data = JSON.parse(json);
+
+                    if (!data.boxters_player) {
+                        alert('Invalid profile file. No player data found.');
+                        return;
+                    }
+                    const profile = JSON.parse(data.boxters_player);
+                    if (!profile.name || profile.totalScore === undefined) {
+                        alert('Invalid profile file. Missing required fields.');
+                        return;
+                    }
+                    if (!confirm(`Import profile "${profile.name}" (Score: ${profile.totalScore}, Levels: ${profile.levelsCompleted})?\n\nThis will replace your current profile.`)) {
+                        return;
+                    }
+                    for (const [key, value] of Object.entries(data)) {
+                        if (key.startsWith('boxters_')) {
+                            localStorage.setItem(key, value);
+                        }
+                    }
+                    window.location.reload();
+                } catch {
+                    alert('Could not read profile file. Make sure it is a valid Boxters export.');
+                }
+            };
+            reader.readAsText(file);
+            fileInput.value = '';
         });
     }
 

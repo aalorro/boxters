@@ -870,6 +870,36 @@ body.light-theme {
     margin-top: 0.5rem;
 }
 
+.settings-divider {
+    height: 1px;
+    background: rgba(255, 215, 0, 0.12);
+    margin: 1.2rem 0;
+}
+
+.settings-actions {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 0.55rem 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 215, 0, 0.8);
+    background: rgba(255, 215, 0, 0.06);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 215, 0, 0.12);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
 /* Light theme settings */
 .light-theme #settings-dialog {
     background: rgba(252, 250, 245, 0.98);
@@ -925,6 +955,21 @@ body.light-theme {
     background: rgba(255, 140, 0, 0.12);
     border-color: #ff8c00;
     color: #ff8c00;
+}
+
+.light-theme .settings-divider {
+    background: rgba(255, 140, 0, 0.12);
+}
+
+.light-theme .btn-secondary {
+    color: rgba(255, 140, 0, 0.8);
+    background: rgba(255, 140, 0, 0.04);
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .btn-secondary:hover {
+    background: rgba(255, 140, 0, 0.1);
+    border-color: rgba(255, 140, 0, 0.5);
 }
 
 /* ── Welcome Actions ───────────────────────────────────── */
