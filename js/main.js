@@ -9,7 +9,7 @@ import { loadLevel, loadLevelWithBoard, getLevelCount, getLevelData, getFirstLev
 import { hexSpiral, hexKey } from './hex.js';
 import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
-import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId, checkNameAvailable } from './firebase.js';
+import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId, checkNameAvailable, syncProfile } from './firebase.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
 const STORAGE_KEY = 'boxters_player';
@@ -53,12 +53,23 @@ function createProfile(name) {
         levelsCompleted: 0,
         gamesPlayed: 0,
         currentLevels: {},
-        unlockedModes: ['simple']
+        unlockedModes: ['simple'],
+        gender: '',
+        ageGroup: ''
     };
     saveProfile(profile);
     return profile;
 }
 
+
+// ── Profile signing ────────────────────────────────────────────
+const _SALT = 'bxp_k7m2q9w4';
+async function _hashData(data) {
+    const msgBuffer = new TextEncoder().encode(_SALT + data);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 // ── Game ────────────────────────────────────────────────────────
 class Game {
@@ -133,6 +144,8 @@ class Game {
             this._populateLeaderboard();
         });
 
+        this._initSettingsDialog();
+
         const loading = document.getElementById('loading-screen');
         setTimeout(() => {
             loading.classList.add('hidden');
@@ -156,9 +169,14 @@ class Game {
         }
     }
 
-    _showEntryScreen() {
+    async _showEntryScreen() {
         this.player = loadProfile();
         if (this.player) {
+            const synced = await syncProfile(this.player);
+            if (synced) {
+                this.player = synced;
+                saveProfile(this.player);
+            }
             if (this._sharedBoard) {
                 this.selectedMode = getLevelData(this._sharedBoard.levelIndex).mode;
             }
@@ -909,6 +927,171 @@ class Game {
         }
 
         containers.forEach(c => c.innerHTML = html);
+    }
+
+    _initSettingsDialog() {
+        const form = document.getElementById('settings-form');
+        const nameInput = document.getElementById('settings-name');
+        const nameStatus = document.getElementById('settings-name-status');
+        const genderSelect = document.getElementById('settings-gender');
+        const ageSelect = document.getElementById('settings-age');
+        const darkBtn = document.getElementById('theme-btn-dark');
+        const lightBtn = document.getElementById('theme-btn-light');
+
+        // Populate on open
+        window.addEventListener('boxters-settings-open', () => {
+            if (!this.player) return;
+            nameInput.value = this.player.name || '';
+            genderSelect.value = this.player.gender || '';
+            ageSelect.value = this.player.ageGroup || '';
+            nameStatus.textContent = '';
+            nameStatus.className = 'name-status';
+            this._updateThemeButtons();
+        });
+
+        // Debounced name check
+        let checkTimer = null;
+        nameInput.addEventListener('input', () => {
+            const name = nameInput.value.trim();
+            if (checkTimer) clearTimeout(checkTimer);
+            if (!name) {
+                nameStatus.textContent = '';
+                nameStatus.className = 'name-status';
+                return;
+            }
+            if (this.player && name.toLowerCase() === this.player.name.toLowerCase()) {
+                nameStatus.textContent = '';
+                nameStatus.className = 'name-status';
+                return;
+            }
+            nameStatus.textContent = 'Checking...';
+            nameStatus.className = 'name-status checking';
+            checkTimer = setTimeout(async () => {
+                const result = await checkNameAvailable(name);
+                if (nameInput.value.trim() !== name) return;
+                if (result.available) {
+                    nameStatus.textContent = 'Name is available!';
+                    nameStatus.className = 'name-status available';
+                } else {
+                    nameStatus.textContent = 'Name is already taken. You can still use it, but consider a unique name.';
+                    nameStatus.className = 'name-status taken';
+                }
+            }, 500);
+        });
+
+        // Theme buttons
+        darkBtn.addEventListener('click', () => {
+            this._applyTheme('dark');
+            this._updateThemeButtons();
+        });
+        lightBtn.addEventListener('click', () => {
+            this._applyTheme('light');
+            this._updateThemeButtons();
+        });
+
+        // Save
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newName = nameInput.value.trim();
+            if (!newName || !this.player) return;
+
+            const nameChanged = newName !== this.player.name;
+            this.player.name = newName;
+            this.player.gender = genderSelect.value;
+            this.player.ageGroup = ageSelect.value;
+            saveProfile(this.player);
+
+            if (nameChanged) {
+                submitScore(this.player);
+            }
+
+            document.getElementById('welcome-name').textContent = this.player.name;
+            document.getElementById('settings-dialog').close();
+        });
+
+        // Export profile
+        document.getElementById('export-profile-btn').addEventListener('click', async () => {
+            const data = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('boxters_')) {
+                    data[key] = localStorage.getItem(key);
+                }
+            }
+            const json = JSON.stringify(data);
+            const encoded = btoa(unescape(encodeURIComponent(json)));
+            const hash = await _hashData(encoded);
+            const fileContent = hash + '.' + encoded;
+
+            const blob = new Blob([fileContent], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const name = (this.player && this.player.name) || 'player';
+            a.href = url;
+            a.download = `boxters-${name.toLowerCase().replace(/\s+/g, '-')}.bxp`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Import profile
+        const fileInput = document.getElementById('import-file-input');
+        document.getElementById('import-profile-btn').addEventListener('click', () => {
+            fileInput.click();
+        });
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const content = ev.target.result;
+                    const dotIdx = content.indexOf('.');
+                    if (dotIdx === -1) { alert('Invalid profile file.'); return; }
+
+                    const hash = content.substring(0, dotIdx);
+                    const encoded = content.substring(dotIdx + 1);
+                    const expectedHash = await _hashData(encoded);
+
+                    if (hash !== expectedHash) {
+                        alert('Profile file has been modified or is corrupt.');
+                        return;
+                    }
+
+                    const json = decodeURIComponent(escape(atob(encoded)));
+                    const data = JSON.parse(json);
+
+                    if (!data.boxters_player) {
+                        alert('Invalid profile file. No player data found.');
+                        return;
+                    }
+                    const profile = JSON.parse(data.boxters_player);
+                    if (!profile.name || profile.totalScore === undefined) {
+                        alert('Invalid profile file. Missing required fields.');
+                        return;
+                    }
+                    if (!confirm(`Import profile "${profile.name}" (Score: ${profile.totalScore}, Levels: ${profile.levelsCompleted})?\n\nThis will replace your current profile.`)) {
+                        return;
+                    }
+                    for (const [key, value] of Object.entries(data)) {
+                        if (key.startsWith('boxters_')) {
+                            localStorage.setItem(key, value);
+                        }
+                    }
+                    window.location.reload();
+                } catch {
+                    alert('Could not read profile file. Make sure it is a valid Boxters export.');
+                }
+            };
+            reader.readAsText(file);
+            fileInput.value = '';
+        });
+    }
+
+    _updateThemeButtons() {
+        const darkBtn = document.getElementById('theme-btn-dark');
+        const lightBtn = document.getElementById('theme-btn-light');
+        darkBtn.classList.toggle('active', this.themeMode === 'dark');
+        lightBtn.classList.toggle('active', this.themeMode === 'light');
     }
 
     _showSolutionModal() {

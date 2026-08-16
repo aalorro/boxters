@@ -759,6 +759,219 @@ body.light-theme {
     color: #dc2626;
 }
 
+/* ── Settings Dialog ───────────────────────────────────── */
+#settings-dialog {
+    position: relative;
+    background: rgba(10, 10, 46, 0.98);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 16px;
+    padding: 0;
+    max-width: 420px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    color: inherit;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.05);
+}
+
+#settings-dialog::backdrop {
+    background: rgba(5, 5, 32, 0.85);
+}
+
+.settings-title {
+    font-family: 'Cinzel', serif;
+    color: rgba(255, 215, 0, 0.95);
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+#settings-form {
+    width: 100%;
+}
+
+.settings-field {
+    margin-bottom: 1rem;
+}
+
+.settings-field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 215, 0, 0.9);
+    margin-bottom: 0.3rem;
+}
+
+.settings-field input,
+.settings-field select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    color: #fdf4e3;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.settings-field input:focus,
+.settings-field select:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.2);
+}
+
+.settings-field select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffd700' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    padding-right: 2rem;
+}
+
+.settings-field select option {
+    background: #0a0a2e;
+    color: #fdf4e3;
+}
+
+.theme-toggle-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.theme-toggle-btn {
+    flex: 1;
+    padding: 0.45rem 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(210, 210, 230, 0.7);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-toggle-btn:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+.theme-toggle-btn.active {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.settings-save-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.settings-divider {
+    height: 1px;
+    background: rgba(255, 215, 0, 0.12);
+    margin: 1.2rem 0;
+}
+
+.settings-actions {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 0.55rem 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 215, 0, 0.8);
+    background: rgba(255, 215, 0, 0.06);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 215, 0, 0.12);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+/* Light theme settings */
+.light-theme #settings-dialog {
+    background: rgba(252, 250, 245, 0.98);
+    border-color: rgba(255, 140, 0, 0.2);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(255, 140, 0, 0.05);
+}
+
+.light-theme #settings-dialog::backdrop {
+    background: rgba(245, 240, 230, 0.85);
+}
+
+.light-theme .settings-title {
+    color: rgba(255, 140, 0, 0.95);
+}
+
+.light-theme .settings-field label {
+    color: rgba(255, 140, 0, 0.9);
+}
+
+.light-theme .settings-field input,
+.light-theme .settings-field select {
+    color: #2d2d44;
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .settings-field input:focus,
+.light-theme .settings-field select:focus {
+    border-color: #ff8c00;
+    box-shadow: 0 0 16px rgba(255, 140, 0, 0.2);
+}
+
+.light-theme .settings-field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff8c00' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+.light-theme .settings-field select option {
+    background: #fcfaf5;
+    color: #2d2d44;
+}
+
+.light-theme .theme-toggle-btn {
+    border-color: rgba(255, 140, 0, 0.25);
+    color: rgba(45, 45, 68, 0.6);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.light-theme .theme-toggle-btn:hover {
+    border-color: rgba(255, 140, 0, 0.5);
+}
+
+.light-theme .theme-toggle-btn.active {
+    background: rgba(255, 140, 0, 0.12);
+    border-color: #ff8c00;
+    color: #ff8c00;
+}
+
+.light-theme .settings-divider {
+    background: rgba(255, 140, 0, 0.12);
+}
+
+.light-theme .btn-secondary {
+    color: rgba(255, 140, 0, 0.8);
+    background: rgba(255, 140, 0, 0.04);
+    border-color: rgba(255, 140, 0, 0.25);
+}
+
+.light-theme .btn-secondary:hover {
+    background: rgba(255, 140, 0, 0.1);
+    border-color: rgba(255, 140, 0, 0.5);
+}
+
 /* ── Welcome Actions ───────────────────────────────────── */
 .welcome-actions {
     display: flex;

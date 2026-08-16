@@ -62,12 +62,29 @@ export async function submitScore(player) {
     }
 
     const name = (player.name || 'Anonymous').substring(0, 20);
+    let remoteTotalScore = 0;
+    let remoteBestScore = 0;
+    let remoteLevelsCompleted = 0;
+
+    try {
+        const doc = await db.collection('leaderboard').doc(playerId).get();
+        if (doc.exists) {
+            const remote = doc.data();
+            remoteTotalScore = remote.totalScore || 0;
+            remoteBestScore = remote.bestScore || 0;
+            remoteLevelsCompleted = remote.levelsCompleted || 0;
+        }
+    } catch { /* proceed with local values */ }
+
     const data = {
         name,
         nameLower: name.toLowerCase(),
-        totalScore: Math.round(player.totalScore || 0),
-        levelsCompleted: Math.round(player.levelsCompleted || 0),
+        totalScore: Math.max(Math.round(player.totalScore || 0), remoteTotalScore),
+        bestScore: Math.max(Math.round(player.bestScore || 0), remoteBestScore),
+        levelsCompleted: Math.max(Math.round(player.levelsCompleted || 0), remoteLevelsCompleted),
         highestMode,
+        gender: player.gender || '',
+        ageGroup: player.ageGroup || '',
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
@@ -105,6 +122,37 @@ export async function fetchLeaderboard() {
     } catch (err) {
         console.warn('Leaderboard fetch failed:', err.message);
         return _getCachedLeaderboard();
+    }
+}
+
+// ── Sync Profile with Firestore ──────────────────────────────
+export async function syncProfile(player) {
+    if (!db) return null;
+    try {
+        const playerId = getPlayerId();
+        const doc = await db.collection('leaderboard').doc(playerId).get();
+        if (!doc.exists) return null;
+
+        const remote = doc.data();
+        let changed = false;
+
+        if ((remote.totalScore || 0) > (player.totalScore || 0)) {
+            player.totalScore = remote.totalScore;
+            changed = true;
+        }
+        if ((remote.bestScore || 0) > (player.bestScore || 0)) {
+            player.bestScore = remote.bestScore;
+            changed = true;
+        }
+        if ((remote.levelsCompleted || 0) > (player.levelsCompleted || 0)) {
+            player.levelsCompleted = remote.levelsCompleted;
+            changed = true;
+        }
+
+        return changed ? player : null;
+    } catch (err) {
+        console.warn('Profile sync failed:', err.message);
+        return null;
     }
 }
 
