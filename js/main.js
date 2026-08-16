@@ -9,6 +9,7 @@ import { loadLevel, loadLevelWithBoard, getLevelCount, getLevelData, getFirstLev
 import { hexSpiral, hexKey } from './hex.js';
 import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
+import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId } from './firebase.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
 const STORAGE_KEY = 'boxters_player';
@@ -99,6 +100,7 @@ class Game {
 
     async init() {
         initDictionary();
+        initFirebase();
         this.audio.init();
         this._applyTheme(localStorage.getItem('boxters_theme') || 'dark');
         this._checkSharedBoardParams();
@@ -125,6 +127,10 @@ class Game {
             if (this.input) {
                 this.input.updateLayout(this.renderer.hexSize, this.renderer.boardOffset);
             }
+        });
+
+        window.addEventListener('boxters-leaderboard-request', () => {
+            this._populateLeaderboard();
         });
 
         const loading = document.getElementById('loading-screen');
@@ -176,6 +182,7 @@ class Game {
             if (!name) return;
 
             this.player = createProfile(name);
+            getPlayerId();
             screen.classList.add('hidden');
             this._showWelcomeScreen();
         }, { once: true });
@@ -696,6 +703,7 @@ class Game {
         this.player.totalScore = this.totalScore;
 
         saveProfile(this.player);
+        submitScore(this.player);
 
         const cx = this.renderer.displayWidth / 2;
         const cy = this.renderer.displayHeight / 2;
@@ -809,6 +817,63 @@ class Game {
         this.audio.playFail();
 
         this._showSolutionModal();
+    }
+
+    async _populateLeaderboard() {
+        const containers = [
+            document.getElementById('leaderboard-container'),
+            document.getElementById('leaderboard-dialog-body')
+        ].filter(Boolean);
+        if (containers.length === 0) return;
+
+        containers.forEach(c => c.innerHTML = '<div class="leaderboard-loading">Loading...</div>');
+
+        const entries = await fetchLeaderboard();
+
+        if (entries.length === 0) {
+            const empty = '<p class="leaderboard-empty">No scores yet. Be the first!</p>';
+            containers.forEach(c => c.innerHTML = empty);
+            return;
+        }
+
+        const modeBadge = { simple: '\uD83C\uDF31', clear: '\uD83E\uDDF9', chain: '\uD83D\uDD17', illuminate: '\uD83D\uDCA1' };
+        const playerId = getPlayerId();
+
+        let html = '<table class="leaderboard-table">';
+        html += '<thead><tr><th>#</th><th>Player</th><th>Score</th><th>Lvls</th></tr></thead>';
+        html += '<tbody>';
+
+        entries.forEach((entry, i) => {
+            const rank = i + 1;
+            const isMe = entry.id === playerId;
+            const rowClass = isMe ? 'leaderboard-row leaderboard-me' : 'leaderboard-row';
+            const badge = modeBadge[entry.highestMode] || '';
+
+            let rankDisplay;
+            if (rank === 1) rankDisplay = '\uD83E\uDD47';
+            else if (rank === 2) rankDisplay = '\uD83E\uDD48';
+            else if (rank === 3) rankDisplay = '\uD83E\uDD49';
+            else rankDisplay = rank;
+
+            const safeName = document.createElement('span');
+            safeName.textContent = entry.name;
+
+            html += `<tr class="${rowClass}">`;
+            html += `<td class="lb-rank">${rankDisplay}</td>`;
+            const youTag = isMe ? ' <span class="lb-you">YOU</span>' : '';
+            html += `<td class="lb-name">${safeName.innerHTML}${youTag} ${badge}</td>`;
+            html += `<td class="lb-score">${entry.totalScore.toLocaleString()}</td>`;
+            html += `<td class="lb-levels">${entry.levelsCompleted}</td>`;
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+
+        if (findPlayerRank(entries) === -1 && this.player) {
+            html += '<p class="leaderboard-hint">Keep playing to earn your spot on the leaderboard!</p>';
+        }
+
+        containers.forEach(c => c.innerHTML = html);
     }
 
     _showSolutionModal() {

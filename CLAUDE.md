@@ -2,7 +2,7 @@
 
 ## Overview
 
-Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.2.0**.
+Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.2.1**.
 
 ## Key Commands
 
@@ -42,6 +42,7 @@ The script tag in `index.html` uses a query string for cache busting:
 | `js/tracer.js` | Word path tracing logic |
 | `js/particles.js` | Particle effect system (burst, clear, chain, illuminate, confetti) |
 | `js/audio.js` | Web Audio API — letter tones, word chords, error sound, victory fanfare, fail/clap/victory SFX |
+| `js/firebase.js` | Firebase Firestore integration — leaderboard submission, fetching, player ID, offline caching |
 | `js/dictionary.js` | Word list array and dictionary lookup |
 
 ### Assets
