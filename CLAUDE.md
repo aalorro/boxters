@@ -18,9 +18,9 @@ There are no tests, linters, or build scripts. Changes take effect on browser re
 
 The script tag in `index.html` uses a query string for cache busting:
 ```html
-<script type="module" src="js/main.js?v=56">
+<script type="module" src="js/main.js?v=69">
 ```
-**Bump the version number** after any JS change to ensure browsers pick up the new code. Same for `style.css?v=18`.
+**Bump the version number** after any JS change to ensure browsers pick up the new code. Same for `style.css?v=24`.
 
 ## Architecture
 
@@ -68,8 +68,19 @@ Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells, 
 Each level has a `scoreMult` field (0.4 for level 1, ramping to 1.0 by level 10) so early levels produce proportionally lower scores.
 
 ### Persistence
-- Player profile stored in `localStorage` key `boxters_player`. Contains: name, gamesPlayed, levelsCompleted, totalScore, currentLevels, highestLevels, cooldownUntil, sessionActive, unlockedModes, celebratedModes.
+- Player profile stored in `localStorage` key `boxters_player`. Contains: name, gamesPlayed, levelsCompleted, totalScore, bestScore, currentLevels, highestLevels, cooldownUntil, sessionActive, unlockedModes, celebratedModes, gender, ageGroup.
 - Board state stored per-mode in `localStorage` key `boxters_board_state_<mode>`. Snapshots include score, cells, objectives.
+- Player ID stored in `localStorage` key `boxters_player_id` — anonymous UUID used as Firestore document ID for leaderboard.
+- Theme preference stored in `localStorage` key `boxters_theme` — `dark` or `light`.
+- Leaderboard cache stored in `localStorage` key `boxters_leaderboard_cache` — offline fallback with timestamp.
+
+### Firebase Leaderboard
+- Uses Firebase Firestore (compat SDK loaded via `<script>` tags, no build step).
+- Each player identified by a client-generated UUID (`crypto.randomUUID()`), stored in `boxters_player_id`.
+- `submitScore()` fetches remote doc first, uses `Math.max()` for totalScore/bestScore/levelsCompleted before writing.
+- `syncProfile()` called on app load to reconcile local vs remote scores (highest values kept).
+- `checkNameAvailable()` performs case-insensitive check via `nameLower` field with fallback scan for legacy docs.
+- Leaderboard entries cached in localStorage for offline access.
 
 ## Important Patterns
 
@@ -81,6 +92,9 @@ Each level has a `scoreMult` field (0.4 for level 1, ramping to 1.0 by level 10)
 - **Audio**: SFX files (fail, clapping, victory) are preloaded as AudioBuffers on init. Synth sounds (tones, chords, fanfare) use Web Audio oscillators. Sound toggle button on board.
 - **Mode completion** (level 14): triggers `isUltimateVictory` flag — special overlay, confetti, victory SFX. Only celebrated once per mode (tracked in `celebratedModes`).
 - **Board sharing**: Share button copies URL with encoded board (`?l=<level>&b=<letters>&a=<anchors>`). `loadLevelWithBoard()` reconstructs exact board from URL params. Uses `hexSpiral()` for deterministic cell ordering.
+- **Settings dialog**: DOM dialog (`#settings-dialog`) for username change (with debounced name availability check), theme toggle, gender, age group. Opened via gear icon on welcome screen.
+- **Profile export/import**: Export creates a signed `.bxp` file (base64-encoded JSON + SHA-256 hash with salt). Import validates hash before restoring. Preserves `boxters_player_id` for leaderboard continuity.
+- **Cloud sync**: `syncProfile()` runs on app load — fetches Firestore doc and takes `Math.max()` of local vs remote for totalScore, bestScore, levelsCompleted. `submitScore()` also fetches remote values first to satisfy monotonic Firestore security rules.
 
 ## Style Conventions
 
