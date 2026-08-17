@@ -983,22 +983,27 @@ body.light-theme {
     justify-content: center;
 }
 
-/* ── Mobile: shrink welcome content to fit without scrolling ── */
-@media (max-height: 700px) {
+/* ── Icon/text toggle for welcome action buttons ── */
+.info-btn .text-only { display: none; }
+
+@media (max-width: 600px) {
+    .info-btn .icon-only { display: none; }
+    .info-btn .text-only { display: inline; }
+    .info-btn {
+        width: auto;
+        height: auto;
+        border-radius: 12px;
+        padding: 0.6rem 1.4rem;
+        font-family: 'Cinzel', serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+    .welcome-actions { margin-top: 1.2rem; gap: 0.6rem; }
     .welcome-logo { width: 50px; margin-bottom: 0.2rem; }
-    .player-stats { gap: 1rem; margin-bottom: 1.2rem; }
+    .player-stats { gap: 1rem; margin-bottom: 1.5rem; }
     .stat-value { font-size: 1.2rem; }
     .mode-buttons { margin-bottom: 0.8rem; }
-    .welcome-actions { margin-top: 1rem; }
-    .info-btn { width: 54px; height: 54px; }
-    .info-btn svg { width: 32px; height: 32px; }
-}
-
-@media (max-height: 550px) {
-    .welcome-logo { display: none; }
-    .player-stats { gap: 0.6rem; margin-bottom: 0.8rem; }
-    .stat-value { font-size: 1rem; }
-    .welcome-actions { margin-top: 0.6rem; }
 }
 
 /* ── Leaderboard Dialog ────────────────────────────────── */
