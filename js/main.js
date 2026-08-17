@@ -144,18 +144,28 @@ class Game {
             this._populateLeaderboard();
         });
 
-        // Welcome screen icon buttons
-        document.getElementById('leaderboard-btn').addEventListener('click', () => {
+        // Welcome screen action buttons (desktop icons + mobile text buttons)
+        const _wireBtn = (id, fn) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('click', fn);
+        };
+        const openLeaderboard = () => {
             document.getElementById('leaderboard-dialog').showModal();
             this._populateLeaderboard();
-        });
-        document.getElementById('settings-btn').addEventListener('click', () => {
+        };
+        const openSettings = () => {
             window.dispatchEvent(new CustomEvent('boxters-settings-open'));
             document.getElementById('settings-dialog').showModal();
-        });
-        document.getElementById('info-btn').addEventListener('click', () => {
+        };
+        const openInfo = () => {
             if (window.showInfoDialog) window.showInfoDialog('about');
-        });
+        };
+        _wireBtn('leaderboard-btn', openLeaderboard);
+        _wireBtn('settings-btn', openSettings);
+        _wireBtn('info-btn', openInfo);
+        _wireBtn('leaderboard-btn-m', openLeaderboard);
+        _wireBtn('settings-btn-m', openSettings);
+        _wireBtn('info-btn-m', openInfo);
 
         this._initSettingsDialog();
 
