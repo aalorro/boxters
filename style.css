@@ -367,6 +367,8 @@ html, body {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
 }
 
 .info-btn svg {
