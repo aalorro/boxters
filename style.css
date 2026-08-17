@@ -983,23 +983,17 @@ body.light-theme {
     justify-content: center;
 }
 
-/* ── Icon/text toggle for welcome action buttons ── */
-.info-btn .text-only { display: none; }
+/* ── Mobile text buttons (hidden on desktop, shown on phones) ── */
+.welcome-actions-mobile { display: none; }
+
+.btn-small {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+}
 
 @media (max-width: 600px) {
-    .info-btn .icon-only { display: none; }
-    .info-btn .text-only { display: inline; }
-    .info-btn {
-        width: auto;
-        height: auto;
-        border-radius: 12px;
-        padding: 0.6rem 1.4rem;
-        font-family: 'Cinzel', serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-    }
-    .welcome-actions { margin-top: 1.2rem; gap: 0.6rem; }
+    .welcome-actions-icons { display: none; }
+    .welcome-actions-mobile { display: flex; }
     .welcome-logo { width: 50px; margin-bottom: 0.2rem; }
     .player-stats { gap: 1rem; margin-bottom: 1.5rem; }
     .stat-value { font-size: 1.2rem; }
