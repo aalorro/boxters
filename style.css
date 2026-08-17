@@ -39,8 +39,6 @@ html, body {
     background: radial-gradient(ellipse at center, #0a0a2e 0%, #050520 100%);
     z-index: 100;
     transition: opacity 0.6s ease-out;
-    overflow-y: auto;
-    padding: 1.5rem 0;
 }
 
 .overlay.hidden {
@@ -983,6 +981,24 @@ body.light-theme {
     gap: 1.2rem;
     margin-top: 2rem;
     justify-content: center;
+}
+
+/* ── Mobile: shrink welcome content to fit without scrolling ── */
+@media (max-height: 700px) {
+    .welcome-logo { width: 50px; margin-bottom: 0.2rem; }
+    .player-stats { gap: 1rem; margin-bottom: 1.2rem; }
+    .stat-value { font-size: 1.2rem; }
+    .mode-buttons { margin-bottom: 0.8rem; }
+    .welcome-actions { margin-top: 1rem; }
+    .info-btn { width: 54px; height: 54px; }
+    .info-btn svg { width: 32px; height: 32px; }
+}
+
+@media (max-height: 550px) {
+    .welcome-logo { display: none; }
+    .player-stats { gap: 0.6rem; margin-bottom: 0.8rem; }
+    .stat-value { font-size: 1rem; }
+    .welcome-actions { margin-top: 0.6rem; }
 }
 
 /* ── Leaderboard Dialog ────────────────────────────────── */

@@ -145,33 +145,17 @@ class Game {
         });
 
         // Welcome screen icon buttons
-        const _openDialog = (btnId, fn) => {
-            const el = document.getElementById(btnId);
-            if (!el) { console.error('Button not found:', btnId); return; }
-            el.addEventListener('click', fn);
-            el.addEventListener('touchend', (e) => { e.preventDefault(); fn(); });
-        };
-        _openDialog('leaderboard-btn', () => {
-            try { document.getElementById('leaderboard-dialog').showModal(); } catch(e) {}
+        document.getElementById('leaderboard-btn').addEventListener('click', () => {
+            document.getElementById('leaderboard-dialog').showModal();
             this._populateLeaderboard();
         });
-        _openDialog('settings-btn', () => {
+        document.getElementById('settings-btn').addEventListener('click', () => {
             window.dispatchEvent(new CustomEvent('boxters-settings-open'));
-            try { document.getElementById('settings-dialog').showModal(); } catch(e) {}
+            document.getElementById('settings-dialog').showModal();
         });
-        _openDialog('info-btn', () => {
+        document.getElementById('info-btn').addEventListener('click', () => {
             if (window.showInfoDialog) window.showInfoDialog('about');
         });
-
-        // DEBUG: detect if taps reach the welcome-actions area at all
-        document.addEventListener('touchstart', (e) => {
-            const btn = e.target.closest('.info-btn');
-            if (btn) document.title = 'TOUCH:' + btn.id;
-            if (e.target.closest('.welcome-actions')) document.title = 'TOUCH:actions';
-        }, true);
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.welcome-actions')) document.title = 'CLICK:' + e.target.tagName;
-        }, true);
 
         this._initSettingsDialog();
 
