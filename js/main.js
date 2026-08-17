@@ -144,6 +144,19 @@ class Game {
             this._populateLeaderboard();
         });
 
+        // Welcome screen icon buttons
+        document.getElementById('leaderboard-btn').addEventListener('click', () => {
+            document.getElementById('leaderboard-dialog').showModal();
+            this._populateLeaderboard();
+        });
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            window.dispatchEvent(new CustomEvent('boxters-settings-open'));
+            document.getElementById('settings-dialog').showModal();
+        });
+        document.getElementById('info-btn').addEventListener('click', () => {
+            if (window.showInfoDialog) window.showInfoDialog('about');
+        });
+
         this._initSettingsDialog();
 
         const loading = document.getElementById('loading-screen');
