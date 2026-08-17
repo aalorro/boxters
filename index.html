@@ -19,7 +19,7 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.boxters.com">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Boxters">
 
@@ -67,7 +67,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css?v=24">
+    <link rel="stylesheet" href="style.css?v=25">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -100,6 +100,11 @@
         window.dispatchEvent(new CustomEvent('boxters-settings-open'));
         document.getElementById('settings-dialog').showModal();
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('leaderboard-btn').addEventListener('click', showLeaderboardDialog);
+        document.getElementById('settings-btn').addEventListener('click', showSettingsDialog);
+        document.getElementById('info-btn').addEventListener('click', function() { showInfoDialog('about'); });
+    });
     </script>
 </head>
 <body>
@@ -137,7 +142,7 @@
             <div id="mode-select" class="mode-buttons"></div>
             <button id="play-btn" class="btn-primary">Play</button>
             <div class="welcome-actions">
-                <button id="leaderboard-btn" class="info-btn" aria-label="Leaderboard" type="button" onclick="showLeaderboardDialog()">
+                <button id="leaderboard-btn" class="info-btn" aria-label="Leaderboard" type="button">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 6 9 6 9"/>
                         <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 18 9 18 9"/>
@@ -145,13 +150,13 @@
                         <path d="M10 22V8a6 6 0 0 0-6-1v5c0 2.2 1.8 4 4 4h8c2.2 0 4-1.8 4-4V7a6 6 0 0 0-6 1v14"/>
                     </svg>
                 </button>
-                <button id="settings-btn" class="info-btn" aria-label="Settings" type="button" onclick="showSettingsDialog()">
+                <button id="settings-btn" class="info-btn" aria-label="Settings" type="button">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
                         <circle cx="12" cy="12" r="3"/>
                     </svg>
                 </button>
-                <button id="info-btn" class="info-btn" aria-label="Info" type="button" onclick="showInfoDialog('about')">
+                <button id="info-btn" class="info-btn" aria-label="Info" type="button">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
                         <line x1="12" y1="16" x2="12" y2="12"/>
