@@ -200,6 +200,7 @@ class Game {
     }
 
     _showRegisterScreen() {
+        this.canvas.style.visibility = 'hidden';
         const screen = document.getElementById('register-screen');
         screen.classList.remove('hidden');
 
@@ -251,6 +252,7 @@ class Game {
     }
 
     _showWelcomeScreen() {
+        this.canvas.style.visibility = 'hidden';
         const screen = document.getElementById('welcome-screen');
         screen.classList.remove('hidden');
 
@@ -307,6 +309,7 @@ class Game {
     }
 
     _startGame() {
+        this.canvas.style.visibility = 'visible';
         this.totalScore = this.player.totalScore || 0;
         // Only count as a new game if not resuming from a reload
         if (!this.player.sessionActive) {
