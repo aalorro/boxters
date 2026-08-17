@@ -144,21 +144,19 @@ class Game {
             this._populateLeaderboard();
         });
 
-        // Welcome screen icon buttons — use pointerup for reliable mobile taps
-        const _btnAction = (id, fn) => {
-            const el = document.getElementById(id);
-            el.addEventListener('pointerup', (e) => { e.preventDefault(); fn(); });
-            el.addEventListener('click', fn); // desktop fallback
-        };
-        _btnAction('leaderboard-btn', () => {
-            document.getElementById('leaderboard-dialog').showModal();
+        // Welcome screen icon buttons
+        document.getElementById('leaderboard-btn').addEventListener('click', () => {
+            document.title = 'LB clicked';
+            try { document.getElementById('leaderboard-dialog').showModal(); } catch(e) { document.title = 'LB error: ' + e.message; }
             this._populateLeaderboard();
         });
-        _btnAction('settings-btn', () => {
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            document.title = 'Settings clicked';
             window.dispatchEvent(new CustomEvent('boxters-settings-open'));
-            document.getElementById('settings-dialog').showModal();
+            try { document.getElementById('settings-dialog').showModal(); } catch(e) { document.title = 'Settings error: ' + e.message; }
         });
-        _btnAction('info-btn', () => {
+        document.getElementById('info-btn').addEventListener('click', () => {
+            document.title = 'Info clicked';
             if (window.showInfoDialog) window.showInfoDialog('about');
         });
 
