@@ -145,20 +145,33 @@ class Game {
         });
 
         // Welcome screen icon buttons
-        document.getElementById('leaderboard-btn').addEventListener('click', () => {
-            document.title = 'LB clicked';
-            try { document.getElementById('leaderboard-dialog').showModal(); } catch(e) { document.title = 'LB error: ' + e.message; }
+        const _openDialog = (btnId, fn) => {
+            const el = document.getElementById(btnId);
+            if (!el) { console.error('Button not found:', btnId); return; }
+            el.addEventListener('click', fn);
+            el.addEventListener('touchend', (e) => { e.preventDefault(); fn(); });
+        };
+        _openDialog('leaderboard-btn', () => {
+            try { document.getElementById('leaderboard-dialog').showModal(); } catch(e) {}
             this._populateLeaderboard();
         });
-        document.getElementById('settings-btn').addEventListener('click', () => {
-            document.title = 'Settings clicked';
+        _openDialog('settings-btn', () => {
             window.dispatchEvent(new CustomEvent('boxters-settings-open'));
-            try { document.getElementById('settings-dialog').showModal(); } catch(e) { document.title = 'Settings error: ' + e.message; }
+            try { document.getElementById('settings-dialog').showModal(); } catch(e) {}
         });
-        document.getElementById('info-btn').addEventListener('click', () => {
-            document.title = 'Info clicked';
+        _openDialog('info-btn', () => {
             if (window.showInfoDialog) window.showInfoDialog('about');
         });
+
+        // DEBUG: detect if taps reach the welcome-actions area at all
+        document.addEventListener('touchstart', (e) => {
+            const btn = e.target.closest('.info-btn');
+            if (btn) document.title = 'TOUCH:' + btn.id;
+            if (e.target.closest('.welcome-actions')) document.title = 'TOUCH:actions';
+        }, true);
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.welcome-actions')) document.title = 'CLICK:' + e.target.tagName;
+        }, true);
 
         this._initSettingsDialog();
 
