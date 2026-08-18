@@ -139,6 +139,7 @@ export class Board {
         this.mode = 'simple';
         this.comboCount = 0;
         this.lastWordCellKeys = new Set();
+        this.lastApexEffect = null;
     }
 
     executeMove(word, path) {
@@ -196,6 +197,57 @@ export class Board {
                     result.illuminated.push({ q: cell.q, r: cell.r });
                 }
                 break;
+
+            case 'apex': {
+                const effects = ['clear', 'chain', 'illuminate'];
+                const chosenEffect = effects[Math.floor(Math.random() * 3)];
+                this.lastApexEffect = chosenEffect;
+
+                // All tiles are always illuminated first (counts toward % lit)
+                for (const cell of path) {
+                    cell.isIlluminated = true;
+                    cell.glowIntensity = 1.0;
+                }
+
+                // Then apply the random effect on top
+                switch (chosenEffect) {
+                    case 'clear':
+                        for (const cell of path) {
+                            if (cell.isAnchor) {
+                                // Anchor cells can't be cleared — stay illuminated
+                                result.illuminated.push({ q: cell.q, r: cell.r });
+                            } else {
+                                result.cleared.push({ q: cell.q, r: cell.r });
+                                cell.letter = null;
+                                cell.isCleared = true;
+                                cell.isActive = false;
+                            }
+                        }
+                        break;
+                    case 'chain': {
+                        const currentKeys = new Set(path.map(c => c.key));
+                        const hasOverlap = [...currentKeys].some(k => this.lastWordCellKeys.has(k));
+                        if (hasOverlap && this.lastWordCellKeys.size > 0) {
+                            this.comboCount = Math.min(this.comboCount + 1, COMBO.maxCombo);
+                        } else {
+                            this.comboCount = 0;
+                        }
+                        this.lastWordCellKeys = currentKeys;
+                        for (const cell of path) {
+                            const newLetter = randomLetter();
+                            cell.letter = newLetter;
+                            result.replaced.push({ q: cell.q, r: cell.r, letter: newLetter });
+                        }
+                        break;
+                    }
+                    case 'illuminate':
+                        for (const cell of path) {
+                            result.illuminated.push({ q: cell.q, r: cell.r });
+                        }
+                        break;
+                }
+                break;
+            }
         }
 
         return result;

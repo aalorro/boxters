@@ -53,7 +53,7 @@ export async function submitScore(player) {
 
     const playerId = getPlayerId();
 
-    const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+    const modeOrder = ['simple', 'clear', 'chain', 'illuminate', 'apex'];
     let highestMode = 'simple';
     if (player.unlockedModes) {
         for (const m of modeOrder) {

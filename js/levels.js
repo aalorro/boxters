@@ -635,6 +635,153 @@ const LEVEL_DATA = [
             { type: 'useAllCells', description: 'Illuminate all cells', target: 1, params: {} },
             { type: 'formWord', description: 'Form 5 words of 5+ letters', target: 5, params: { minLength: 5 } }
         ]
+    },
+
+    // ── Apex Mode (levels 57-70) ──────────────────────────────
+    {
+        id: 'apex_01', name: 'First Contact', mode: 'apex', tier: 'apex',
+        maxMoves: 8, scoreMult: 0.5, twoStarTarget: 200, threeStarTarget: 320,
+        tutorial: { message: 'Apex mode: each word triggers a RANDOM effect — clear, chain, or illuminate. Words must pass through an anchor until the anchor objective is met, then you\'re free!' },
+        layout: { shape: 'hex2', cellTypes: {}, anchors: 1 },
+        objectives: [
+            { type: 'formWord', description: 'Form 2 words', target: 2, params: { minLength: 3 } },
+            { type: 'illuminateAnchors', description: 'Use the Anchor cell', target: 1, params: {} }
+        ]
+    },
+    {
+        id: 'apex_02', name: 'Shifting Ground', mode: 'apex', tier: 'apex',
+        maxMoves: 7, scoreMult: 0.55, twoStarTarget: 240, threeStarTarget: 380,
+        tutorial: { message: 'Tip: Watch the effect indicator after each word. Plan your next move based on what happened.' },
+        layout: { shape: 'hex2', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 2 words of 4+ letters', target: 2, params: { minLength: 4 } },
+            { type: 'illuminatePercent', description: 'Illuminate 50% of cells', target: 50, params: {} }
+        ]
+    },
+    {
+        id: 'apex_03', name: 'Wild Cards', mode: 'apex', tier: 'apex',
+        maxMoves: 7, scoreMult: 0.6, twoStarTarget: 280, threeStarTarget: 440,
+        tutorial: { message: 'Two anchors — every word must pass through one until the anchor objective is complete. After that, you\'re free to trace anywhere!' },
+        layout: { shape: 'hex2', cellTypes: {}, anchors: 2 },
+        objectives: [
+            { type: 'formWord', description: 'Form 3 words', target: 3, params: { minLength: 3 } },
+            { type: 'illuminateAnchors', description: 'Use both Anchors', target: 2, params: {} }
+        ]
+    },
+    {
+        id: 'apex_04', name: 'Fractured', mode: 'apex', tier: 'apex',
+        maxMoves: 10, scoreMult: 0.65, twoStarTarget: 340, threeStarTarget: 520,
+        tutorial: { message: 'Bigger board now. If tiles get cleared, you lose them. If they chain, new letters appear. Stay flexible.' },
+        layout: { shape: 'hex3', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 3 words of 4+ letters', target: 3, params: { minLength: 4 } },
+            { type: 'illuminatePercent', description: 'Illuminate 50% of cells', target: 50, params: {} }
+        ]
+    },
+    {
+        id: 'apex_05', name: 'Entropy', mode: 'apex', tier: 'apex',
+        maxMoves: 10, scoreMult: 0.7, twoStarTarget: 380, threeStarTarget: 580,
+        tutorial: { message: 'Tip: Words must pass through an anchor until the objective is satisfied. Once all anchors are lit, remaining words can go anywhere!' },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
+        objectives: [
+            { type: 'formWord', description: 'Form 3 words of 4+ letters', target: 3, params: { minLength: 4 } },
+            { type: 'illuminateAnchors', description: 'Use both Anchors', target: 2, params: {} }
+        ]
+    },
+    {
+        id: 'apex_06', name: 'Volatile', mode: 'apex', tier: 'apex',
+        maxMoves: 9, scoreMult: 0.75, twoStarTarget: 420, threeStarTarget: 640,
+        tutorial: { message: 'You need 60% illumination. Chain effects help by giving new letters, but clear effects remove tiles entirely.' },
+        layout: { shape: 'hex3', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
+            { type: 'illuminatePercent', description: 'Illuminate 60% of cells', target: 60, params: {} }
+        ]
+    },
+    {
+        id: 'apex_07', name: 'Fusion Core', mode: 'apex', tier: 'apex',
+        maxMoves: 9, scoreMult: 0.8, twoStarTarget: 460, threeStarTarget: 700,
+        tutorial: { message: 'Three anchors to hit. Words must pass through one until all anchors are illuminated — then you\'re free to trace anywhere!' },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
+        objectives: [
+            { type: 'formWord', description: 'Form 4 words of 4+ letters', target: 4, params: { minLength: 4 } },
+            { type: 'illuminateAnchors', description: 'Use all 3 Anchors', target: 3, params: {} }
+        ]
+    },
+    {
+        id: 'apex_08', name: 'Singularity', mode: 'apex', tier: 'apex',
+        maxMoves: 9, scoreMult: 0.85, twoStarTarget: 500, threeStarTarget: 760,
+        tutorial: { message: 'Combos trigger when chain effects overlap your previous word path. Chase them when you can!' },
+        layout: { shape: 'hex3', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
+            { type: 'achieveCombo', description: 'Achieve a x2 combo', target: 2, params: {} },
+            { type: 'illuminatePercent', description: 'Illuminate 60% of cells', target: 60, params: {} }
+        ]
+    },
+    {
+        id: 'apex_09', name: 'Quantum Flux', mode: 'apex', tier: 'apex',
+        maxMoves: 8, scoreMult: 0.9, twoStarTarget: 540, threeStarTarget: 820,
+        tutorial: { message: 'Fewer moves, more anchors. Words must touch an anchor until the objective is met, then you\'re free. Plan two moves ahead.' },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
+        objectives: [
+            { type: 'formWord', description: 'Form 4 words of 5+ letters', target: 4, params: { minLength: 5 } },
+            { type: 'illuminateAnchors', description: 'Use all 3 Anchors', target: 3, params: {} }
+        ]
+    },
+    {
+        id: 'apex_10', name: 'Cataclysm', mode: 'apex', tier: 'apex',
+        maxMoves: 8, scoreMult: 0.92, twoStarTarget: 580, threeStarTarget: 880,
+        tutorial: { message: 'Combos + illumination together. Chain effects on overlapping paths give combos AND might illuminate cells.' },
+        layout: { shape: 'hex3', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
+            { type: 'achieveCombo', description: 'Achieve a x2 combo', target: 2, params: {} },
+            { type: 'illuminatePercent', description: 'Illuminate 70% of cells', target: 70, params: {} }
+        ]
+    },
+    {
+        id: 'apex_11', name: 'Maelstrom', mode: 'apex', tier: 'apex',
+        maxMoves: 8, scoreMult: 0.95, twoStarTarget: 620, threeStarTarget: 940,
+        tutorial: { message: 'Three anchors, combos required, and tight moves. Once all anchors are illuminated, remaining words are free. This is where Apex gets real.' },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
+        objectives: [
+            { type: 'formWord', description: 'Form 4 words of 5+ letters', target: 4, params: { minLength: 5 } },
+            { type: 'illuminateAnchors', description: 'Use all 3 Anchors', target: 3, params: {} },
+            { type: 'achieveCombo', description: 'Achieve a x2 combo', target: 2, params: {} }
+        ]
+    },
+    {
+        id: 'apex_12', name: 'Pandemonium', mode: 'apex', tier: 'apex',
+        maxMoves: 7, scoreMult: 0.97, twoStarTarget: 660, threeStarTarget: 1000,
+        tutorial: { message: 'Only 7 moves to illuminate 75%. Every word must be long and precise.' },
+        layout: { shape: 'hex3', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 4 words of 5+ letters', target: 4, params: { minLength: 5 } },
+            { type: 'illuminatePercent', description: 'Illuminate 75% of cells', target: 75, params: {} }
+        ]
+    },
+    {
+        id: 'apex_13', name: 'Oblivion', mode: 'apex', tier: 'apex',
+        maxMoves: 7, scoreMult: 0.98, twoStarTarget: 700, threeStarTarget: 1060,
+        tutorial: { message: 'Four anchors, x3 combo, 5+ letter words. Once all anchors are lit, you\'re free. The penultimate Apex challenge.' },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 4 },
+        objectives: [
+            { type: 'formWord', description: 'Form 5 words of 5+ letters', target: 5, params: { minLength: 5 } },
+            { type: 'illuminateAnchors', description: 'Use all 4 Anchors', target: 4, params: {} },
+            { type: 'achieveCombo', description: 'Achieve a x3 combo', target: 3, params: {} }
+        ]
+    },
+    {
+        id: 'apex_14', name: 'Transcendence', mode: 'apex', tier: 'apex',
+        maxMoves: 7, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
+        tutorial: { message: 'The ultimate challenge. 80% illumination, 6+ letter words, x3 combos. You are the Apex.' },
+        layout: { shape: 'hex3', cellTypes: {} },
+        objectives: [
+            { type: 'formWord', description: 'Form 5 words of 6+ letters', target: 5, params: { minLength: 6 } },
+            { type: 'illuminatePercent', description: 'Illuminate 80% of cells', target: 80, params: {} },
+            { type: 'achieveCombo', description: 'Achieve a x3 combo', target: 3, params: {} }
+        ]
     }
 ];
 
@@ -1372,8 +1519,8 @@ function isBoardSolvable(board, data) {
         if (coveredCells.size < totalCells) return false;
     }
 
-    // For illuminate mode, verify every cell is reachable by at least one valid word
-    if (data.mode === 'illuminate') {
+    // For illuminate/apex mode, verify every cell is reachable by at least one valid word
+    if (data.mode === 'illuminate' || data.mode === 'apex') {
         if (!board.field.allCellsCoverable(dictionary)) return false;
     }
 
@@ -1400,6 +1547,29 @@ export function loadLevel(levelIndex) {
         const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
         const board = buildBoardClearMode(data, seed);
         return { board, levelData: data, levelIndex };
+    }
+
+    // Apex mode: same generation as illuminate (word-first + safeLetter fills)
+    if (data.mode === 'apex') {
+        let bestBoard = null;
+        let bestCoverage = -1;
+        for (let i = 0; i < 100; i++) {
+            boardAttempt++;
+            const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
+            const board = buildBoardIlluminate(data, seed);
+            if (board.field.allCellsCoverable(dictionary)) {
+                return { board, levelData: data, levelIndex };
+            }
+            const coverage = _countCoverableCells(board, dictionary);
+            if (coverage > bestCoverage) {
+                bestCoverage = coverage;
+                bestBoard = board;
+            }
+        }
+        if (bestBoard) {
+            _fixUncoverableCells(bestBoard, dictionary);
+        }
+        return { board: bestBoard, levelData: data, levelIndex };
     }
 
     // Illuminate mode: word-first with overlapping coverage + solvability retry

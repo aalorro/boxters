@@ -1,4 +1,4 @@
-import { STATES, MODES, COMBO, setTheme } from './constants.js';
+import { STATES, MODES, COMBO, APEX_UNLOCK_SCORE, setTheme } from './constants.js';
 import { Renderer } from './renderer.js';
 import { InputManager } from './input.js';
 import { WordTracer } from './tracer.js';
@@ -25,7 +25,7 @@ function loadProfile() {
         // Migrate: compute unlockedModes from existing progress
         if (!profile.unlockedModes) {
             const modes = ['simple'];
-            const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+            const modeOrder = ['simple', 'clear', 'chain', 'illuminate', 'apex'];
             if (profile.highestLevels) {
                 for (const mode of modeOrder) {
                     if (profile.highestLevels[mode] !== undefined && !modes.includes(mode)) {
@@ -272,6 +272,18 @@ class Game {
         document.getElementById('stat-score').textContent = this.player.totalScore || 0;
         document.getElementById('stat-best').textContent = this.player.bestScore || 0;
 
+        // Retroactive apex unlock for players who already meet conditions
+        if (this.player.celebratedModes && this.player.celebratedModes.includes('illuminate') &&
+            (this.player.totalScore || 0) >= APEX_UNLOCK_SCORE &&
+            !(this.player.unlockedModes || []).includes('apex')) {
+            if (!this.player.unlockedModes) this.player.unlockedModes = ['simple'];
+            this.player.unlockedModes.push('apex');
+            if (this.player.isInGauntlet) {
+                this.player.isInGauntlet = false;
+            }
+            saveProfile(this.player);
+        }
+
         // Restore last played mode, or default to simple (must be unlocked)
         const lastMode = this.player.lastMode || MODES.SIMPLE;
         this.selectedMode = (this.player.unlockedModes && this.player.unlockedModes.includes(lastMode))
@@ -290,7 +302,7 @@ class Game {
     }
 
     _setupModeButtons() {
-        const modeOrder = [MODES.SIMPLE, MODES.CLEAR, MODES.CHAIN, MODES.ILLUMINATE];
+        const modeOrder = [MODES.SIMPLE, MODES.CLEAR, MODES.CHAIN, MODES.ILLUMINATE, MODES.APEX];
         const unlocked = this.player.unlockedModes || ['simple'];
         const container = document.getElementById('mode-select');
         if (!container) return;
@@ -340,6 +352,10 @@ class Game {
             this.cooldownUntil = this.player.cooldownUntil;
             this.lives = 0;
             this.state = STATES.COOLDOWN;
+        } else if (this.player.isInGauntlet) {
+            // Resume gauntlet from a previous session
+            this.isInGauntlet = true;
+            this.state = STATES.GAUNTLET_INTRO;
         } else if (this._sharedBoard) {
             // Load shared board directly — switch to the level's mode
             this._clearBoardState();
@@ -386,7 +402,7 @@ class Game {
         const modeEnd = modeLevels.length > 0 ? modeLevels[modeLevels.length - 1].index + 1 : getLevelCount();
         if (index >= modeEnd || index >= getLevelCount()) {
             // Advance to the next mode if unlocked
-            const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+            const modeOrder = ['simple', 'clear', 'chain', 'illuminate', 'apex'];
             const unlocked = this.player.unlockedModes || ['simple'];
             const currentModeIdx = modeOrder.indexOf(this.selectedMode);
             const nextMode = currentModeIdx < modeOrder.length - 1 ? modeOrder[currentModeIdx + 1] : null;
@@ -450,6 +466,17 @@ class Game {
         }
 
         this.state = STATES.PLAYING;
+    }
+
+    _loadGauntletLevel() {
+        const modes = ['simple', 'clear', 'chain', 'illuminate'];
+        const randomMode = modes[Math.floor(Math.random() * modes.length)];
+        const modeLevels = getLevelsForMode(randomMode);
+        // Pick levels with index >= 6 within the mode (levels 7-14)
+        const highLevels = modeLevels.filter((_, i) => i >= 6);
+        const level = highLevels[Math.floor(Math.random() * highLevels.length)];
+        this.selectedMode = randomMode;
+        this._loadLevel(level.index);
     }
 
     // ── Input handlers ──────────────────────────────────────────
@@ -602,10 +629,59 @@ class Game {
             // Defeat/game-over handled by solution modal
             if (this.state === STATES.GAME_OVER || this.state === STATES.DEFEAT) return;
 
+            if (this.state === STATES.APEX_UNLOCK) {
+                if (this.levelTransitionTimer <= 0) {
+                    this.apexJustUnlocked = false;
+                    this.state = STATES.MENU;
+                    this._showWelcomeScreen();
+                }
+                return;
+            }
+
+            if (this.state === STATES.GAUNTLET_INTRO) {
+                this._loadGauntletLevel();
+                return;
+            }
+
             if (this.state === STATES.VICTORY) {
                 if (this.levelTransitionTimer <= 0) {
+                    // Check if apex was just unlocked via gauntlet
+                    if (this.apexJustUnlocked) {
+                        this.isUltimateVictory = false;
+                        this.state = STATES.APEX_UNLOCK;
+                        this.levelTransitionTimer = 1.2;
+                        const cx = this.renderer.displayWidth / 2;
+                        const cy = this.renderer.displayHeight / 2;
+                        this.audio.playUltimateVictory();
+                        this.particles.emitVictoryBurst(cx, cy);
+                        this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
+                        this._confettiInterval = setInterval(() => {
+                            if (this.state === STATES.APEX_UNLOCK) {
+                                this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
+                            } else {
+                                clearInterval(this._confettiInterval);
+                                this._confettiInterval = null;
+                            }
+                        }, 2000);
+                        return;
+                    }
+                    // Check if entering gauntlet after illuminate completion
+                    if (this.enterGauntlet) {
+                        this.enterGauntlet = false;
+                        this.isInGauntlet = true;
+                        this.player.isInGauntlet = true;
+                        saveProfile(this.player);
+                        this.isUltimateVictory = false;
+                        this.state = STATES.GAUNTLET_INTRO;
+                        return;
+                    }
+                    // Normal: load next level (or next gauntlet level)
                     this.isUltimateVictory = false;
-                    this._loadLevel(this.levelIndex + 1);
+                    if (this.isInGauntlet) {
+                        this._loadGauntletLevel();
+                    } else {
+                        this._loadLevel(this.levelIndex + 1);
+                    }
                 }
                 return;
             }
@@ -654,13 +730,20 @@ class Game {
         }
 
         // Reject words that don't touch any anchor if the board has anchor cells
+        // In Apex mode, relax this once the anchor objective is complete
         const anchorCells = this.board.field.getAllCells().filter(c => c.isAnchor);
         if (anchorCells.length > 0) {
-            const touchesAnchor = path.some(cell => cell.isAnchor);
-            if (!touchesAnchor) {
-                this._showFeedback('Word must pass through an Anchor cell!');
-                this.audio.playError();
-                return;
+            const anchorObjectiveMet = this.board.mode === 'apex' &&
+                this.objectives.allObjectives
+                    .filter(o => o.type === 'illuminateAnchors')
+                    .every(o => o.completed);
+            if (!anchorObjectiveMet) {
+                const touchesAnchor = path.some(cell => cell.isAnchor);
+                if (!touchesAnchor) {
+                    this._showFeedback('Word must pass through an Anchor cell!');
+                    this.audio.playError();
+                    return;
+                }
             }
         }
 
@@ -668,8 +751,9 @@ class Game {
 
         const moveResult = this.board.executeMove(word, path);
 
-        // Auto-clear isolated clusters of 1-2 cells in clear mode (can't form a 3-letter word)
-        if (this.board.mode === 'clear') {
+        // Auto-clear isolated clusters in clear mode or apex clear effect
+        const apexEffect = this.board.lastApexEffect;
+        if (this.board.mode === 'clear' || (this.board.mode === 'apex' && apexEffect === 'clear')) {
             const remaining = this.board.field.getAllCells().filter(c => !c.isCleared);
             if (remaining.length > 0) {
                 const remainSet = new Set(remaining.map(c => `${c.q},${c.r}`));
@@ -710,13 +794,14 @@ class Game {
 
         // Mode-specific particles
         const mode = this.board.mode;
+        const effectMode = mode === 'apex' ? apexEffect : mode;
         for (const cell of path) {
             const pos = this.renderer.getCellPixelPos(cell.q, cell.r);
-            if (mode === 'clear') {
+            if (effectMode === 'clear') {
                 this.particles.emitClearEffect(pos.x, pos.y);
-            } else if (mode === 'chain') {
+            } else if (effectMode === 'chain') {
                 this.particles.emitChainReplace(pos.x, pos.y);
-            } else if (mode === 'illuminate') {
+            } else if (effectMode === 'illuminate') {
                 this.particles.emitIlluminate(pos.x, pos.y);
             } else {
                 this.particles.emit(pos.x, pos.y, 6, {
@@ -729,14 +814,18 @@ class Game {
         this.score += moveScore;
 
         let feedbackMsg = `${word} — +${moveScore} pts`;
-        if (mode === 'chain' && this.board.comboCount > 0) {
+        if ((mode === 'chain' || (mode === 'apex' && apexEffect === 'chain')) && this.board.comboCount > 0) {
             const comboMult = COMBO.multipliers[Math.min(this.board.comboCount, COMBO.maxCombo)];
             feedbackMsg += ` (x${comboMult} combo!)`;
         }
+        if (mode === 'apex' && apexEffect) {
+            const effectLabels = { clear: 'CLEAR', chain: 'CHAIN', illuminate: 'ILLUMINATE' };
+            feedbackMsg += ` [${effectLabels[apexEffect]}]`;
+        }
         this._showFeedback(feedbackMsg);
 
-        // For chain mode, need to rebuild tracer since letters changed
-        if (mode === 'chain') {
+        // Rebuild tracer if letters changed (chain mode or apex chain effect)
+        if (mode === 'chain' || (mode === 'apex' && apexEffect === 'chain')) {
             this.tracer = new WordTracer(this.board.field, dictionary);
         }
 
@@ -788,20 +877,30 @@ class Game {
         const cy = this.renderer.displayHeight / 2;
 
         // Check if this is the final level of any mode (level 14)
-        const finalLevels = ['simple_14', 'clear_14', 'chain_14', 'illuminate_14'];
+        const finalLevels = ['simple_14', 'clear_14', 'chain_14', 'illuminate_14', 'apex_14'];
         const isFinalLevel = finalLevels.includes(this.levelData.id);
         if (!this.player.celebratedModes) this.player.celebratedModes = [];
         const alreadyCelebrated = this.player.celebratedModes.includes(this.board.mode);
         this.isUltimateVictory = isFinalLevel && !alreadyCelebrated;
 
         if (isFinalLevel) {
-            // Unlock the next mode
-            const modeOrder = ['simple', 'clear', 'chain', 'illuminate'];
+            // Unlock the next mode (apex requires score threshold)
+            const modeOrder = ['simple', 'clear', 'chain', 'illuminate', 'apex'];
             const idx = modeOrder.indexOf(this.board.mode);
             if (idx >= 0 && idx < modeOrder.length - 1) {
                 const nextMode = modeOrder[idx + 1];
                 if (!this.player.unlockedModes) this.player.unlockedModes = ['simple'];
-                if (!this.player.unlockedModes.includes(nextMode)) {
+                // Apex unlock requires score threshold
+                if (nextMode === 'apex') {
+                    if (this.player.totalScore >= APEX_UNLOCK_SCORE) {
+                        if (!this.player.unlockedModes.includes('apex')) {
+                            this.player.unlockedModes.push('apex');
+                        }
+                    } else {
+                        // Flag for gauntlet entry after victory overlay
+                        this.enterGauntlet = true;
+                    }
+                } else if (!this.player.unlockedModes.includes(nextMode)) {
                     this.player.unlockedModes.push(nextMode);
                 }
             }
@@ -810,6 +909,20 @@ class Game {
                 this.player.celebratedModes.push(this.board.mode);
             }
             saveProfile(this.player);
+        }
+
+        // General apex unlock check — works during gauntlet, replays, or any victory
+        if (!this.player.unlockedModes.includes('apex') &&
+            this.player.celebratedModes.includes('illuminate') &&
+            this.player.totalScore >= APEX_UNLOCK_SCORE) {
+            this.player.unlockedModes.push('apex');
+            if (this.isInGauntlet) {
+                this.isInGauntlet = false;
+                this.player.isInGauntlet = false;
+            }
+            saveProfile(this.player);
+            this.apexJustUnlocked = true;
+            this.isUltimateVictory = true;  // Trigger celebration
         }
 
         if (this.isUltimateVictory) {
@@ -833,7 +946,7 @@ class Game {
     _handleDefeat() {
         this._clearBoardState();
         // Find solution words filtered by objectives
-        const maxSolutions = this.board.mode === 'illuminate' ? 999 : 12;
+        const maxSolutions = (this.board.mode === 'illuminate' || this.board.mode === 'apex') ? 999 : 12;
         let solutions = this.board.field.findWordsWithPaths(dictionary, maxSolutions);
 
         const objectives = this.levelData.objectives.filter(o => o.isPrimary !== false);
@@ -915,7 +1028,7 @@ class Game {
             return;
         }
 
-        const modeBadge = { simple: '\uD83C\uDF31', clear: '\uD83E\uDDF9', chain: '\uD83D\uDD17', illuminate: '\uD83D\uDCA1' };
+        const modeBadge = { simple: '\uD83C\uDF31', clear: '\uD83E\uDDF9', chain: '\uD83D\uDD17', illuminate: '\uD83D\uDCA1', apex: '\uD83D\uDC51' };
         const playerId = getPlayerId();
 
         let html = '<table class="leaderboard-table">';
@@ -1485,6 +1598,11 @@ class Game {
             cooldownUntil: this.cooldownUntil,
             hasMovesInProgress: this._hasMovesInProgress(),
             isUltimateVictory: this.isUltimateVictory || false,
+            isInGauntlet: this.isInGauntlet || false,
+            apexJustUnlocked: this.apexJustUnlocked || false,
+            gauntletTarget: APEX_UNLOCK_SCORE,
+            hasIlluminateObjective: this.objectives && this.objectives.allObjectives
+                && this.objectives.allObjectives.some(o => o.type === 'illuminatePercent' || o.type === 'useAllCells'),
             audioEnabled: this.audio.enabled,
             themeMode: this.themeMode
         };

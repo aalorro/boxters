@@ -2,7 +2,7 @@
 
 ## Overview
 
-Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.2.1**.
+Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.3.0**.
 
 ## Key Commands
 
@@ -18,9 +18,9 @@ There are no tests, linters, or build scripts. Changes take effect on browser re
 
 The script tag in `index.html` uses a query string for cache busting:
 ```html
-<script type="module" src="js/main.js?v=69">
+<script type="module" src="js/main.js?v=88">
 ```
-**Bump the version number** after any JS change to ensure browsers pick up the new code. Same for `style.css?v=24`.
+**Bump the version number** after any JS change to ensure browsers pick up the new code. Same for `style.css?v=30`.
 
 ## Architecture
 
@@ -33,7 +33,7 @@ The script tag in `index.html` uses a query string for cache busting:
 | `js/main.js` | Game class — state machine, game loop, event wiring, all game logic, board persistence |
 | `js/renderer.js` | All canvas drawing — board, hexes, UI bar, tooltips, overlays, ghost board, version footer |
 | `js/input.js` | InputManager — pointer events, tracing, hover, button hit detection |
-| `js/levels.js` | LEVEL_DATA array (56 levels), board generation (random + word-first), `loadLevel()`, `loadLevelWithBoard()` |
+| `js/levels.js` | LEVEL_DATA array (70 levels across 5 modes), board generation (random + word-first), `loadLevel()`, `loadLevelWithBoard()` |
 | `js/board.js` | Data structures: HexCell, Field (hex grid), Board (game state) |
 | `js/hex.js` | Hex math — axial coordinates, pixel conversion, neighbor calculation, spiral generation |
 | `js/scoring.js` | `calculateLevelScore()`, `calculateMoveScore()`, `getStars()` |
@@ -51,13 +51,14 @@ The script tag in `index.html` uses a query string for cache busting:
 | `sfx/` | MP3 sound effects — `fails01-03.MP3` (defeat), `clapping01-03.MP3` (victory), `victory.mp3` (mode completion) |
 
 ### Game States
-`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN`
+`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN → GAUNTLET_INTRO → APEX_UNLOCK`
 
 ### Game Modes
 - **simple** — form words, tiles persist
 - **clear** — form words, tiles removed; clusters <3 auto-clear
 - **chain** — tiles get new letters after each word; overlap positions for combos
 - **illuminate** — tiles light up permanently when used; cover all to win
+- **apex** — each word triggers a random effect (clear/chain/illuminate); mixed objectives; unlocked after illuminate + 20k score
 
 ### Hex System
 Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells, radius 1), hex2 (19 cells, radius 2), hex3 (37 cells, radius 3).
