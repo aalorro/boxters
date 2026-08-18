@@ -5,6 +5,26 @@ All notable changes to Boxters will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-08-18
+
+### Added
+- **Apex mode** — The 5th and ultimate game mode. Each word triggers a random effect (clear, chain, or illuminate). Players must adapt to unpredictable tile behaviors while completing mixed objectives.
+- **14 Apex levels** — From "First Contact" (hex2) to "Transcendence" (hex3), with progressively harder objectives combining anchors, illuminate percentages, combos, and long words.
+- **Gauntlet system** — Players who complete Illuminate but haven't reached 20,000 total score enter a gauntlet of random high-level games (level 7+) from any mode. Scores accumulate until the threshold is reached.
+- **Apex unlock celebration** — Special purple-themed overlay with crown emoji and confetti when Apex mode is unlocked.
+- **Dictionary words** — Added fest, bestie, besties, bff.
+
+### Changed
+- **Anchor freedom in Apex** — Once the anchor objective is met, remaining words no longer need to pass through anchors (Apex mode only).
+- **Apex illumination** — All words in Apex mode always illuminate tiles first, then apply the random effect. This ensures illuminate% objectives are achievable.
+- **HUD improvements** — % lit counter only shows when there's an illuminatePercent objective. Combo and % lit stack vertically when both active.
+- **Tutorial updates** — Apex anchor levels explain that words are free after anchor objective is met.
+- **Version footer** — Updated to v1.3.0.
+
+### Fixed
+- **Touch dead zone on hex3 boards** — Hidden solution modal's child element (`pointer-events: auto`) was intercepting touches at the bottom of the screen. Added `visibility: hidden` to all hidden overlays.
+- **Premature level completion** — Apex levels 8 and 11 had secondary objectives that didn't block victory. All objectives are now primary.
+
 ## [1.2.1] - 2026-08-16
 
 ### Added
