@@ -5,7 +5,7 @@ export function calculateMoveScore(word, tier, comboCount = 0) {
     for (const ch of word.toUpperCase()) {
         letterScore += LETTER_VALUES[ch] || 5;
     }
-    if (tier === 'chain' && comboCount > 0) {
+    if ((tier === 'chain' || tier === 'apex') && comboCount > 0) {
         const comboMult = COMBO.multipliers[Math.min(comboCount, COMBO.maxCombo)];
         letterScore = Math.floor(letterScore * comboMult);
     }

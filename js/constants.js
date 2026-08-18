@@ -3,7 +3,8 @@ export const MODES = {
     SIMPLE: 'simple',
     CLEAR: 'clear',
     CHAIN: 'chain',
-    ILLUMINATE: 'illuminate'
+    ILLUMINATE: 'illuminate',
+    APEX: 'apex'
 };
 
 // Chain mode combo multipliers
@@ -33,7 +34,8 @@ const DARK_THEME = {
         simple: { accent: '#ffd700', glow: 'rgba(255, 215, 0, 0.6)' },
         clear: { accent: '#ef4444', glow: 'rgba(239, 68, 68, 0.5)' },
         chain: { accent: '#4ade80', glow: 'rgba(74, 222, 128, 0.5)', combo: '#22c55e' },
-        illuminate: { accent: '#f59e0b', glow: 'rgba(245, 158, 11, 0.6)', lit: 'rgba(255, 215, 0, 0.25)' }
+        illuminate: { accent: '#f59e0b', glow: 'rgba(245, 158, 11, 0.6)', lit: 'rgba(255, 215, 0, 0.25)' },
+        apex: { accent: '#e879f9', glow: 'rgba(232, 121, 249, 0.6)', lit: 'rgba(232, 121, 249, 0.25)' }
     },
     canvas: {
         overlayDim: 'rgba(5, 5, 32, 0.7)', overlayDimLight: 'rgba(5, 5, 32, 0.45)',
@@ -82,7 +84,8 @@ const LIGHT_THEME = {
         simple: { accent: '#ff8c00', glow: 'rgba(255, 140, 0, 0.5)' },
         clear: { accent: '#e53e3e', glow: 'rgba(229, 62, 62, 0.4)' },
         chain: { accent: '#22c55e', glow: 'rgba(34, 197, 94, 0.4)', combo: '#16a34a' },
-        illuminate: { accent: '#f59e0b', glow: 'rgba(245, 158, 11, 0.5)', lit: 'rgba(255, 200, 50, 0.3)' }
+        illuminate: { accent: '#f59e0b', glow: 'rgba(245, 158, 11, 0.5)', lit: 'rgba(255, 200, 50, 0.3)' },
+        apex: { accent: '#a855f7', glow: 'rgba(168, 85, 247, 0.5)', lit: 'rgba(168, 85, 247, 0.3)' }
     },
     canvas: {
         overlayDim: 'rgba(255, 255, 255, 0.75)', overlayDimLight: 'rgba(255, 255, 255, 0.5)',
@@ -155,8 +158,8 @@ export const LETTER_VALUES = {
 
 // Scoring
 export const SCORING = {
-    baseTier: { simple: 50, clear: 60, chain: 70, illuminate: 80 },
-    multiplierTier: { simple: 1.0, clear: 1.2, chain: 1.4, illuminate: 1.6 },
+    baseTier: { simple: 50, clear: 60, chain: 70, illuminate: 80, apex: 90 },
+    multiplierTier: { simple: 1.0, clear: 1.2, chain: 1.4, illuminate: 1.6, apex: 1.8 },
     efficiencyPerMove: 15,
     secondaryCompletionBonus: 30,
     discoveryBonus: 5
@@ -180,5 +183,10 @@ export const STATES = {
     VICTORY: 'victory',
     DEFEAT: 'defeat',
     GAME_OVER: 'game_over',
-    COOLDOWN: 'cooldown'
+    COOLDOWN: 'cooldown',
+    GAUNTLET_INTRO: 'gauntlet_intro',
+    APEX_UNLOCK: 'apex_unlock'
 };
+
+// Apex mode unlock threshold
+export const APEX_UNLOCK_SCORE = 20000;

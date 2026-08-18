@@ -118,6 +118,10 @@ export class Renderer {
 
         if (gameState.state === 'victory') {
             this._drawVictoryOverlay(ctx, gameState);
+        } else if (gameState.state === 'apex_unlock') {
+            this._drawApexUnlockOverlay(ctx, gameState);
+        } else if (gameState.state === 'gauntlet_intro') {
+            this._drawGauntletIntroOverlay(ctx, gameState);
         } else if (gameState.state === 'game_over') {
             this._drawGameOverOverlay(ctx, gameState);
         } else if (gameState.state === 'defeat') {
@@ -167,7 +171,7 @@ export class Renderer {
 
         const isInTrace = gameState.tracer && gameState.tracer.path.some(c => c.key === cell.key);
         const mode = gameState.board ? gameState.board.mode : 'simple';
-        const isLastWordCell = mode === 'chain' && gameState.board &&
+        const isLastWordCell = (mode === 'chain' || mode === 'apex') && gameState.board &&
             gameState.board.lastWordCellKeys && gameState.board.lastWordCellKeys.has(cell.key);
 
         // Draw hex background
@@ -184,8 +188,8 @@ export class Renderer {
         } else if (isLastWordCell) {
             const pulse = 0.12 + 0.06 * Math.sin(this.time * 3);
             ctx.fillStyle = COLORS.hex.chainPulse.replace('0.5)', `${pulse})`);
-        } else if (cell.isIlluminated && mode === 'illuminate') {
-            ctx.fillStyle = COLORS.modes.illuminate.lit;
+        } else if (cell.isIlluminated && (mode === 'illuminate' || mode === 'apex')) {
+            ctx.fillStyle = (COLORS.modes[mode] && COLORS.modes[mode].lit) || COLORS.modes.illuminate.lit;
         } else if (cell.isIlluminated) {
             ctx.fillStyle = COLORS.hex.illuminatedFill;
         } else {
@@ -369,7 +373,11 @@ export class Renderer {
         const lvlNum = gameState.modeLevelNum || '';
         ctx.font = "16px 'Inter', sans-serif";
         ctx.fillStyle = modeColor;
-        ctx.fillText(`${mode.toUpperCase()}${lvlNum ? ` (LVL ${lvlNum})` : ''}`, padding, 56);
+        if (gameState.isInGauntlet) {
+            ctx.fillText(`GAUNTLET — ${mode.toUpperCase()} LVL ${lvlNum}`, padding, 56);
+        } else {
+            ctx.fillText(`${mode.toUpperCase()}${lvlNum ? ` (LVL ${lvlNum})` : ''}`, padding, 56);
+        }
 
         // Right column — all right-aligned
         ctx.textAlign = 'right';
@@ -403,20 +411,34 @@ export class Renderer {
         // Mode-specific HUD elements (center area)
         if (gameState.board) {
             ctx.textAlign = 'center';
-            if (mode === 'chain' && gameState.board.comboCount > 0) {
+            // In apex mode, show both combo and % lit side by side
+            const hasCombo = (mode === 'chain' || mode === 'apex') && gameState.board.comboCount > 0;
+            const hasLitPct = (mode === 'illuminate' || mode === 'apex') && gameState.hasIlluminateObjective;
+
+            if (hasCombo && hasLitPct) {
+                // Apex: % lit on top line, combo below
+                const allCells = gameState.board.field.getAllCells();
+                const illuminated = allCells.filter(c => c.isIlluminated).length;
+                const pct = Math.floor((illuminated / allCells.length) * 100);
+                const comboMult = COMBO.multipliers[Math.min(gameState.board.comboCount, COMBO.maxCombo)];
+                ctx.textAlign = 'center';
+                ctx.font = "18px 'Inter', sans-serif";
+                ctx.fillStyle = (COLORS.modes[mode] && COLORS.modes[mode].accent) || COLORS.modes.illuminate.accent;
+                ctx.fillText(`${pct}% lit`, this.displayWidth / 2, 48);
+                ctx.font = "bold 16px 'Inter', sans-serif";
+                ctx.fillStyle = COLORS.modes.chain?.combo || COLORS.modes.chain.accent;
+                ctx.fillText(`COMBO x${comboMult}`, this.displayWidth / 2, 66);
+            } else if (hasCombo) {
                 ctx.font = "bold 20px 'Inter', sans-serif";
-                ctx.fillStyle = COLORS.modes.chain.combo;
+                ctx.fillStyle = COLORS.modes.chain?.combo || COLORS.modes.chain.accent;
                 const comboMult = COMBO.multipliers[Math.min(gameState.board.comboCount, COMBO.maxCombo)];
                 ctx.fillText(`COMBO x${comboMult}`, this.displayWidth / 2, 56);
-            }
-
-            if (mode === 'illuminate') {
+            } else if (hasLitPct) {
                 const allCells = gameState.board.field.getAllCells();
                 const illuminated = allCells.filter(c => c.isIlluminated).length;
                 const pct = Math.floor((illuminated / allCells.length) * 100);
                 ctx.font = "18px 'Inter', sans-serif";
-                ctx.fillStyle = COLORS.modes.illuminate.accent;
-                ctx.textAlign = 'center';
+                ctx.fillStyle = (COLORS.modes[mode] && COLORS.modes[mode].accent) || COLORS.modes.illuminate.accent;
                 ctx.fillText(`${pct}% lit`, this.displayWidth / 2, 56);
             }
 
@@ -646,13 +668,15 @@ export class Renderer {
                 simple: 'WORD MASTER',
                 clear: 'BOARD SWEEPER',
                 chain: 'CHAIN LEGEND',
-                illuminate: 'MASTER OF LIGHT'
+                illuminate: 'MASTER OF LIGHT',
+                apex: 'APEX LEGEND'
             };
             const subtitles = {
                 simple: 'You have conquered every Simple challenge!',
                 clear: 'You have swept every Clear challenge!',
                 chain: 'You have chained every Chain challenge!',
-                illuminate: 'You have conquered every Illuminate challenge!'
+                illuminate: 'You have conquered every Illuminate challenge!',
+                apex: 'You have mastered every Apex challenge!'
             };
             const accent = COLORS.modes[mode]?.accent || '#ffd700';
             const glow = COLORS.modes[mode]?.glow || 'rgba(255, 215, 0, 0.8)';
@@ -687,7 +711,7 @@ export class Renderer {
             ctx.fillStyle = COLORS.ui.textDim;
             ctx.fillText('Click anywhere to continue', centerX, centerY + 130);
         } else {
-            const modeNames = { simple: 'COMPLETE', clear: 'CLEARED', chain: 'CHAINED', illuminate: 'ILLUMINATED' };
+            const modeNames = { simple: 'COMPLETE', clear: 'CLEARED', chain: 'CHAINED', illuminate: 'ILLUMINATED', apex: 'APEX!' };
             const mode = gameState.board?.mode || 'simple';
 
             ctx.font = "bold 54px 'Cinzel', serif";
@@ -792,7 +816,7 @@ export class Renderer {
 
     _drawBoardGhost(ctx, board) {
         const field = board.field;
-        const isIlluminate = board.mode === 'illuminate';
+        const isIlluminate = board.mode === 'illuminate' || board.mode === 'apex';
         ctx.save();
         for (const cell of field.getAllCells()) {
             if (cell.isCleared) continue;
@@ -880,6 +904,105 @@ export class Renderer {
             ctx.fillStyle = COLORS.ui.accent;
             ctx.fillText('Click anywhere to continue', centerX, centerY + 10);
         }
+    }
+
+    _drawGauntletIntroOverlay(ctx, gameState) {
+        ctx.fillStyle = COLORS.canvas.overlayDimHeavy;
+        ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
+
+        const centerX = this.displayWidth / 2;
+        const centerY = this.displayHeight / 2;
+        const pulse = 0.5 + 0.5 * Math.sin(this.time * 2);
+
+        // Title
+        ctx.font = "bold 40px 'Cinzel', serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#e879f9';
+        ctx.shadowBlur = 20 + 8 * pulse;
+        ctx.shadowColor = 'rgba(232, 121, 249, 0.7)';
+        ctx.fillText('THE GAUNTLET', centerX, centerY - 90);
+        ctx.shadowBlur = 0;
+
+        // Subtitle
+        ctx.font = "18px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.text;
+        ctx.globalAlpha = 0.85;
+        ctx.fillText('Prove your worth to unlock Apex mode!', centerX, centerY - 40);
+        ctx.globalAlpha = 1;
+
+        // Progress bar
+        const currentScore = gameState.totalScore || 0;
+        const target = gameState.gauntletTarget || 20000;
+        const progress = Math.min(1, currentScore / target);
+        const barW = 220;
+        const barH = 18;
+        const barX = centerX - barW / 2;
+        const barY = centerY - 5;
+
+        ctx.strokeStyle = 'rgba(232, 121, 249, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW, barH, 9);
+        ctx.stroke();
+
+        if (progress > 0) {
+            ctx.fillStyle = '#e879f9';
+            ctx.beginPath();
+            ctx.roundRect(barX, barY, barW * progress, barH, 9);
+            ctx.fill();
+        }
+
+        // Score text
+        ctx.font = "bold 16px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.text;
+        ctx.fillText(`${currentScore.toLocaleString()} / ${target.toLocaleString()}`, centerX, barY + barH + 25);
+
+        // Instruction
+        ctx.font = "14px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.textDim;
+        ctx.fillText('Random high-level challenges from all modes', centerX, centerY + 60);
+
+        // Click prompt
+        ctx.font = "21px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.accent;
+        ctx.fillText('Click to begin', centerX, centerY + 110);
+    }
+
+    _drawApexUnlockOverlay(ctx, gameState) {
+        ctx.fillStyle = COLORS.canvas.overlayDim;
+        ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
+
+        const centerX = this.displayWidth / 2;
+        const centerY = this.displayHeight / 2;
+        const pulse = 0.5 + 0.5 * Math.sin(this.time * 3);
+
+        // Crown emoji
+        ctx.font = "60px sans-serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('\uD83D\uDC51', centerX, centerY - 100);
+
+        // Title with purple glow
+        ctx.font = "bold 38px 'Cinzel', serif";
+        ctx.fillStyle = '#e879f9';
+        ctx.shadowBlur = 30 + 15 * pulse;
+        ctx.shadowColor = 'rgba(232, 121, 249, 0.8)';
+        ctx.fillText('APEX MODE UNLOCKED!', centerX, centerY - 30);
+        ctx.shadowBlur = 0;
+
+        // Subtitle
+        ctx.font = "20px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.text;
+        ctx.globalAlpha = 0.85;
+        ctx.fillText('You have proven your worth.', centerX, centerY + 20);
+        ctx.fillText('The ultimate challenge awaits.', centerX, centerY + 50);
+        ctx.globalAlpha = 1;
+
+        // Click prompt
+        ctx.font = "21px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.textDim;
+        ctx.fillText('Click anywhere to continue', centerX, centerY + 110);
     }
 
     _drawFeedback(ctx, message, timer) {

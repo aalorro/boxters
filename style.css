@@ -44,6 +44,7 @@ html, body {
 .overlay.hidden {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
 }
 
 #loading-screen {
@@ -64,6 +65,7 @@ html, body {
 #loading-screen.hidden {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .title {
@@ -226,6 +228,7 @@ html, body {
 #solution-modal.hidden {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
 }
 
 .solution-panel {
