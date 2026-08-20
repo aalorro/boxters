@@ -432,6 +432,7 @@ class Game {
         this.levelData = result.levelData;
         this.levelIndex = index;
         this.score = 0;
+        if (this.levelData.apexWeights) this.board.apexWeights = this.levelData.apexWeights;
 
         // Save current level for resume, and track highest reached
         // Skip progress update for shared board loads beyond player's highest level
@@ -1497,6 +1498,7 @@ class Game {
         board.maxMoves = snapshot.maxMoves;
         board.comboCount = snapshot.comboCount || 0;
         board.lastWordCellKeys = new Set(snapshot.lastWordCellKeys || []);
+        if (this.levelData.apexWeights) board.apexWeights = this.levelData.apexWeights;
 
         // Restore cell state
         for (const saved of snapshot.cells) {

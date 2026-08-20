@@ -140,6 +140,7 @@ export class Board {
         this.comboCount = 0;
         this.lastWordCellKeys = new Set();
         this.lastApexEffect = null;
+        this.apexWeights = null; // optional { clear, chain, illuminate } weights
     }
 
     executeMove(word, path) {
@@ -199,8 +200,15 @@ export class Board {
                 break;
 
             case 'apex': {
-                const effects = ['clear', 'chain', 'illuminate'];
-                const chosenEffect = effects[Math.floor(Math.random() * 3)];
+                let chosenEffect;
+                if (this.apexWeights) {
+                    const r = Math.random();
+                    const w = this.apexWeights;
+                    chosenEffect = r < w.clear ? 'clear' : r < w.clear + w.chain ? 'chain' : 'illuminate';
+                } else {
+                    const effects = ['clear', 'chain', 'illuminate'];
+                    chosenEffect = effects[Math.floor(Math.random() * 3)];
+                }
                 this.lastApexEffect = chosenEffect;
 
                 // All tiles are always illuminated first (counts toward % lit)
