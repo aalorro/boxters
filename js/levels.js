@@ -731,7 +731,8 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_10', name: 'Cataclysm', mode: 'apex', tier: 'apex',
-        maxMoves: 8, scoreMult: 0.92, twoStarTarget: 580, threeStarTarget: 880,
+        maxMoves: 9, scoreMult: 0.92, twoStarTarget: 580, threeStarTarget: 880,
+        apexWeights: { clear: 0.25, chain: 0.45, illuminate: 0.30 },
         tutorial: { message: 'Combos + illumination together. Chain effects on overlapping paths give combos AND might illuminate cells.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -743,6 +744,7 @@ const LEVEL_DATA = [
     {
         id: 'apex_11', name: 'Maelstrom', mode: 'apex', tier: 'apex',
         maxMoves: 8, scoreMult: 0.95, twoStarTarget: 620, threeStarTarget: 940,
+        apexWeights: { clear: 0.20, chain: 0.40, illuminate: 0.40 },
         tutorial: { message: 'Three anchors, combos required, and tight moves. Once all anchors are illuminated, remaining words are free. This is where Apex gets real.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
@@ -763,7 +765,8 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_13', name: 'Oblivion', mode: 'apex', tier: 'apex',
-        maxMoves: 7, scoreMult: 0.98, twoStarTarget: 700, threeStarTarget: 1060,
+        maxMoves: 9, scoreMult: 0.98, twoStarTarget: 700, threeStarTarget: 1060,
+        apexWeights: { clear: 0.15, chain: 0.50, illuminate: 0.35 },
         tutorial: { message: 'Four anchors, x3 combo, 5+ letter words. Once all anchors are lit, you\'re free. The penultimate Apex challenge.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 4 },
         objectives: [
