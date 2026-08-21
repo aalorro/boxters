@@ -778,7 +778,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_14', name: 'Transcendence', mode: 'apex', tier: 'apex',
-        maxMoves: 7, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
+        maxMoves: 8, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
         apexWeights: { clear: 0.05, chain: 0.65, illuminate: 0.30 },
         tutorial: { message: 'The ultimate challenge. 80% illumination, 6+ letter words, x3 combos. You are the Apex.' },
         layout: { shape: 'hex3', cellTypes: {} },
