@@ -1,6 +1,7 @@
 import { hexSpiral, hexKey, getNeighbors } from './hex.js';
 import { HexCell, Field, Board } from './board.js';
 import { dictionary, WORD_LIST } from './dictionary.js';
+import { BOARD_WORDS } from './common-words.js';
 
 // Seeded PRNG (mulberry32)
 function createRNG(seed) {
@@ -766,7 +767,7 @@ const LEVEL_DATA = [
     {
         id: 'apex_13', name: 'Oblivion', mode: 'apex', tier: 'apex',
         maxMoves: 9, scoreMult: 0.98, twoStarTarget: 700, threeStarTarget: 1060,
-        apexWeights: { clear: 0.15, chain: 0.50, illuminate: 0.35 },
+        apexWeights: { clear: 0.10, chain: 0.65, illuminate: 0.25 },
         tutorial: { message: 'Four anchors, x3 combo, 5+ letter words. Once all anchors are lit, you\'re free. The penultimate Apex challenge.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 4 },
         objectives: [
@@ -778,6 +779,7 @@ const LEVEL_DATA = [
     {
         id: 'apex_14', name: 'Transcendence', mode: 'apex', tier: 'apex',
         maxMoves: 7, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
+        apexWeights: { clear: 0.05, chain: 0.65, illuminate: 0.30 },
         tutorial: { message: 'The ultimate challenge. 80% illumination, 6+ letter words, x3 combos. You are the Apex.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -815,10 +817,31 @@ function pickRandomAnchors(positions, count, rng) {
 
 // ── Word-first board generation (Simple mode) ──────────────────
 
-// Pick candidate words from dictionary matching length requirements
+// Pick candidate words — prefer common everyday words, rarely use obscure ones
+const COMMON_SET = new Set(BOARD_WORDS);
 function pickCandidateWords(minLength, maxLength, count, rng) {
-    const filtered = WORD_LIST.filter(w => w.length >= minLength && w.length <= maxLength);
-    return shuffle(filtered, rng).slice(0, count);
+    const common = BOARD_WORDS.filter(w => w.length >= minLength && w.length <= maxLength);
+    const shuffled = shuffle(common, rng);
+
+    // ~5% chance to swap one candidate for an uncommon word (for variety)
+    if (shuffled.length >= count && rng() < 0.05) {
+        const all = WORD_LIST.filter(w => w.length >= minLength && w.length <= maxLength && !COMMON_SET.has(w));
+        if (all.length > 0) {
+            const idx = Math.floor(rng() * all.length);
+            shuffled[shuffled.length - 1] = all[idx];
+        }
+    }
+
+    const result = shuffled.slice(0, count);
+
+    // If not enough common words, fill from full dictionary
+    if (result.length < count) {
+        const used = new Set(result);
+        const extra = WORD_LIST.filter(w => w.length >= minLength && w.length <= maxLength && !used.has(w));
+        result.push(...shuffle(extra, rng).slice(0, count - result.length));
+    }
+
+    return result;
 }
 
 // Try to place a single word on the grid as an adjacent hex path
