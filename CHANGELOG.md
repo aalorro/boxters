@@ -5,6 +5,12 @@ All notable changes to Boxters will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-08-21
+
+### Changed
+- **Apex level 14** — Increased moves from 7 to 8 for better balance.
+- **Version footer** — Updated to v1.3.1.
+
 ## [1.3.0] - 2026-08-18
 
 ### Added

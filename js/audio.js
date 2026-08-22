@@ -12,6 +12,8 @@ export class AudioManager {
         this.failBuffers = [];
         this.clapBuffers = [];
         this.victoryBuffer = null;
+        this.puzzleBuffer = null;
+        this._puzzleSource = null;
     }
 
     init() {
@@ -25,6 +27,7 @@ export class AudioManager {
             this._loadFailSfx();
             this._loadClapSfx();
             this._loadVictorySfx();
+            this._loadPuzzleSfx();
         } catch (e) {
             this.enabled = false;
         }
@@ -58,6 +61,33 @@ export class AudioManager {
             .then(buf => this.ctx.decodeAudioData(buf))
             .then(decoded => { this.victoryBuffer = decoded; })
             .catch(() => {});
+    }
+
+    _loadPuzzleSfx() {
+        fetch('sfx/puzzle.mp3')
+            .then(r => r.arrayBuffer())
+            .then(buf => this.ctx.decodeAudioData(buf))
+            .then(decoded => { this.puzzleBuffer = decoded; })
+            .catch(() => {});
+    }
+
+    playPuzzleLoop() {
+        if (!this.enabled || !this.initialized || !this.puzzleBuffer) return;
+        this.stopPuzzleLoop();
+        this.resume();
+        const source = this.ctx.createBufferSource();
+        source.buffer = this.puzzleBuffer;
+        source.loop = true;
+        source.connect(this.masterGain);
+        source.start();
+        this._puzzleSource = source;
+    }
+
+    stopPuzzleLoop() {
+        if (this._puzzleSource) {
+            try { this._puzzleSource.stop(); } catch (e) {}
+            this._puzzleSource = null;
+        }
     }
 
     resume() {

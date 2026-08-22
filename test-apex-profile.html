@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head><title>Inject Apex Test Profile</title></head>
+<body>
+<h2>Apex Level 14 — Auto-Win Test</h2>
+<p>Click the button, then open <a href="index.html">Boxters</a>. When the Apex level 14 board loads, just <strong>double-click anywhere on the board</strong> to instantly trigger the victory celebration.</p>
+<button id="inject" style="font-size:18px; padding:12px 24px; cursor:pointer;">Inject Test Profile</button>
+<button id="remove" style="font-size:18px; padding:12px 24px; cursor:pointer; margin-left:12px; background:#f44; color:white; border:none; border-radius:4px;">Remove Debug Hook</button>
+<pre id="output" style="margin-top:16px; background:#222; color:#0f0; padding:16px; border-radius:8px; max-height:500px; overflow:auto;"></pre>
+<script>
+document.getElementById('inject').onclick = function() {
+    const profile = {
+        name: "TestApex",
+        createdAt: "2026-08-01T00:00:00.000Z",
+        totalScore: 45000,
+        bestScore: 1200,
+        levelsCompleted: 69,
+        gamesPlayed: 80,
+        currentLevels: { simple: 13, clear: 27, chain: 41, illuminate: 55, apex: 69 },
+        highestLevels: { simple: 13, clear: 27, chain: 41, illuminate: 55, apex: 69 },
+        unlockedModes: ["simple", "clear", "chain", "illuminate", "apex"],
+        celebratedModes: ["simple", "clear", "chain", "illuminate"],
+        cooldownUntil: null,
+        sessionActive: false,
+        isInGauntlet: false,
+        lastMode: "apex",
+        gender: "",
+        ageGroup: ""
+    };
+
+    localStorage.setItem('boxters_player', JSON.stringify(profile));
+    localStorage.removeItem('boxters_board_state_apex');
+
+    // Set debug flag so main.js knows to enable the double-click cheat
+    localStorage.setItem('boxters_debug_autowin', 'true');
+
+    document.getElementById('output').textContent =
+        'Profile injected with auto-win debug hook!\n\n' +
+        'Now open index.html and click Play.\n' +
+        'Double-click anywhere on the board to instantly win.\n\n' +
+        'Click "Remove Debug Hook" when done testing.';
+};
+
+document.getElementById('remove').onclick = function() {
+    localStorage.removeItem('boxters_debug_autowin');
+    document.getElementById('output').textContent = 'Debug hook removed. Game will play normally.';
+};
+</script>
+</body>
+</html>

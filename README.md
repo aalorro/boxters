@@ -1,6 +1,6 @@
 # Boxters
 
-A word puzzle game where you trace paths across a hexagonal board to form words. Challenge yourself across four unique game modes, each with its own twist on word-finding strategy.
+A word puzzle game where you trace paths across a hexagonal board to form words. Challenge yourself across five unique game modes, each with its own twist on word-finding strategy.
 
 Built with HTML5 Canvas. No frameworks, no dependencies, no build tools.
 
@@ -14,6 +14,7 @@ Drag through adjacent hexagonal tiles to spell words. Each tile can only be used
 - **Clear** — Sweep the board clean. Each word removes its tiles. Small leftover clusters (1-2 tiles) are auto-cleared.
 - **Chain** — Form words one at a time. Used tiles get new random letters and pulse blue. Reuse those tile positions in your next word to build combos (up to 4x multiplier).
 - **Illuminate** — Light up the board by using tiles in words. Cover every tile to win.
+- **Apex** — The ultimate challenge. Each word triggers a random effect (clear, chain, or illuminate). Adapt your strategy on the fly while completing mixed objectives. Unlocked after completing Illuminate with 20,000+ total score.
 
 ### Anchors
 
@@ -25,7 +26,7 @@ Tap the share button (bottom-right of the board) to copy a link. Anyone who open
 
 ### Leaderboard
 
-Tap the trophy icon on the welcome screen to view the global leaderboard. Scores are stored in Firebase Firestore and sync across devices. Your entry is highlighted with a "YOU" badge. Mode badges show each player's highest unlocked mode (🌱 Simple, 🧹 Clear, 🔗 Chain, 💡 Illuminate).
+Tap the trophy icon on the welcome screen to view the global leaderboard. Scores are stored in Firebase Firestore and sync across devices. Your entry is highlighted with a "YOU" badge. Mode badges show each player's highest unlocked mode (🌱 Simple, 🧹 Clear, 🔗 Chain, 💡 Illuminate, 👑 Apex).
 
 ### Settings
 
@@ -76,7 +77,7 @@ boxters/
     main.js           # Game loop, state machine, event handling, board persistence
     renderer.js       # Canvas rendering (board, UI, effects, overlays, ghost board, version footer)
     input.js          # Pointer/touch input handling with pointer capture
-    levels.js         # 56 level definitions + board generation (word-first & retry-based)
+    levels.js         # 70 level definitions + board generation (word-first & retry-based)
     board.js          # HexCell, Field, Board data structures
     hex.js            # Hex math (axial coords, pixel conversion, neighbors, spiral)
     scoring.js        # Score calculation, star ratings
@@ -93,7 +94,7 @@ boxters/
 
 ### Game States
 
-`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN`
+`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN → GAUNTLET_INTRO → APEX_UNLOCK`
 
 ### Board Generation
 
@@ -105,6 +106,7 @@ Each game mode uses a tailored board generation strategy:
 | Clear | `buildBoardClearMode` | Dedicated generator for clearable boards |
 | Chain | `buildBoard` | Random letters (35% vowel floor) + solvability retry loop |
 | Illuminate | `buildBoardIlluminate` | Word-first + safe letter fills (excludes J/Q/V/X/Z) + solvability verification |
+| Apex | `buildBoardIlluminate` | Reuses illuminate generation; each word triggers a random effect (clear/chain/illuminate) |
 
 ### Hex System
 
