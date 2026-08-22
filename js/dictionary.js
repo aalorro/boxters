@@ -3551,7 +3551,7 @@ export const WORD_LIST = [
 "tawdrily","tawdry","tawed","tawer","tawers","tawie","tawing","tawney","tawneys","tawnier","tawnies","tawniest","tawnily","tawny","tawpie","tawpies","taws","tawse","tawsed","tawses",
 "tawsing","tax","taxa","taxable","taxables","taxably","taxation","taxed","taxeme","taxemes","taxemic","taxer","taxers","taxes","taxi","taxicab","taxicabs","taxied","taxies","taxiing",
 "taximan","taximen","taxing","taxingly","taxis","taxite","taxites","taxitic","taxiway","taxiways","taxless","taxman","taxmen","taxon","taxonomy","taxons","taxpaid","taxpayer","taxus","taxwise",
-"taxying","tazza","tazzas","tazze","tea","teaberry","teaboard","teabowl","teabowls","teabox","teaboxes","teacake","teacakes","teacart","teacarts","teach","teacher","teachers","teaches","teaching",
+"taxying","taze","tazed","tazes","tazing","tazza","tazzas","tazze","tea","teaberry","teaboard","teabowl","teabowls","teabox","teaboxes","teacake","teacakes","teacart","teacarts","teach","teacher","teachers","teaches","teaching",
 "teacup","teacups","teahouse","teak","teaks","teakwood","teal","tealike","teals","team","teamaker","teamed","teaming","teammate","teams","teamster","teamwork","teapot","teapots","teapoy",
 "teapoys","tear","tearable","tearaway","teardown","teardrop","teared","tearer","tearers","tearful","teargas","tearier","teariest","tearily","tearing","tearless","tearoom","tearooms","tears","teary",
 "teas","tease","teased","teasel","teaseled","teaseler","teasels","teaser","teasers","teases","teashop","teashops","teasing","teaspoon","teat","teated","teatime","teatimes","teats","teaware",
