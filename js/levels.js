@@ -780,11 +780,11 @@ const LEVEL_DATA = [
         id: 'apex_14', name: 'Transcendence', mode: 'apex', tier: 'apex',
         maxMoves: 8, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
         apexWeights: { clear: 0.05, chain: 0.65, illuminate: 0.30 },
-        tutorial: { message: 'The ultimate challenge. 80% illumination, 6+ letter words, x3 combos. You are the Apex.' },
+        tutorial: { message: 'The ultimate challenge. 75% illumination, 6+ letter words, x3 combos. You are the Apex.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
-            { type: 'formWord', description: 'Form 5 words of 6+ letters', target: 5, params: { minLength: 6 } },
-            { type: 'illuminatePercent', description: 'Illuminate 80% of cells', target: 80, params: {} },
+            { type: 'formWord', description: 'Form 4 words of 6+ letters', target: 4, params: { minLength: 6 } },
+            { type: 'illuminatePercent', description: 'Illuminate 75% of cells', target: 75, params: {} },
             { type: 'achieveCombo', description: 'Achieve a x3 combo', target: 3, params: {} }
         ]
     }
@@ -1553,6 +1553,14 @@ function isBoardSolvable(board, data) {
     return true;
 }
 
+// Check if a board has too many uncommon words (> 5% of traceable words)
+function hasTooManyUncommonWords(board) {
+    const words = board.field.findWordsWithPaths(dictionary, 200);
+    if (words.length === 0) return false;
+    const uncommon = words.filter(w => !COMMON_SET.has(w.word.toLowerCase()));
+    return uncommon.length / words.length > 0.05;
+}
+
 // Build a board, retrying until solvable
 export function loadLevel(levelIndex) {
     if (levelIndex >= LEVEL_DATA.length) levelIndex = levelIndex % LEVEL_DATA.length;
@@ -1561,18 +1569,26 @@ export function loadLevel(levelIndex) {
 
     // Simple mode: word-first generation (guaranteed solvable)
     if (data.mode === 'simple') {
-        boardAttempt++;
-        const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
-        const board = buildBoardWordFirst(data, seed);
-        return { board, levelData: data, levelIndex };
+        let best = null;
+        for (let i = 0; i < 10; i++) {
+            boardAttempt++;
+            const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
+            best = buildBoardWordFirst(data, seed);
+            if (!hasTooManyUncommonWords(best)) break;
+        }
+        return { board: best, levelData: data, levelIndex };
     }
 
     // Clear mode: word-first with full coverage (non-overlapping paths)
     if (data.mode === 'clear') {
-        boardAttempt++;
-        const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
-        const board = buildBoardClearMode(data, seed);
-        return { board, levelData: data, levelIndex };
+        let best = null;
+        for (let i = 0; i < 10; i++) {
+            boardAttempt++;
+            const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
+            best = buildBoardClearMode(data, seed);
+            if (!hasTooManyUncommonWords(best)) break;
+        }
+        return { board: best, levelData: data, levelIndex };
     }
 
     // Apex mode: same generation as illuminate (word-first + safeLetter fills)
@@ -1583,7 +1599,7 @@ export function loadLevel(levelIndex) {
             boardAttempt++;
             const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
             const board = buildBoardIlluminate(data, seed);
-            if (board.field.allCellsCoverable(dictionary)) {
+            if (board.field.allCellsCoverable(dictionary) && !hasTooManyUncommonWords(board)) {
                 return { board, levelData: data, levelIndex };
             }
             const coverage = _countCoverableCells(board, dictionary);
@@ -1606,7 +1622,7 @@ export function loadLevel(levelIndex) {
             boardAttempt++;
             const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
             const board = buildBoardIlluminate(data, seed);
-            if (board.field.allCellsCoverable(dictionary)) {
+            if (board.field.allCellsCoverable(dictionary) && !hasTooManyUncommonWords(board)) {
                 return { board, levelData: data, levelIndex };
             }
             // Track board with best coverage for fallback
@@ -1633,7 +1649,7 @@ export function loadLevel(levelIndex) {
         const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
         const board = buildBoard(data, seed);
 
-        if (isBoardSolvable(board, data)) {
+        if (isBoardSolvable(board, data) && !hasTooManyUncommonWords(board)) {
             return { board, levelData: data, levelIndex };
         }
 

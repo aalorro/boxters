@@ -116,6 +116,17 @@ class Game {
         this._applyTheme(localStorage.getItem('boxters_theme') || 'dark');
         this._checkSharedBoardParams();
 
+        // DEBUG: double-click to auto-win (for testing celebrations)
+        if (localStorage.getItem('boxters_debug_autowin') === 'true') {
+            this.canvas.addEventListener('dblclick', () => {
+                if (this.state === STATES.PLAYING) {
+                    this.score = 950;
+                    this.totalScore = (this.player.totalScore || 0) + this.score;
+                    this._handleVictory();
+                }
+            });
+        }
+
         // Prevent browser refresh while a game is in progress (moves made)
         window.addEventListener('keydown', (e) => {
             if ((e.key === 'F5' || (e.ctrlKey && e.key === 'r')) && this._hasMovesInProgress()) {
@@ -480,6 +491,16 @@ class Game {
         this._loadLevel(level.index);
     }
 
+    _loadRandomChallenge() {
+        const modes = ['simple', 'clear', 'chain', 'illuminate', 'apex'];
+        const randomMode = modes[Math.floor(Math.random() * modes.length)];
+        const modeLevels = getLevelsForMode(randomMode);
+        const highLevels = modeLevels.filter((_, i) => i >= 5);
+        const level = highLevels[Math.floor(Math.random() * highLevels.length)];
+        this.selectedMode = randomMode;
+        this._loadLevel(level.index);
+    }
+
     // ── Input handlers ──────────────────────────────────────────
     _setupInputHandlers() {
         this.input.on('traceStart', (data) => {
@@ -630,6 +651,25 @@ class Game {
             // Defeat/game-over handled by solution modal
             if (this.state === STATES.GAME_OVER || this.state === STATES.DEFEAT) return;
 
+            if (this.state === STATES.GAME_COMPLETE) {
+                const btn = this.renderer.getGameCompleteButtonHit(data.pos.x, data.pos.y);
+                if (btn === 'play_any') {
+                    this.audio.stopPuzzleLoop();
+                    this.isApexComplete = false;
+                    if (this._confettiInterval) { clearInterval(this._confettiInterval); this._confettiInterval = null; }
+                    this.state = STATES.MENU;
+                    this._showWelcomeScreen();
+                } else if (btn === 'random') {
+                    this.audio.stopPuzzleLoop();
+                    this.isApexComplete = false;
+                    if (this._confettiInterval) { clearInterval(this._confettiInterval); this._confettiInterval = null; }
+                    this._loadRandomChallenge();
+                } else if (btn === 'leaderboard') {
+                    if (window.showInfoDialog) window.showInfoDialog('leaderboard');
+                }
+                return;
+            }
+
             if (this.state === STATES.APEX_UNLOCK) {
                 if (this.levelTransitionTimer <= 0) {
                     this.apexJustUnlocked = false;
@@ -664,6 +704,12 @@ class Game {
                                 this._confettiInterval = null;
                             }
                         }, 2000);
+                        return;
+                    }
+                    // Apex complete: transition to Game Complete screen
+                    if (this.isApexComplete) {
+                        this.isUltimateVictory = false;
+                        this.state = STATES.GAME_COMPLETE;
                         return;
                     }
                     // Check if entering gauntlet after illuminate completion
@@ -931,13 +977,18 @@ class Game {
             this.particles.emitVictoryBurst(cx, cy);
             this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
             this._confettiInterval = setInterval(() => {
-                if (this.state === STATES.VICTORY) {
+                if (this.state === STATES.VICTORY || this.state === STATES.GAME_COMPLETE) {
                     this.particles.emitConfetti(this.renderer.displayWidth, this.renderer.displayHeight);
                 } else {
                     clearInterval(this._confettiInterval);
                     this._confettiInterval = null;
                 }
             }, 2000);
+            // Apex mode completion: loop celebration music
+            if (this.board.mode === 'apex') {
+                this.isApexComplete = true;
+                this.audio.playPuzzleLoop();
+            }
         } else {
             this.audio.playVictory();
             this.particles.emitVictoryBurst(cx, cy);
@@ -1600,6 +1651,7 @@ class Game {
             cooldownUntil: this.cooldownUntil,
             hasMovesInProgress: this._hasMovesInProgress(),
             isUltimateVictory: this.isUltimateVictory || false,
+            isApexComplete: this.isApexComplete || false,
             isInGauntlet: this.isInGauntlet || false,
             apexJustUnlocked: this.apexJustUnlocked || false,
             gauntletTarget: APEX_UNLOCK_SCORE,

@@ -118,6 +118,8 @@ export class Renderer {
 
         if (gameState.state === 'victory') {
             this._drawVictoryOverlay(ctx, gameState);
+        } else if (gameState.state === 'game_complete') {
+            this._drawGameCompleteOverlay(ctx, gameState);
         } else if (gameState.state === 'apex_unlock') {
             this._drawApexUnlockOverlay(ctx, gameState);
         } else if (gameState.state === 'gauntlet_intro') {
@@ -1531,6 +1533,94 @@ export class Renderer {
         const dx = x - this._logoutBtnPos.x;
         const dy = y - this._logoutBtnPos.y;
         return (dx * dx + dy * dy) <= (this._logoutBtnPos.r + 8) * (this._logoutBtnPos.r + 8);
+    }
+
+    _drawGameCompleteOverlay(ctx, gameState) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
+
+        const cx = this.displayWidth / 2;
+        const cy = this.displayHeight / 2;
+        const pulse = 0.5 + 0.5 * Math.sin(this.time * 2);
+
+        // Crown emoji
+        ctx.font = "70px sans-serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('\uD83D\uDC51', cx, cy - 160);
+
+        // Title with gold glow
+        ctx.font = "bold 42px 'Cinzel', serif";
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowBlur = 30 + 15 * pulse;
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
+        ctx.fillText('GAME COMPLETE', cx, cy - 90);
+        ctx.shadowBlur = 0;
+
+        // Player name
+        ctx.font = "bold 26px 'Inter', sans-serif";
+        ctx.fillStyle = '#e879f9';
+        ctx.fillText(gameState.playerName || 'Player', cx, cy - 45);
+
+        // Total score
+        ctx.font = "22px 'Inter', sans-serif";
+        ctx.fillStyle = COLORS.ui.text;
+        ctx.fillText(`Total Score: ${gameState.totalScore || 0}`, cx, cy - 10);
+
+        // Screenshot prompt
+        ctx.font = "16px 'Inter', sans-serif";
+        ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
+        ctx.fillText('Screenshot this to save your badge!', cx, cy + 25);
+
+        // Draw 3 buttons
+        const btnW = 220;
+        const btnH = 44;
+        const btnGap = 16;
+        const btnStartY = cy + 60;
+        const buttons = [
+            { id: 'play_any', label: 'Play Any Level', color: '#4ade80' },
+            { id: 'random', label: 'Random Challenge', color: '#60a5fa' },
+            { id: 'leaderboard', label: 'Leaderboard', color: '#fbbf24' }
+        ];
+
+        this._gcButtons = [];
+        for (let i = 0; i < buttons.length; i++) {
+            const bx = cx - btnW / 2;
+            const by = btnStartY + i * (btnH + btnGap);
+            const btn = buttons[i];
+
+            // Button background
+            ctx.fillStyle = btn.color;
+            ctx.globalAlpha = 0.15;
+            ctx.beginPath();
+            ctx.roundRect(bx, by, btnW, btnH, 8);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            // Button border
+            ctx.strokeStyle = btn.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(bx, by, btnW, btnH, 8);
+            ctx.stroke();
+
+            // Button text
+            ctx.font = "bold 18px 'Inter', sans-serif";
+            ctx.fillStyle = btn.color;
+            ctx.fillText(btn.label, cx, by + btnH / 2);
+
+            this._gcButtons.push({ id: btn.id, x: bx, y: by, w: btnW, h: btnH });
+        }
+    }
+
+    getGameCompleteButtonHit(x, y) {
+        if (!this._gcButtons) return null;
+        for (const btn of this._gcButtons) {
+            if (x >= btn.x && x <= btn.x + btn.w && y >= btn.y && y <= btn.y + btn.h) {
+                return btn.id;
+            }
+        }
+        return null;
     }
 
     getCellPixelPos(q, r) {

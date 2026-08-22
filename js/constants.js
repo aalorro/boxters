@@ -185,7 +185,8 @@ export const STATES = {
     GAME_OVER: 'game_over',
     COOLDOWN: 'cooldown',
     GAUNTLET_INTRO: 'gauntlet_intro',
-    APEX_UNLOCK: 'apex_unlock'
+    APEX_UNLOCK: 'apex_unlock',
+    GAME_COMPLETE: 'game_complete'
 };
 
 // Apex mode unlock threshold
