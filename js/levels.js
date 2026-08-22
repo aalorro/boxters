@@ -641,7 +641,7 @@ const LEVEL_DATA = [
     // ── Apex Mode (levels 57-70) ──────────────────────────────
     {
         id: 'apex_01', name: 'First Contact', mode: 'apex', tier: 'apex',
-        maxMoves: 8, scoreMult: 0.5, twoStarTarget: 200, threeStarTarget: 320,
+        maxMoves: 9, scoreMult: 0.5, twoStarTarget: 200, threeStarTarget: 320,
         tutorial: { message: 'Apex mode: each word triggers a RANDOM effect — clear, chain, or illuminate. Words must pass through an anchor until the anchor objective is met, then you\'re free!' },
         layout: { shape: 'hex2', cellTypes: {}, anchors: 1 },
         objectives: [
@@ -651,7 +651,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_02', name: 'Shifting Ground', mode: 'apex', tier: 'apex',
-        maxMoves: 7, scoreMult: 0.55, twoStarTarget: 240, threeStarTarget: 380,
+        maxMoves: 8, scoreMult: 0.55, twoStarTarget: 240, threeStarTarget: 380,
         tutorial: { message: 'Tip: Watch the effect indicator after each word. Plan your next move based on what happened.' },
         layout: { shape: 'hex2', cellTypes: {} },
         objectives: [
@@ -661,7 +661,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_03', name: 'Wild Cards', mode: 'apex', tier: 'apex',
-        maxMoves: 7, scoreMult: 0.6, twoStarTarget: 280, threeStarTarget: 440,
+        maxMoves: 8, scoreMult: 0.6, twoStarTarget: 280, threeStarTarget: 440,
         tutorial: { message: 'Two anchors — every word must pass through one until the anchor objective is complete. After that, you\'re free to trace anywhere!' },
         layout: { shape: 'hex2', cellTypes: {}, anchors: 2 },
         objectives: [
@@ -671,7 +671,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_04', name: 'Fractured', mode: 'apex', tier: 'apex',
-        maxMoves: 10, scoreMult: 0.65, twoStarTarget: 340, threeStarTarget: 520,
+        maxMoves: 11, scoreMult: 0.65, twoStarTarget: 340, threeStarTarget: 520,
         tutorial: { message: 'Bigger board now. If tiles get cleared, you lose them. If they chain, new letters appear. Stay flexible.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -681,7 +681,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_05', name: 'Entropy', mode: 'apex', tier: 'apex',
-        maxMoves: 10, scoreMult: 0.7, twoStarTarget: 380, threeStarTarget: 580,
+        maxMoves: 11, scoreMult: 0.7, twoStarTarget: 380, threeStarTarget: 580,
         tutorial: { message: 'Tip: Words must pass through an anchor until the objective is satisfied. Once all anchors are lit, remaining words can go anywhere!' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
@@ -691,7 +691,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_06', name: 'Volatile', mode: 'apex', tier: 'apex',
-        maxMoves: 9, scoreMult: 0.75, twoStarTarget: 420, threeStarTarget: 640,
+        maxMoves: 10, scoreMult: 0.75, twoStarTarget: 420, threeStarTarget: 640,
         tutorial: { message: 'You need 60% illumination. Chain effects help by giving new letters, but clear effects remove tiles entirely.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -701,7 +701,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_07', name: 'Fusion Core', mode: 'apex', tier: 'apex',
-        maxMoves: 9, scoreMult: 0.8, twoStarTarget: 460, threeStarTarget: 700,
+        maxMoves: 10, scoreMult: 0.8, twoStarTarget: 460, threeStarTarget: 700,
         tutorial: { message: 'Three anchors to hit. Words must pass through one until all anchors are illuminated — then you\'re free to trace anywhere!' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
@@ -711,7 +711,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_08', name: 'Singularity', mode: 'apex', tier: 'apex',
-        maxMoves: 9, scoreMult: 0.85, twoStarTarget: 500, threeStarTarget: 760,
+        maxMoves: 10, scoreMult: 0.85, twoStarTarget: 500, threeStarTarget: 760,
         tutorial: { message: 'Combos trigger when chain effects overlap your previous word path. Chase them when you can!' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -722,7 +722,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_09', name: 'Quantum Flux', mode: 'apex', tier: 'apex',
-        maxMoves: 8, scoreMult: 0.9, twoStarTarget: 540, threeStarTarget: 820,
+        maxMoves: 9, scoreMult: 0.9, twoStarTarget: 540, threeStarTarget: 820,
         tutorial: { message: 'Fewer moves, more anchors. Words must touch an anchor until the objective is met, then you\'re free. Plan two moves ahead.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
@@ -732,7 +732,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_10', name: 'Cataclysm', mode: 'apex', tier: 'apex',
-        maxMoves: 9, scoreMult: 0.92, twoStarTarget: 580, threeStarTarget: 880,
+        maxMoves: 10, scoreMult: 0.92, twoStarTarget: 580, threeStarTarget: 880,
         apexWeights: { clear: 0.25, chain: 0.45, illuminate: 0.30 },
         tutorial: { message: 'Combos + illumination together. Chain effects on overlapping paths give combos AND might illuminate cells.' },
         layout: { shape: 'hex3', cellTypes: {} },
@@ -744,7 +744,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_11', name: 'Maelstrom', mode: 'apex', tier: 'apex',
-        maxMoves: 8, scoreMult: 0.95, twoStarTarget: 620, threeStarTarget: 940,
+        maxMoves: 9, scoreMult: 0.95, twoStarTarget: 620, threeStarTarget: 940,
         apexWeights: { clear: 0.20, chain: 0.40, illuminate: 0.40 },
         tutorial: { message: 'Three anchors, combos required, and tight moves. Once all anchors are illuminated, remaining words are free. This is where Apex gets real.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
@@ -756,7 +756,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_12', name: 'Pandemonium', mode: 'apex', tier: 'apex',
-        maxMoves: 7, scoreMult: 0.97, twoStarTarget: 660, threeStarTarget: 1000,
+        maxMoves: 8, scoreMult: 0.97, twoStarTarget: 660, threeStarTarget: 1000,
         tutorial: { message: 'Only 7 moves to illuminate 75%. Every word must be long and precise.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -766,7 +766,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_13', name: 'Oblivion', mode: 'apex', tier: 'apex',
-        maxMoves: 9, scoreMult: 0.98, twoStarTarget: 700, threeStarTarget: 1060,
+        maxMoves: 10, scoreMult: 0.98, twoStarTarget: 700, threeStarTarget: 1060,
         apexWeights: { clear: 0.10, chain: 0.65, illuminate: 0.25 },
         tutorial: { message: 'Four anchors, x3 combo, 5+ letter words. Once all anchors are lit, you\'re free. The penultimate Apex challenge.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 4 },
@@ -778,7 +778,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'apex_14', name: 'Transcendence', mode: 'apex', tier: 'apex',
-        maxMoves: 8, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
+        maxMoves: 9, scoreMult: 1.0, twoStarTarget: 740, threeStarTarget: 1120,
         apexWeights: { clear: 0.05, chain: 0.65, illuminate: 0.30 },
         tutorial: { message: 'The ultimate challenge. 75% illumination, 6+ letter words, x3 combos. You are the Apex.' },
         layout: { shape: 'hex3', cellTypes: {} },

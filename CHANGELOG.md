@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2026-08-21
 
 ### Changed
-- **Apex level 14** — Increased moves from 7 to 8 for better balance.
+- **Apex moves** — Added +1 move to all 14 apex levels for better balance.
+- **Game Complete screen** — Special celebration overlay with looping music, badge display, and three action buttons (Play Any Level, Random Challenge, Leaderboard) when completing apex_14.
+- **Uncommon word filter** — Board generation now rejects boards where >5% of traceable words are uncommon (all modes).
+- **SEO** — Updated meta tags for five modes, 70 levels, and global leaderboard.
+- **Dictionary** — Added rebase, rebased, rebases.
 - **Version footer** — Updated to v1.3.1.
 
 ## [1.3.0] - 2026-08-18
