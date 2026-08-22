@@ -162,7 +162,8 @@ export const SCORING = {
     multiplierTier: { simple: 1.0, clear: 1.2, chain: 1.4, illuminate: 1.6, apex: 1.8 },
     efficiencyPerMove: 15,
     secondaryCompletionBonus: 30,
-    discoveryBonus: 5
+    discoveryBonus: 5,
+    maxLevelScore: 2500
 };
 
 // Timing

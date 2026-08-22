@@ -45,6 +45,8 @@ Export your profile from Settings to create a `.bxp` file. Import it on another 
 
 Points are based on letter values, word length, unused moves, and mode difficulty. Each level has a difficulty multiplier that scales with progression — early levels produce lower scores, harder levels reward more. Earn 1-3 stars per level.
 
+Your **total score** is the sum of your **best score per level**. Replaying a level only increases your total if you beat your previous best for that level. Per-level scores are synced to Firebase and validated server-side to prevent manipulation.
+
 ### Lives
 
 You start with 3 lives. Failing a level costs a life. Lose all 3 and there's a 5-minute cooldown before you can retry.

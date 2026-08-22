@@ -2,7 +2,7 @@
 
 ## Overview
 
-Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.3.1**.
+Boxters is a hex-grid word puzzle game built with vanilla JS and HTML5 Canvas. No frameworks, no build step, no dependencies. Serve statically and open in a browser. Current version: **1.3.2**.
 
 ## Key Commands
 
@@ -67,6 +67,8 @@ Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells, 
 `score = (baseTier + letterTotal + unusedMoves×15 + secondaryBonus) × tierMultiplier × levelScoreMult`
 
 Each level has a `scoreMult` field (0.4 for level 1, ramping to 1.0 by level 10) so early levels produce proportionally lower scores.
+
+**Best-per-level scoring**: `totalScore = baseScore + sum(player.levelScores)`. Each level stores the player's best score. Replaying a level only increases totalScore if the new score exceeds the previous best. `baseScore` preserves pre-migration accumulated scores. Per-level scores are capped at 2500 and validated via Firestore security rules (`firestore.rules`).
 
 ### Persistence
 - Player profile stored in `localStorage` key `boxters_player`. Contains: name, gamesPlayed, levelsCompleted, totalScore, bestScore, currentLevels, highestLevels, cooldownUntil, sessionActive, unlockedModes, celebratedModes, gender, ageGroup.

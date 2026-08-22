@@ -5,6 +5,14 @@ All notable changes to Boxters will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2026-08-22
+
+### Changed
+- **Best-per-level scoring** — Total score is now the sum of your best score per level. Replaying a level only increases your total if you beat your previous best. Victory overlay shows feedback on whether the score counted.
+- **Anti-cheat** — Per-level scores stored in Firestore with security rules: per-write delta capped at 2500, monotonic totalScore, immutable baseScore for legacy migration. `syncProfile()` recomputes totalScore from levelScores on load.
+- **Dictionary** — Added hiphop, copish.
+- **Version footer** — Updated to v1.3.2.
+
 ## [1.3.1] - 2026-08-21
 
 ### Changed
