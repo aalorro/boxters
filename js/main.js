@@ -355,6 +355,11 @@ class Game {
         this.input = new InputManager(this.canvas, this.renderer.hexSize, this.renderer.boardOffset);
         this._setupInputHandlers();
 
+        // Restore lives from profile
+        if (this.player.lives !== undefined) {
+            this.lives = this.player.lives;
+        }
+
         // Check if player is still in cooldown from a previous session
         if (this.player.cooldownUntil && Date.now() < this.player.cooldownUntil) {
             const savedLevel = this.player.currentLevels[this.selectedMode];
@@ -642,6 +647,7 @@ class Game {
                     this.lives = this.maxLives;
                     this.cooldownUntil = null;
                     this.player.cooldownUntil = null;
+                    this.player.lives = this.lives;
                     saveProfile(this.player);
                     this._loadLevel(this.levelIndex);
                 }
@@ -911,6 +917,8 @@ class Game {
         this.stars = getStars(this.score, this.levelData);
         this.totalScore += this.score;
 
+        this.lives = this.maxLives;
+        this.player.lives = this.lives;
         this.player.levelsCompleted++;
         this.player.totalScore = this.totalScore;
         if (this.score > (this.player.bestScore || 0)) {
@@ -1045,6 +1053,8 @@ class Game {
         // Don't lose a life if the board had no valid solutions
         if (this.solutionWords.length > 0) {
             this.lives--;
+            this.player.lives = this.lives;
+            saveProfile(this.player);
         } else {
             this._showFeedback('No valid solutions existed — no life lost');
         }
@@ -1345,6 +1355,7 @@ class Game {
                 this.lives = this.maxLives;
                 this.cooldownUntil = null;
                 this.player.cooldownUntil = null;
+                this.player.lives = this.lives;
                 saveProfile(this.player);
                 this._loadLevel(this.levelIndex);
             } else {
@@ -1468,7 +1479,6 @@ class Game {
         this.tracer = null;
         this.objectives = null;
         this.score = 0;
-        this.lives = this.maxLives;
         this.cooldownUntil = null;
         this.solutionWords = [];
         this.hoveredSolution = null;
@@ -1652,6 +1662,7 @@ class Game {
             hasMovesInProgress: this._hasMovesInProgress(),
             isUltimateVictory: this.isUltimateVictory || false,
             isApexComplete: this.isApexComplete || false,
+            playerTotalScore: this.player ? this.player.totalScore : 0,
             isInGauntlet: this.isInGauntlet || false,
             apexJustUnlocked: this.apexJustUnlocked || false,
             gauntletTarget: APEX_UNLOCK_SCORE,
