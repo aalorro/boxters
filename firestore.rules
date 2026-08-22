@@ -1,0 +1,25 @@
+// Boxters Firestore Security Rules
+// Deploy via Firebase Console: Firestore > Rules
+// Or via Firebase CLI: firebase deploy --only firestore:rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leaderboard/{userId} {
+      allow read: if true;
+
+      allow create: if
+        request.resource.data.totalScore >= 0 &&
+        request.resource.data.totalScore <= 175000;
+
+      allow update: if
+        // totalScore can only increase
+        request.resource.data.totalScore >= resource.data.totalScore &&
+        // totalScore can't jump more than max single level score per write
+        request.resource.data.totalScore - resource.data.totalScore <= 2500 &&
+        // baseScore (legacy migration) can't change once set
+        (!resource.data.keys().hasAny(['baseScore']) ||
+         request.resource.data.baseScore == resource.data.baseScore);
+    }
+  }
+}

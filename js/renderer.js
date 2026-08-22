@@ -151,7 +151,7 @@ export class Renderer {
         ctx.fillText('\u00A9 2026 ArtMondo \u2014 MIT License', this.displayWidth / 2, this.displayHeight - 22);
         ctx.font = "16px 'Inter', sans-serif";
         ctx.fillStyle = COLORS.footer.version;
-        ctx.fillText('v1.3.1', this.displayWidth / 2, this.displayHeight - 6);
+        ctx.fillText('v1.3.2', this.displayWidth / 2, this.displayHeight - 6);
     }
 
     _drawBackground(ctx) {
@@ -386,6 +386,13 @@ export class Renderer {
             ctx.fillText(`GAUNTLET — ${mode.toUpperCase()} LVL ${lvlNum}`, padding, 56);
         } else {
             ctx.fillText(`${mode.toUpperCase()}${lvlNum ? ` (LVL ${lvlNum})` : ''}`, padding, 56);
+        }
+
+        // Best level score (under mode badge, left side)
+        if (gameState.levelBestScore > 0) {
+            ctx.font = "13px 'Inter', sans-serif";
+            ctx.fillStyle = COLORS.ui.textDim;
+            ctx.fillText(`Best: ${gameState.levelBestScore}`, padding, 74);
         }
 
         // Right column — all right-aligned
@@ -716,9 +723,22 @@ export class Renderer {
             ctx.fillStyle = COLORS.ui.accent;
             ctx.fillText(starText, centerX, centerY + 75);
 
+            // Best score feedback
+            ctx.font = "16px 'Inter', sans-serif";
+            if (gameState.isNewBest) {
+                ctx.fillStyle = '#4ade80';
+                const msg = gameState.prevLevelBest > 0
+                    ? `New best! +${gameState.score - gameState.prevLevelBest} added to total`
+                    : `New best! +${gameState.score} added to total`;
+                ctx.fillText(msg, centerX, centerY + 110);
+            } else {
+                ctx.fillStyle = COLORS.ui.textDim;
+                ctx.fillText(`In order to increase your total score, beat your best of ${gameState.prevLevelBest}`, centerX, centerY + 110);
+            }
+
             ctx.font = "21px 'Inter', sans-serif";
             ctx.fillStyle = COLORS.ui.textDim;
-            ctx.fillText('Click anywhere to continue', centerX, centerY + 130);
+            ctx.fillText('Click anywhere to continue', centerX, centerY + 145);
         } else {
             const modeNames = { simple: 'COMPLETE', clear: 'CLEARED', chain: 'CHAINED', illuminate: 'ILLUMINATED', apex: 'APEX!' };
             const mode = gameState.board?.mode || 'simple';
@@ -742,9 +762,22 @@ export class Renderer {
             ctx.fillStyle = COLORS.ui.accent;
             ctx.fillText(starText, centerX, centerY + 60);
 
+            // Best score feedback
+            ctx.font = "16px 'Inter', sans-serif";
+            if (gameState.isNewBest) {
+                ctx.fillStyle = '#4ade80';
+                const msg = gameState.prevLevelBest > 0
+                    ? `New best! +${gameState.score - gameState.prevLevelBest} added to total`
+                    : `New best! +${gameState.score} added to total`;
+                ctx.fillText(msg, centerX, centerY + 95);
+            } else {
+                ctx.fillStyle = COLORS.ui.textDim;
+                ctx.fillText(`In order to increase your total score, beat your best of ${gameState.prevLevelBest}`, centerX, centerY + 95);
+            }
+
             ctx.font = "21px 'Inter', sans-serif";
             ctx.fillStyle = COLORS.ui.textDim;
-            ctx.fillText('Click anywhere to continue', centerX, centerY + 115);
+            ctx.fillText('Click anywhere to continue', centerX, centerY + 130);
         }
     }
 

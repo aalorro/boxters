@@ -5,6 +5,7 @@ const PLAYER_ID_KEY = 'boxters_player_id';
 const LEADERBOARD_CACHE_KEY = 'boxters_leaderboard_cache';
 const LEADERBOARD_SIZE = 30;
 const SUBMIT_COOLDOWN_MS = 5000;
+const MAX_LEVEL_SCORE = 2500;
 
 let db = null;
 let _lastSubmitTime = 0;
@@ -62,25 +63,49 @@ export async function submitScore(player) {
     }
 
     const name = (player.name || 'Anonymous').substring(0, 20);
-    let remoteTotalScore = 0;
-    let remoteBestScore = 0;
+    const localLevelScores = player.levelScores || {};
+    let remoteLevelScores = {};
+    let remoteBaseScore = 0;
     let remoteLevelsCompleted = 0;
+    let hasRemoteDoc = false;
 
     try {
         const doc = await db.collection('leaderboard').doc(playerId).get();
         if (doc.exists) {
+            hasRemoteDoc = true;
             const remote = doc.data();
-            remoteTotalScore = remote.totalScore || 0;
-            remoteBestScore = remote.bestScore || 0;
+            remoteLevelScores = remote.levelScores || {};
+            remoteBaseScore = remote.baseScore || 0;
             remoteLevelsCompleted = remote.levelsCompleted || 0;
+
+            // Migration: if remote has totalScore but no levelScores, preserve as baseScore
+            if (!remote.levelScores && (remote.totalScore || 0) > 0) {
+                remoteBaseScore = remote.totalScore;
+            }
         }
     } catch { /* proceed with local values */ }
+
+    // Merge levelScores: take max per level, cap at MAX_LEVEL_SCORE
+    const mergedLevelScores = { ...remoteLevelScores };
+    for (const [levelId, score] of Object.entries(localLevelScores)) {
+        const capped = Math.min(Math.round(score), MAX_LEVEL_SCORE);
+        mergedLevelScores[levelId] = Math.max(mergedLevelScores[levelId] || 0, capped);
+    }
+
+    // Derive totalScore and bestScore from merged levelScores
+    const levelScoreValues = Object.values(mergedLevelScores);
+    const levelScoreSum = levelScoreValues.reduce((a, b) => a + b, 0);
+    const baseScore = Math.max(player.baseScore || 0, remoteBaseScore);
+    const totalScore = baseScore + levelScoreSum;
+    const bestScore = levelScoreValues.length > 0 ? Math.max(...levelScoreValues) : 0;
 
     const data = {
         name,
         nameLower: name.toLowerCase(),
-        totalScore: Math.max(Math.round(player.totalScore || 0), remoteTotalScore),
-        bestScore: Math.max(Math.round(player.bestScore || 0), remoteBestScore),
+        levelScores: mergedLevelScores,
+        baseScore,
+        totalScore,
+        bestScore,
         levelsCompleted: Math.max(Math.round(player.levelsCompleted || 0), remoteLevelsCompleted),
         highestMode,
         gender: player.gender || '',
@@ -136,14 +161,45 @@ export async function syncProfile(player) {
         const remote = doc.data();
         let changed = false;
 
-        if ((remote.totalScore || 0) > (player.totalScore || 0)) {
-            player.totalScore = remote.totalScore;
+        // Merge levelScores from remote (max per level)
+        const remoteLevelScores = remote.levelScores || {};
+        if (!player.levelScores) player.levelScores = {};
+
+        for (const [levelId, score] of Object.entries(remoteLevelScores)) {
+            const localScore = player.levelScores[levelId] || 0;
+            if (score > localScore) {
+                player.levelScores[levelId] = score;
+                changed = true;
+            }
+        }
+
+        // Migration: if remote has totalScore but no levelScores, preserve as baseScore
+        const remoteBaseScore = remote.levelScores
+            ? (remote.baseScore || 0)
+            : (remote.totalScore || 0);
+        if (remoteBaseScore > (player.baseScore || 0)) {
+            player.baseScore = remoteBaseScore;
             changed = true;
         }
-        if ((remote.bestScore || 0) > (player.bestScore || 0)) {
-            player.bestScore = remote.bestScore;
+
+        // Recompute totalScore from levelScores + baseScore (overrides any localStorage tampering)
+        const levelScoreValues = Object.values(player.levelScores);
+        const recomputed = (player.baseScore || 0)
+            + (levelScoreValues.length > 0 ? levelScoreValues.reduce((a, b) => a + b, 0) : 0);
+        if (recomputed !== (player.totalScore || 0)) {
+            player.totalScore = recomputed;
             changed = true;
         }
+
+        // Recompute bestScore from levelScores
+        if (levelScoreValues.length > 0) {
+            const best = Math.max(...levelScoreValues);
+            if (best !== (player.bestScore || 0)) {
+                player.bestScore = best;
+                changed = true;
+            }
+        }
+
         if ((remote.levelsCompleted || 0) > (player.levelsCompleted || 0)) {
             player.levelsCompleted = remote.levelsCompleted;
             changed = true;

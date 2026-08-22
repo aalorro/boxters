@@ -121,7 +121,6 @@ class Game {
             this.canvas.addEventListener('dblclick', () => {
                 if (this.state === STATES.PLAYING) {
                     this.score = 950;
-                    this.totalScore = (this.player.totalScore || 0) + this.score;
                     this._handleVictory();
                 }
             });
@@ -343,6 +342,11 @@ class Game {
 
     _startGame() {
         this.canvas.style.visibility = 'visible';
+        // Recompute totalScore from levelScores (prevents localStorage tampering)
+        if (this.player.levelScores && Object.keys(this.player.levelScores).length > 0) {
+            this.player.totalScore = Object.values(this.player.levelScores).reduce((a, b) => a + b, 0)
+                + (this.player.baseScore || 0);
+        }
         this.totalScore = this.player.totalScore || 0;
         // Only count as a new game if not resuming from a reload
         if (!this.player.sessionActive) {
@@ -448,6 +452,7 @@ class Game {
         this.levelData = result.levelData;
         this.levelIndex = index;
         this.score = 0;
+        this.levelBestScore = (this.player && this.player.levelScores && this.player.levelScores[this.levelData.id]) || 0;
         if (this.levelData.apexWeights) this.board.apexWeights = this.levelData.apexWeights;
 
         // Save current level for resume, and track highest reached
@@ -915,15 +920,22 @@ class Game {
         this.levelTransitionTimer = 1.2;
         this.score = calculateLevelScore(this.board, this.levelData.tier, this.objectives, this.levelData);
         this.stars = getStars(this.score, this.levelData);
-        this.totalScore += this.score;
+
+        // Per-level best score tracking (anti-cheat: totalScore derived from levelScores)
+        if (!this.player.levelScores) this.player.levelScores = {};
+        const levelId = this.levelData.id;
+        const prevBest = this.player.levelScores[levelId] || 0;
+        this.isNewBest = this.score > prevBest;
+        this.prevLevelBest = prevBest;
+        this.player.levelScores[levelId] = Math.max(prevBest, this.score);
+        this.player.totalScore = Object.values(this.player.levelScores).reduce((a, b) => a + b, 0)
+            + (this.player.baseScore || 0);
+        this.player.bestScore = Math.max(...Object.values(this.player.levelScores));
+        this.totalScore = this.player.totalScore;
 
         this.lives = this.maxLives;
         this.player.lives = this.lives;
         this.player.levelsCompleted++;
-        this.player.totalScore = this.totalScore;
-        if (this.score > (this.player.bestScore || 0)) {
-            this.player.bestScore = this.score;
-        }
 
         saveProfile(this.player);
         submitScore(this.player);
@@ -1577,7 +1589,12 @@ class Game {
         this.board = board;
         this.wordsUsed = new Set(snapshot.wordsUsed || []);
         this.lives = snapshot.lives;
-        this.totalScore = snapshot.totalScore || 0;
+        // Recompute totalScore from levelScores on restore (prevents localStorage tampering)
+        if (this.player.levelScores && Object.keys(this.player.levelScores).length > 0) {
+            this.player.totalScore = Object.values(this.player.levelScores).reduce((a, b) => a + b, 0)
+                + (this.player.baseScore || 0);
+        }
+        this.totalScore = this.player.totalScore || 0;
 
         // Restore objectives
         this.objectives = new ObjectiveTracker(this.levelData.objectives);
@@ -1596,6 +1613,7 @@ class Game {
         this.input.updateLayout(this.renderer.hexSize, this.renderer.boardOffset);
 
         this.score = snapshot.score || 0;
+        this.levelBestScore = (this.player && this.player.levelScores && this.player.levelScores[this.levelData.id]) || 0;
         this.stars = 0;
         this.tutorialMessage = null;
         this.feedbackMessage = null;
@@ -1663,6 +1681,9 @@ class Game {
             isUltimateVictory: this.isUltimateVictory || false,
             isApexComplete: this.isApexComplete || false,
             playerTotalScore: this.player ? this.player.totalScore : 0,
+            levelBestScore: this.levelBestScore || 0,
+            isNewBest: this.isNewBest || false,
+            prevLevelBest: this.prevLevelBest || 0,
             isInGauntlet: this.isInGauntlet || false,
             apexJustUnlocked: this.apexJustUnlocked || false,
             gauntletTarget: APEX_UNLOCK_SCORE,
