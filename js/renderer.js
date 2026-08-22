@@ -120,6 +120,13 @@ export class Renderer {
             this._drawVictoryOverlay(ctx, gameState);
         } else if (gameState.state === 'game_complete') {
             this._drawGameCompleteOverlay(ctx, gameState);
+            // Re-draw confetti on top of the overlay
+            if (particles) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'lighter';
+                particles.renderParticles(ctx);
+                ctx.restore();
+            }
         } else if (gameState.state === 'apex_unlock') {
             this._drawApexUnlockOverlay(ctx, gameState);
         } else if (gameState.state === 'gauntlet_intro') {
@@ -1536,7 +1543,8 @@ export class Renderer {
     }
 
     _drawGameCompleteOverlay(ctx, gameState) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        // Semi-transparent overlay so confetti shows through
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
         ctx.fillRect(0, 0, this.displayWidth, this.displayHeight);
 
         const cx = this.displayWidth / 2;
@@ -1547,36 +1555,45 @@ export class Renderer {
         ctx.font = "70px sans-serif";
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('\uD83D\uDC51', cx, cy - 160);
+        ctx.fillText('\uD83D\uDC51', cx, cy - 175);
 
         // Title with gold glow
-        ctx.font = "bold 42px 'Cinzel', serif";
+        ctx.font = "bold 34px 'Cinzel', serif";
         ctx.fillStyle = '#ffd700';
         ctx.shadowBlur = 30 + 15 * pulse;
         ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
-        ctx.fillText('GAME COMPLETE', cx, cy - 90);
+        ctx.fillText('APEX LEGEND', cx, cy - 115);
         ctx.shadowBlur = 0;
 
-        // Player name
-        ctx.font = "bold 26px 'Inter', sans-serif";
+        // Subtitle
+        ctx.font = "20px 'Inter', sans-serif";
         ctx.fillStyle = '#e879f9';
-        ctx.fillText(gameState.playerName || 'Player', cx, cy - 45);
+        ctx.fillText('You\'ve mastered all five modes.', cx, cy - 75);
+
+        // Player name
+        ctx.font = "bold 28px 'Cinzel', serif";
+        ctx.fillStyle = '#ffd700';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+        ctx.fillText(gameState.playerName, cx, cy - 35);
+        ctx.shadowBlur = 0;
+
+        // Acclaim line
+        ctx.font = "italic 17px 'Inter', sans-serif";
+        ctx.fillStyle = 'rgba(232, 121, 249, 0.85)';
+        ctx.fillText('The ultimate word master.', cx, cy - 5);
 
         // Total score
         ctx.font = "22px 'Inter', sans-serif";
         ctx.fillStyle = COLORS.ui.text;
-        ctx.fillText(`Total Score: ${gameState.totalScore || 0}`, cx, cy - 10);
-
-        // Screenshot prompt
-        ctx.font = "16px 'Inter', sans-serif";
-        ctx.fillStyle = 'rgba(255, 215, 0, 0.7)';
-        ctx.fillText('Screenshot this to save your badge!', cx, cy + 25);
+        const playerScore = gameState.playerTotalScore || gameState.totalScore || 0;
+        ctx.fillText(`Total Score: ${playerScore}`, cx, cy + 30);
 
         // Draw 3 buttons
         const btnW = 220;
         const btnH = 44;
         const btnGap = 16;
-        const btnStartY = cy + 60;
+        const btnStartY = cy + 65;
         const buttons = [
             { id: 'play_any', label: 'Play Any Level', color: '#4ade80' },
             { id: 'random', label: 'Random Challenge', color: '#60a5fa' },

@@ -41,17 +41,17 @@ The script tag in `index.html` uses a query string for cache busting:
 | `js/constants.js` | All config: MODES, COLORS, HEX geometry, LETTER_VALUES, SCORING, STATES |
 | `js/tracer.js` | Word path tracing logic |
 | `js/particles.js` | Particle effect system (burst, clear, chain, illuminate, confetti) |
-| `js/audio.js` | Web Audio API — letter tones, word chords, error sound, victory fanfare, fail/clap/victory SFX |
+| `js/audio.js` | Web Audio API — letter tones, word chords, error sound, victory fanfare, fail/clap/victory SFX, puzzle loop |
 | `js/firebase.js` | Firebase Firestore integration — leaderboard submission, fetching, player ID, offline caching |
 | `js/dictionary.js` | Word list array and dictionary lookup |
 
 ### Assets
 | Folder | Contents |
 |--------|----------|
-| `sfx/` | MP3 sound effects — `fails01-03.MP3` (defeat), `clapping01-03.MP3` (victory), `victory.mp3` (mode completion) |
+| `sfx/` | MP3 sound effects — `fails01-03.MP3` (defeat), `clapping01-03.MP3` (victory), `victory.mp3` (mode completion), `puzzle.mp3` (apex complete loop) |
 
 ### Game States
-`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN → GAUNTLET_INTRO → APEX_UNLOCK`
+`LOADING → MENU → LEVEL_INTRO → PLAYING → SUBMITTING → VICTORY/DEFEAT → GAME_OVER → COOLDOWN → GAUNTLET_INTRO → APEX_UNLOCK → GAME_COMPLETE`
 
 ### Game Modes
 - **simple** — form words, tiles persist

@@ -2855,7 +2855,7 @@ export const WORD_LIST = [
 "ream","reamed","reamer","reamers","reaming","reams","reannex","reanoint","reap","reapable","reaped","reaper","reapers","reaphook","reaping","reappear","reapply","reaps","rear","reared",
 "rearer","rearers","reargue","reargued","reargues","rearing","rearm","rearmed","rearmice","rearming","rearmost","rearms","rearouse","rearrest","rears","rearward","reascend","reascent","reason","reasoned",
 "reasoner","reasons","reassail","reassert","reassess","reassign","reassort","reassume","reassure","reata","reatas","reattach","reattack","reattain","reavail","reavails","reave","reaved","reaver","reavers",
-"reaves","reaving","reavow","reavowed","reavows","reawake","reawaked","reawaken","reawakes","reawoke","reawoken","reb","rebait","rebaited","rebaits","rebar","rebars","rebate","rebated","rebater",
+"reaves","reaving","reavow","reavowed","reavows","reawake","reawaked","reawaken","reawakes","reawoke","reawoken","reb","rebait","rebaited","rebaits","rebar","rebars","rebase","rebased","rebases","rebate","rebated","rebater",
 "rebaters","rebates","rebating","rebato","rebatos","rebbe","rebbes","rebec","rebeck","rebecks","rebecs","rebegan","rebegin","rebegins","rebegun","rebel","rebeldom","rebelled","rebels","rebid",
 "rebidden","rebids","rebill","rebilled","rebills","rebind","rebinds","rebirth","rebirths","reblend","reblends","rebloom","reblooms","reboant","reboard","reboards","rebodied","rebodies","rebody","reboil",
 "reboiled","reboils","rebook","rebooked","rebooks","reboot","rebooted","reboots","rebop","rebops","rebore","rebored","rebores","reboring","reborn","rebottle","rebought","rebound","rebounds","rebozo",
