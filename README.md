@@ -105,7 +105,7 @@ Each game mode uses a tailored board generation strategy:
 | Mode | Generator | Strategy |
 |------|-----------|----------|
 | Simple | `buildBoardWordFirst` | Places real dictionary words on the grid, fills gaps with frequency-weighted letters |
-| Clear | `buildBoardClearMode` | Dedicated generator for clearable boards |
+| Clear | `buildBoardClearMode` | Dedicated generator for clearable boards; validates enough long words are traceable for formWord objectives |
 | Chain | `buildBoard` | Random letters (35% vowel floor) + solvability retry loop |
 | Illuminate | `buildBoardIlluminate` | Word-first + safe letter fills (excludes J/Q/V/X/Z) + solvability verification |
 | Apex | `buildBoardIlluminate` | Reuses illuminate generation; each word triggers a random effect (clear/chain/illuminate) |
@@ -116,12 +116,12 @@ Pointy-top hexagons using axial coordinates (q, r). Board sizes: hex1 (7 cells),
 
 ### Persistence
 
-- **Player profile**: `localStorage` key `boxters_player` — name, scores, levels completed, unlocked modes, cooldown, gender, age group
+- **Player profile**: `localStorage` key `boxters_player` — name, per-level best scores, total score, levels completed, unlocked modes, cooldown, lives, gender, age group
 - **Board state**: `localStorage` key `boxters_board_state_<mode>` — per-mode snapshots preserve board, score, and objectives across menu navigation
 - **Player ID**: `localStorage` key `boxters_player_id` — anonymous UUID for leaderboard identity
 - **Theme**: `localStorage` key `boxters_theme` — dark/light preference
 - **Leaderboard cache**: `localStorage` key `boxters_leaderboard_cache` — offline fallback for leaderboard data
-- **Cloud sync**: On app load, local scores are reconciled with Firebase Firestore (highest values kept)
+- **Cloud sync**: On app load, local scores are reconciled with Firebase Firestore (highest per-level values kept). Per-level scores validated server-side via Firestore security rules
 
 ### Audio
 
