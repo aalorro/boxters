@@ -268,12 +268,12 @@ const LEVEL_DATA = [
     },
     {
         id: 'clear_06', name: 'Precision Strike', mode: 'clear', tier: 'clear',
-        maxMoves: 10, scoreMult: 0.8, twoStarTarget: 210, threeStarTarget: 330,
+        maxMoves: 8, scoreMult: 0.8, twoStarTarget: 210, threeStarTarget: 330,
         tutorial: { message: 'Tip: If only 1 or 2 tiles remain in a cluster with no valid word, they get auto-cleared for you!' },
         layout: { shape: 'hex2', cellTypes: {} },
         objectives: [
             { type: 'clearAllCells', description: 'Clear all 19 cells', target: 1, params: {} },
-            { type: 'formWord', description: 'Use a 4+ letter word', target: 1, params: { minLength: 4 }, isPrimary: false }
+            { type: 'formWord', description: 'Use a 5+ letter word', target: 1, params: { minLength: 5 }, isPrimary: false }
         ]
     },
     {
@@ -337,12 +337,12 @@ const LEVEL_DATA = [
     },
     {
         id: 'clear_13', name: 'Surgical', mode: 'clear', tier: 'clear',
-        maxMoves: 9, twoStarTarget: 380, threeStarTarget: 570,
+        maxMoves: 8, twoStarTarget: 380, threeStarTarget: 570,
         tutorial: { message: 'With just 9 moves, you need an average of 4+ tiles per word. Think big!' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'clearAllCells', description: 'Clear all 37 cells', target: 1, params: {} },
-            { type: 'formWord', description: 'Form 3 words of 4+ letters', target: 3, params: { minLength: 4 }, isPrimary: false }
+            { type: 'formWord', description: 'Form 2 words of 6+ letters', target: 2, params: { minLength: 6 } }
         ]
     },
     {
@@ -352,7 +352,7 @@ const LEVEL_DATA = [
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'clearAllCells', description: 'Clear all 37 cells', target: 1, params: {} },
-            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 }, isPrimary: false }
+            { type: 'formWord', description: 'Form 3 words of 6+ letters', target: 3, params: { minLength: 6 } }
         ]
     },
 
@@ -1581,12 +1581,24 @@ export function loadLevel(levelIndex) {
 
     // Clear mode: word-first with full coverage (non-overlapping paths)
     if (data.mode === 'clear') {
+        // Check if level has formWord objectives requiring long words
+        const fwObjs = (data.objectives || []).filter(o => o.type === 'formWord' && o.params && o.params.minLength >= 5);
+        const requiredLong = fwObjs.reduce((sum, o) => sum + (o.target || 1), 0);
+        const requiredMinLen = fwObjs.length > 0 ? Math.max(...fwObjs.map(o => o.params.minLength)) : 0;
+
         let best = null;
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             boardAttempt++;
             const seed = SESSION_SEED ^ (levelIndex * 2654435761) ^ (boardAttempt * 1103515245);
             best = buildBoardClearMode(data, seed);
-            if (!hasTooManyUncommonWords(best)) break;
+            if (hasTooManyUncommonWords(best)) continue;
+            // Verify enough long words are traceable for formWord objectives
+            if (requiredLong > 0) {
+                const words = best.field.findWordsWithPaths(dictionary, 50);
+                const longWords = words.filter(w => w.word.length >= requiredMinLen);
+                if (longWords.length < requiredLong) continue;
+            }
+            break;
         }
         return { board: best, levelData: data, levelIndex };
     }
