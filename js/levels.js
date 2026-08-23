@@ -278,7 +278,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'clear_07', name: 'Demolition', mode: 'clear', tier: 'clear',
-        maxMoves: 16, scoreMult: 0.85, twoStarTarget: 240, threeStarTarget: 370,
+        maxMoves: 12, scoreMult: 0.85, twoStarTarget: 240, threeStarTarget: 370,
         tutorial: { message: 'Bigger board! Use long words to clear more tiles per move. Small leftover clusters get auto-cleared.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
