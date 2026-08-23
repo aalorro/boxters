@@ -317,22 +317,22 @@ const LEVEL_DATA = [
 
     {
         id: 'clear_11', name: 'Methodical', mode: 'clear', tier: 'clear',
-        maxMoves: 12, twoStarTarget: 340, threeStarTarget: 500,
+        maxMoves: 10, twoStarTarget: 340, threeStarTarget: 500,
         tutorial: { message: 'Work section by section. Clear one area completely before moving to the next to avoid scattered leftovers.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'clearAllCells', description: 'Clear all 37 cells', target: 1, params: {} },
-            { type: 'formWord', description: 'Use a 5+ letter word', target: 1, params: { minLength: 5 }, isPrimary: false }
+            { type: 'formWord', description: 'Form 3 words with 5+ letters', target: 3, params: { minLength: 5 } }
         ]
     },
     {
         id: 'clear_12', name: 'Obliterate', mode: 'clear', tier: 'clear',
-        maxMoves: 10, twoStarTarget: 360, threeStarTarget: 540,
+        maxMoves: 8, twoStarTarget: 360, threeStarTarget: 540,
         tutorial: { message: 'Every move counts. Look for 5+ letter words before settling for shorter ones.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'clearAllCells', description: 'Clear all 37 cells', target: 1, params: {} },
-            { type: 'formWord', description: 'Form 2 words of 5+ letters', target: 2, params: { minLength: 5 }, isPrimary: false }
+            { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } }
         ]
     },
     {
