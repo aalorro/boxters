@@ -287,7 +287,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'clear_08', name: 'Precision', mode: 'clear', tier: 'clear',
-        maxMoves: 14, scoreMult: 0.9, twoStarTarget: 265, threeStarTarget: 400,
+        maxMoves: 10, scoreMult: 0.9, twoStarTarget: 265, threeStarTarget: 400,
         tutorial: { message: 'Fewer moves now. Plan your paths to avoid leaving isolated tiles in the middle of the board.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
@@ -296,7 +296,7 @@ const LEVEL_DATA = [
     },
     {
         id: 'clear_09', name: 'Scorched Earth', mode: 'clear', tier: 'clear',
-        maxMoves: 12, scoreMult: 0.95, twoStarTarget: 290, threeStarTarget: 440,
+        maxMoves: 10, scoreMult: 0.95, twoStarTarget: 290, threeStarTarget: 440,
         tutorial: { message: 'Try clearing from the edges inward. A 5+ letter word earns bonus points and clears a big chunk!' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
