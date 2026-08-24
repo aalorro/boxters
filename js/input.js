@@ -63,6 +63,9 @@ export class InputManager {
     }
 
     _setupEvents() {
+        this._abortController = new AbortController();
+        const opts = { signal: this._abortController.signal };
+
         // Use pointer events for unified mouse/touch handling
         this.canvas.addEventListener('pointerdown', (e) => {
             e.preventDefault();
@@ -73,7 +76,7 @@ export class InputManager {
             this._pointerPos = pos;
             const hex = this._canvasPosToHex(pos);
             this._emit('traceStart', { hex, pos, key: hexKey(hex.q, hex.r) });
-        });
+        }, opts);
 
         this.canvas.addEventListener('pointermove', (e) => {
             e.preventDefault();
@@ -85,7 +88,7 @@ export class InputManager {
             } else {
                 this._emit('hover', { pos });
             }
-        });
+        }, opts);
 
         this.canvas.addEventListener('pointerup', (e) => {
             e.preventDefault();
@@ -95,17 +98,25 @@ export class InputManager {
                 const hex = this._canvasPosToHex(pos);
                 this._emit('traceEnd', { hex, pos, key: hexKey(hex.q, hex.r) });
             }
-        });
+        }, opts);
 
         this.canvas.addEventListener('pointercancel', (e) => {
             if (this.isTracing) {
                 this.isTracing = false;
                 this._emit('traceEnd', { hex: { q: 0, r: 0 }, pos: this._pointerPos, key: '0,0', cancelled: true });
             }
-        });
+        }, opts);
 
         // Prevent context menu on long press
-        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        this.canvas.addEventListener('contextmenu', (e) => e.preventDefault(), opts);
+    }
+
+    destroy() {
+        if (this._abortController) {
+            this._abortController.abort();
+            this._abortController = null;
+        }
+        this.listeners = { traceStart: [], traceMove: [], traceEnd: [], hover: [], click: [], dialDrag: [] };
     }
 
     cancelTrace() {
