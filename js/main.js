@@ -356,6 +356,7 @@ class Game {
         this.player.lastMode = this.selectedMode;
         saveProfile(this.player);
 
+        if (this.input) this.input.destroy();
         this.input = new InputManager(this.canvas, this.renderer.hexSize, this.renderer.boardOffset);
         this._setupInputHandlers();
 
