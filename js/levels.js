@@ -757,6 +757,7 @@ const LEVEL_DATA = [
     {
         id: 'apex_12', name: 'Pandemonium', mode: 'apex', tier: 'apex',
         maxMoves: 8, scoreMult: 0.97, twoStarTarget: 660, threeStarTarget: 1000,
+        apexWeights: { clear: 0.15, chain: 0.60, illuminate: 0.25 },
         tutorial: { message: 'Only 7 moves to illuminate 75%. Every word must be long and precise.' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
