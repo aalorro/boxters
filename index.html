@@ -67,7 +67,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css?v=30">
+    <link rel="stylesheet" href="style.css?v=31">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -158,11 +158,17 @@
                         <line x1="12" y1="8" x2="12.01" y2="8"/>
                     </svg>
                 </button>
+                <button id="donate-btn" class="info-btn" aria-label="Support Development" type="button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                    </svg>
+                </button>
             </div>
             <div class="welcome-actions welcome-actions-mobile">
                 <button id="leaderboard-btn-m" class="btn-primary btn-small" type="button">Leaders</button>
                 <button id="settings-btn-m" class="btn-primary btn-small" type="button">Settings</button>
                 <button id="info-btn-m" class="btn-primary btn-small" type="button">Info</button>
+                <button id="donate-btn-m" class="btn-primary btn-small" type="button">Support</button>
             </div>
         </div>
 
@@ -249,6 +255,33 @@
         </div>
     </dialog>
 
+    <dialog id="donate-dialog">
+        <button class="info-close-x" type="button" onclick="document.getElementById('donate-dialog').close()" aria-label="Close">&times;</button>
+        <div class="info-dialog-inner">
+            <h3 class="donate-title">Support Development</h3>
+            <p class="donate-desc">Your support helps us continue developing Boxters and adding new features. Every donation makes a difference!</p>
+            <div class="donate-type-group">
+                <button type="button" id="donate-onetime" class="donate-type-btn active">One-Time</button>
+                <button type="button" id="donate-monthly" class="donate-type-btn">Monthly</button>
+            </div>
+            <label class="donate-label">Choose an amount<span id="donate-monthly-hint" class="donate-hint" style="display:none;"> (per month)</span>:</label>
+            <div class="donate-presets">
+                <button type="button" class="donate-amount-btn" data-amount="5">$5</button>
+                <button type="button" class="donate-amount-btn active" data-amount="10">$10</button>
+                <button type="button" class="donate-amount-btn" data-amount="15">$15</button>
+                <button type="button" class="donate-amount-btn" data-amount="20">$20</button>
+            </div>
+            <label class="donate-label" id="donate-custom-label">Or enter a custom amount (USD):</label>
+            <div class="donate-custom-row">
+                <span class="donate-dollar">$</span>
+                <input type="number" id="donate-custom" min="1" step="1" placeholder="5">
+            </div>
+            <div class="donate-info">You'll be securely redirected to PayPal to complete your donation.</div>
+            <button type="button" id="donate-submit" class="btn-primary donate-submit-btn">Donate Now</button>
+            <button type="button" id="donate-cancel" class="btn-secondary donate-cancel-btn" onclick="document.getElementById('donate-dialog').close()">Cancel</button>
+        </div>
+    </dialog>
+
     <dialog id="contact-dialog">
         <button class="info-close-x" type="button" onclick="document.getElementById('contact-dialog').close()" aria-label="Close">&times;</button>
         <div class="info-dialog-inner" id="contact-dialog-inner">
@@ -318,6 +351,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    <script type="module" src="js/main.js?v=103"></script>
+    <script type="module" src="js/main.js?v=104"></script>
 </body>
 </html>

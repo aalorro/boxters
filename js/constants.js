@@ -57,7 +57,7 @@ const DARK_THEME = {
         ghostLetter: 'rgba(255, 221, 0, 0.65)',
         unlitFill: 'rgba(255, 80, 80, 0.08)', unlitStroke: 'rgba(255, 80, 80, 0.4)',
         unlitShadow: 'rgba(255, 80, 80, 0.6)', unlitLetter: 'rgba(255, 100, 100, 0.6)',
-        chainPulse: 'rgba(100, 200, 255, 0.5)', chainPulseStroke: 'rgba(100, 200, 255, 0.5)',
+        chainPulse: 'rgba(60, 130, 255, 0.5)', chainPulseStroke: 'rgba(60, 130, 255, 0.5)',
         solutionFill: 'rgba(255, 215, 0, 0.15)', solutionStroke: '#ffd700',
         solutionShadow: 'rgba(255, 215, 0, 0.5)', solutionPathShadow: 'rgba(255, 215, 0, 0.6)'
     },
@@ -107,7 +107,7 @@ const LIGHT_THEME = {
         ghostLetter: 'rgba(255, 140, 0, 0.65)',
         unlitFill: 'rgba(255, 80, 80, 0.1)', unlitStroke: 'rgba(255, 80, 80, 0.5)',
         unlitShadow: 'rgba(255, 80, 80, 0.6)', unlitLetter: 'rgba(255, 100, 100, 0.7)',
-        chainPulse: 'rgba(60, 160, 255, 0.5)', chainPulseStroke: 'rgba(60, 160, 255, 0.5)',
+        chainPulse: 'rgba(40, 100, 240, 0.5)', chainPulseStroke: 'rgba(40, 100, 240, 0.5)',
         solutionFill: 'rgba(255, 140, 0, 0.15)', solutionStroke: '#ff8c00',
         solutionShadow: 'rgba(255, 140, 0, 0.5)', solutionPathShadow: 'rgba(255, 140, 0, 0.6)'
     },
