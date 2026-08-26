@@ -170,14 +170,20 @@ class Game {
         const openInfo = () => {
             if (window.showInfoDialog) window.showInfoDialog('about');
         };
+        const openDonate = () => {
+            document.getElementById('donate-dialog').showModal();
+        };
         _wireBtn('leaderboard-btn', openLeaderboard);
         _wireBtn('settings-btn', openSettings);
         _wireBtn('info-btn', openInfo);
+        _wireBtn('donate-btn', openDonate);
         _wireBtn('leaderboard-btn-m', openLeaderboard);
         _wireBtn('settings-btn-m', openSettings);
         _wireBtn('info-btn-m', openInfo);
+        _wireBtn('donate-btn-m', openDonate);
 
         this._initSettingsDialog();
+        this._initDonateDialog();
 
         const loading = document.getElementById('loading-screen');
         setTimeout(() => {
@@ -1301,6 +1307,74 @@ class Game {
         });
     }
 
+    _initDonateDialog() {
+        const dlg = document.getElementById('donate-dialog');
+        const onetimeBtn = document.getElementById('donate-onetime');
+        const monthlyBtn = document.getElementById('donate-monthly');
+        const monthlyHint = document.getElementById('donate-monthly-hint');
+        const customLabel = document.getElementById('donate-custom-label');
+        const customInput = document.getElementById('donate-custom');
+        const submitBtn = document.getElementById('donate-submit');
+        const amountBtns = dlg.querySelectorAll('.donate-amount-btn');
+
+        let isMonthly = false;
+        let selectedAmount = 10;
+
+        onetimeBtn.addEventListener('click', () => {
+            isMonthly = false;
+            onetimeBtn.classList.add('active');
+            monthlyBtn.classList.remove('active');
+            monthlyHint.style.display = 'none';
+            customLabel.textContent = 'Or enter a custom amount (USD):';
+        });
+
+        monthlyBtn.addEventListener('click', () => {
+            isMonthly = true;
+            monthlyBtn.classList.add('active');
+            onetimeBtn.classList.remove('active');
+            monthlyHint.style.display = '';
+            customLabel.textContent = 'Or enter a custom amount (USD per month):';
+        });
+
+        amountBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                amountBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedAmount = parseInt(btn.dataset.amount);
+                customInput.value = '';
+            });
+        });
+
+        customInput.addEventListener('input', () => {
+            if (customInput.value) {
+                amountBtns.forEach(b => b.classList.remove('active'));
+                selectedAmount = null;
+            }
+        });
+
+        submitBtn.addEventListener('click', () => {
+            const amount = customInput.value ? parseFloat(customInput.value) : selectedAmount;
+            if (!amount || amount <= 0) return;
+            const noRecurring = isMonthly ? '0' : '1';
+            const url = `https://www.paypal.com/donate?business=armando@alorro.com&amount=${amount}&no_recurring=${noRecurring}&currency_code=USD`;
+            window.open(url, '_blank', 'noopener,noreferrer');
+            dlg.close();
+        });
+
+        // Reset state when dialog opens
+        dlg.addEventListener('close', () => {
+            isMonthly = false;
+            selectedAmount = 10;
+            onetimeBtn.classList.add('active');
+            monthlyBtn.classList.remove('active');
+            monthlyHint.style.display = 'none';
+            customLabel.textContent = 'Or enter a custom amount (USD):';
+            customInput.value = '';
+            amountBtns.forEach(b => b.classList.remove('active'));
+            amountBtns[1].classList.add('active'); // $10 default
+        });
+    }
+
     _updateThemeButtons() {
         const darkBtn = document.getElementById('theme-btn-dark');
         const lightBtn = document.getElementById('theme-btn-light');
@@ -1625,7 +1699,7 @@ class Game {
 
     _showFeedback(message) {
         this.feedbackMessage = message;
-        this.feedbackTimer = 2.0;
+        this.feedbackTimer = 5.0;
     }
 
     // ── Game loop ───────────────────────────────────────────────
