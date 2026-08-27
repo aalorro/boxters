@@ -729,7 +729,8 @@ const LEVEL_DATA = [
         layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
             { type: 'formWord', description: 'Form 4 words of 5+ letters', target: 4, params: { minLength: 5 } },
-            { type: 'illuminateAnchors', description: 'Use all 3 Anchors', target: 3, params: {} }
+            { type: 'illuminateAnchors', description: 'Use all 3 Anchors', target: 3, params: {} },
+            { type: 'illuminatePercent', description: 'Illuminate 60% of cells', target: 60, params: {} }
         ]
     },
     {
