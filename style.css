@@ -170,6 +170,32 @@ html, body {
     transform: translateY(0);
 }
 
+.play-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.btn-random {
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
+}
+
+.btn-random:hover {
+    box-shadow: 0 6px 28px rgba(168, 85, 247, 0.4);
+}
+
+.light-theme .btn-random {
+    background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(147, 51, 234, 0.25);
+}
+
+.light-theme .btn-random:hover {
+    box-shadow: 0 6px 28px rgba(147, 51, 234, 0.4);
+}
+
 /* Welcome screen */
 .welcome-greeting {
     font-family: 'Inter', sans-serif;

@@ -67,7 +67,7 @@
     }
     </script>
 
-    <link rel="stylesheet" href="style.css?v=31">
+    <link rel="stylesheet" href="style.css?v=32">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -135,7 +135,10 @@
                 <div class="stat"><span class="stat-value" id="stat-best">0</span><span class="stat-label">Best Score</span></div>
             </div>
             <div id="mode-select" class="mode-buttons"></div>
-            <button id="play-btn" class="btn-primary">Play</button>
+            <div class="play-buttons">
+                <button id="play-btn" class="btn-primary">Play</button>
+                <button id="random-btn" class="btn-primary btn-random" style="display:none">Random</button>
+            </div>
             <div class="welcome-actions welcome-actions-icons">
                 <button id="leaderboard-btn" class="info-btn" aria-label="Leaderboard" type="button">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -351,6 +354,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    <script type="module" src="js/main.js?v=108"></script>
+    <script type="module" src="js/main.js?v=110"></script>
 </body>
 </html>
