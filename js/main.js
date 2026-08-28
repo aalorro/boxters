@@ -315,6 +315,21 @@ class Game {
             this._startGame();
         }, { once: true });
 
+        // Show RANDOM button only for apex-complete players
+        const randomBtn = document.getElementById('random-btn');
+        const apexCompleted = this.player.celebratedModes && this.player.celebratedModes.includes('apex');
+        if (apexCompleted) {
+            randomBtn.style.display = '';
+            randomBtn.addEventListener('click', () => {
+                this.audio.init();
+                this.audio.resume();
+                screen.classList.add('hidden');
+                this._startRandomMode();
+            }, { once: true });
+        } else {
+            randomBtn.style.display = 'none';
+        }
+
     }
 
     _setupModeButtons() {
@@ -518,6 +533,34 @@ class Game {
         this._loadLevel(level.index);
     }
 
+    _startRandomMode() {
+        this.isRandomMode = true;
+        this.canvas.style.visibility = 'visible';
+        if (this.player.levelScores && Object.keys(this.player.levelScores).length > 0) {
+            this.player.totalScore = Object.values(this.player.levelScores).reduce((a, b) => a + b, 0)
+                + (this.player.baseScore || 0);
+        }
+        this.totalScore = this.player.totalScore || 0;
+        if (!this.player.sessionActive) {
+            this.player.gamesPlayed++;
+        }
+        this.player.sessionActive = true;
+        saveProfile(this.player);
+
+        if (this.input) this.input.destroy();
+        this.input = new InputManager(this.canvas, this.renderer.hexSize, this.renderer.boardOffset);
+        this._setupInputHandlers();
+
+        if (this.player.lives !== undefined) {
+            this.lives = this.player.lives;
+        }
+
+        this._loadRandomChallenge();
+        this.state = STATES.PLAYING;
+        this.lastTime = performance.now();
+        requestAnimationFrame(this._boundLoop);
+    }
+
     // ── Input handlers ──────────────────────────────────────────
     _setupInputHandlers() {
         this.input.on('traceStart', (data) => {
@@ -674,12 +717,14 @@ class Game {
                 if (btn === 'play_any') {
                     this.audio.stopPuzzleLoop();
                     this.isApexComplete = false;
+                    this.isRandomMode = false;
                     if (this._confettiInterval) { clearInterval(this._confettiInterval); this._confettiInterval = null; }
                     this.state = STATES.MENU;
                     this._showWelcomeScreen();
                 } else if (btn === 'random') {
                     this.audio.stopPuzzleLoop();
                     this.isApexComplete = false;
+                    this.isRandomMode = true;
                     if (this._confettiInterval) { clearInterval(this._confettiInterval); this._confettiInterval = null; }
                     this._loadRandomChallenge();
                 } else if (btn === 'leaderboard') {
@@ -740,9 +785,11 @@ class Game {
                         this.state = STATES.GAUNTLET_INTRO;
                         return;
                     }
-                    // Normal: load next level (or next gauntlet level)
+                    // Normal: load next level (or next gauntlet/random level)
                     this.isUltimateVictory = false;
-                    if (this.isInGauntlet) {
+                    if (this.isRandomMode) {
+                        this._loadRandomChallenge();
+                    } else if (this.isInGauntlet) {
                         this._loadGauntletLevel();
                     } else {
                         this._loadLevel(this.levelIndex + 1);
@@ -1544,18 +1591,21 @@ class Game {
     }
 
     _returnToWelcome() {
-        // Save board state if moves in progress, otherwise clear it
-        if (this._hasMovesInProgress()) {
+        // Save board state if moves in progress (skip for random mode — throwaway games)
+        if (!this.isRandomMode && this._hasMovesInProgress()) {
             this._saveBoardState();
         } else {
             this._clearBoardState();
         }
-        // Save current progress and end session
-        this.player.currentLevels[this.selectedMode] = this.levelIndex;
+        // Save current progress and end session (skip level tracking for random mode)
+        if (!this.isRandomMode) {
+            this.player.currentLevels[this.selectedMode] = this.levelIndex;
+        }
         this.player.sessionActive = false;
         saveProfile(this.player);
 
         // Reset game state
+        this.isRandomMode = false;
         this.particles.particles = [];
         if (this._confettiInterval) {
             clearInterval(this._confettiInterval);
