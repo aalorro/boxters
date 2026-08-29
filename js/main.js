@@ -997,11 +997,13 @@ class Game {
         this.totalScore = this.player.totalScore;
 
         // Only restore lives if this level is at or above where lives were lost
+        this.livesRegained = false;
         if (this.lives < this.maxLives && this.livesLostAtLevel >= 0) {
             if (this.levelIndex >= this.livesLostAtLevel) {
                 this.lives = this.maxLives;
                 this.livesLostAtLevel = -1;
                 this.player.livesLostAtLevel = -1;
+                this.livesRegained = true;
             }
         } else {
             this.lives = this.maxLives;
@@ -1856,6 +1858,7 @@ class Game {
             levelBestScore: this.levelBestScore || 0,
             isNewBest: this.isNewBest || false,
             prevLevelBest: this.prevLevelBest || 0,
+            livesRegained: this.livesRegained || false,
             isInGauntlet: this.isInGauntlet || false,
             apexJustUnlocked: this.apexJustUnlocked || false,
             gauntletTarget: APEX_UNLOCK_SCORE,

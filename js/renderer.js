@@ -736,9 +736,17 @@ export class Renderer {
                 ctx.fillText(`In order to increase your total score, beat your best of ${gameState.prevLevelBest}`, centerX, centerY + 110);
             }
 
+            let ultimateNextY = centerY + 135;
+            if (gameState.livesRegained) {
+                ctx.font = "15px 'Inter', sans-serif";
+                ctx.fillStyle = '#4ade80';
+                ctx.fillText('\u2764 Lives restored to full!', centerX, ultimateNextY);
+                ultimateNextY += 30;
+            }
+
             ctx.font = "21px 'Inter', sans-serif";
             ctx.fillStyle = COLORS.ui.textDim;
-            ctx.fillText('Click anywhere to continue', centerX, centerY + 145);
+            ctx.fillText('Click anywhere to continue', centerX, ultimateNextY);
         } else {
             const modeNames = { simple: 'COMPLETE', clear: 'CLEARED', chain: 'CHAINED', illuminate: 'ILLUMINATED', apex: 'APEX!' };
             const mode = gameState.board?.mode || 'simple';
@@ -775,9 +783,17 @@ export class Renderer {
                 ctx.fillText(`In order to increase your total score, beat your best of ${gameState.prevLevelBest}`, centerX, centerY + 95);
             }
 
+            let nextY = centerY + 120;
+            if (gameState.livesRegained) {
+                ctx.font = "15px 'Inter', sans-serif";
+                ctx.fillStyle = '#4ade80';
+                ctx.fillText('\u2764 Lives restored to full!', centerX, nextY);
+                nextY += 30;
+            }
+
             ctx.font = "21px 'Inter', sans-serif";
             ctx.fillStyle = COLORS.ui.textDim;
-            ctx.fillText('Click anywhere to continue', centerX, centerY + 130);
+            ctx.fillText('Click anywhere to continue', centerX, nextY);
         }
     }
 
