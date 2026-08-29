@@ -998,15 +998,14 @@ class Game {
 
         // Only restore lives if this level is at or above where lives were lost
         this.livesRegained = false;
-        if (this.lives < this.maxLives && this.livesLostAtLevel >= 0) {
-            if (this.levelIndex >= this.livesLostAtLevel) {
+        if (this.lives < this.maxLives) {
+            if (this.livesLostAtLevel >= 0 && this.levelIndex >= this.livesLostAtLevel) {
                 this.lives = this.maxLives;
                 this.livesLostAtLevel = -1;
                 this.player.livesLostAtLevel = -1;
                 this.livesRegained = true;
             }
-        } else {
-            this.lives = this.maxLives;
+            // Otherwise keep current lives — no free restores on easier levels
         }
         this.player.lives = this.lives;
         this.player.levelsCompleted++;
@@ -1762,7 +1761,8 @@ class Game {
 
         this.board = board;
         this.wordsUsed = new Set(snapshot.wordsUsed || []);
-        this.lives = snapshot.lives;
+        // Lives come from profile (authoritative), not snapshot (may be stale)
+        this.lives = (this.player.lives !== undefined) ? this.player.lives : snapshot.lives;
         // Recompute totalScore from levelScores on restore (prevents localStorage tampering)
         if (this.player.levelScores && Object.keys(this.player.levelScores).length > 0) {
             this.player.totalScore = Object.values(this.player.levelScores).reduce((a, b) => a + b, 0)
