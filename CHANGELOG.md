@@ -5,6 +5,16 @@ All notable changes to Boxters will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-08-29
+
+### Added
+- **Leaderboard player rank** — Players outside the top 30 now see their own row at the bottom of the leaderboard with their actual rank number and a separator.
+- **Quick tips** — Added tips about tracing back to undo letters without losing a move, and real-time red-to-green color feedback for word validity.
+- **Random challenge button** — RANDOM button on the welcome screen for players who have completed Apex mode.
+
+### Changed
+- **Version footer** — Updated to v1.4.0.
+
 ## [1.3.2] - 2026-08-22
 
 ### Changed
