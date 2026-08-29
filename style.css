@@ -1410,6 +1410,15 @@ body.light-theme {
     font-size: 0.88rem;
 }
 
+.leaderboard-separator td {
+    text-align: center;
+    color: rgba(255, 215, 0, 0.4);
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    padding: 0.2rem 0;
+    border: none;
+}
+
 .leaderboard-hint {
     text-align: center;
     color: rgba(255, 215, 0, 0.6);
@@ -1460,6 +1469,10 @@ body.light-theme {
 .light-theme .leaderboard-loading,
 .light-theme .leaderboard-empty {
     color: rgba(45, 45, 68, 0.5);
+}
+
+.light-theme .leaderboard-separator td {
+    color: rgba(255, 140, 0, 0.4);
 }
 
 .light-theme .leaderboard-hint {
