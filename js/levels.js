@@ -105,7 +105,7 @@ const LEVEL_DATA = [
     {
         id: 'simple_03', name: 'Stretch', mode: 'simple', tier: 'simple',
         maxMoves: 6, scoreMult: 0.6, twoStarTarget: 100, threeStarTarget: 155,
-        tutorial: { message: 'Look for common prefixes and suffixes like RE-, UN-, -ING, or -TION to build longer words.' },
+        tutorial: { message: 'Tip: Losing a life? You can only regain lives by winning the same level or harder — no going back to easy levels!' },
         layout: { shape: 'hex2', cellTypes: {} },
         objectives: [
             { type: 'formWord', description: 'Form a 4+ letter word', target: 1, params: { minLength: 4 } }
