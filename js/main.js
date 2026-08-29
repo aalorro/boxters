@@ -98,6 +98,7 @@ class Game {
         this.levelTransitionTimer = 0;
         this.lives = 3;
         this.maxLives = 3;
+        this.livesLostAtLevel = -1; // track highest level where a life was lost
         this.solutionWords = [];
         this.hoveredSolution = null;
         this.selectedMode = MODES.SIMPLE;
@@ -385,6 +386,9 @@ class Game {
         if (this.player.lives !== undefined) {
             this.lives = this.player.lives;
         }
+        if (this.player.livesLostAtLevel !== undefined) {
+            this.livesLostAtLevel = this.player.livesLostAtLevel;
+        }
 
         // Check if player is still in cooldown from a previous session
         if (this.player.cooldownUntil && Date.now() < this.player.cooldownUntil) {
@@ -554,6 +558,9 @@ class Game {
         if (this.player.lives !== undefined) {
             this.lives = this.player.lives;
         }
+        if (this.player.livesLostAtLevel !== undefined) {
+            this.livesLostAtLevel = this.player.livesLostAtLevel;
+        }
 
         this._loadRandomChallenge();
         this.state = STATES.PLAYING;
@@ -700,9 +707,11 @@ class Game {
             if (this.state === STATES.COOLDOWN) {
                 if (!this.cooldownUntil || Date.now() >= this.cooldownUntil) {
                     this.lives = this.maxLives;
+                    this.livesLostAtLevel = -1;
                     this.cooldownUntil = null;
                     this.player.cooldownUntil = null;
                     this.player.lives = this.lives;
+                    this.player.livesLostAtLevel = -1;
                     saveProfile(this.player);
                     this._loadLevel(this.levelIndex);
                 }
@@ -987,7 +996,16 @@ class Game {
         this.player.bestScore = Math.max(...Object.values(this.player.levelScores));
         this.totalScore = this.player.totalScore;
 
-        this.lives = this.maxLives;
+        // Only restore lives if this level is at or above where lives were lost
+        if (this.lives < this.maxLives && this.livesLostAtLevel >= 0) {
+            if (this.levelIndex >= this.livesLostAtLevel) {
+                this.lives = this.maxLives;
+                this.livesLostAtLevel = -1;
+                this.player.livesLostAtLevel = -1;
+            }
+        } else {
+            this.lives = this.maxLives;
+        }
         this.player.lives = this.lives;
         this.player.levelsCompleted++;
 
@@ -1120,6 +1138,11 @@ class Game {
         if (this.solutionWords.length > 0) {
             this.lives--;
             this.player.lives = this.lives;
+            // Track the highest level where a life was lost
+            if (this.levelIndex > this.livesLostAtLevel) {
+                this.livesLostAtLevel = this.levelIndex;
+                this.player.livesLostAtLevel = this.livesLostAtLevel;
+            }
             saveProfile(this.player);
         } else {
             this._showFeedback('No valid solutions existed — no life lost');
@@ -1509,9 +1532,11 @@ class Game {
 
             if (this.state === STATES.GAME_OVER) {
                 this.lives = this.maxLives;
+                this.livesLostAtLevel = -1;
                 this.cooldownUntil = null;
                 this.player.cooldownUntil = null;
                 this.player.lives = this.lives;
+                this.player.livesLostAtLevel = -1;
                 saveProfile(this.player);
                 this._loadLevel(this.levelIndex);
             } else {
