@@ -9,7 +9,7 @@ import { loadLevel, loadLevelWithBoard, getLevelCount, getLevelData, getFirstLev
 import { hexSpiral, hexKey } from './hex.js';
 import { ObjectiveTracker } from './objectives.js';
 import { calculateLevelScore, calculateMoveScore, getStars } from './scoring.js';
-import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, getPlayerId, checkNameAvailable, syncProfile } from './firebase.js';
+import { initFirebase, submitScore, fetchLeaderboard, findPlayerRank, findPlayerRankRemote, getPlayerId, checkNameAvailable, syncProfile } from './firebase.js';
 
 // ── Player Profile (localStorage) ──────────────────────────────
 const STORAGE_KEY = 'boxters_player';
@@ -1189,8 +1189,30 @@ class Game {
 
         html += '</tbody></table>';
 
-        if (findPlayerRank(entries) === -1 && this.player) {
-            html += '<p class="leaderboard-hint">Keep playing to earn your spot on the leaderboard!</p>';
+        if (findPlayerRank(entries) === -1 && this.player && this.player.totalScore > 0) {
+            const rank = await findPlayerRankRemote(this.player.totalScore);
+            if (rank > 0) {
+                const modeOrder = ['simple', 'clear', 'chain', 'illuminate', 'apex'];
+                let playerMode = 'simple';
+                if (this.player.unlockedModes) {
+                    for (const m of modeOrder) {
+                        if (this.player.unlockedModes.includes(m)) playerMode = m;
+                    }
+                }
+                const badge = modeBadge[playerMode] || '';
+                const safeName = document.createElement('span');
+                safeName.textContent = this.player.name || 'Anonymous';
+
+                html = html.replace('</tbody></table>', '');
+                html += '<tr class="leaderboard-row leaderboard-separator"><td colspan="4">···</td></tr>';
+                html += `<tr class="leaderboard-row leaderboard-me">`;
+                html += `<td class="lb-rank">${rank}</td>`;
+                html += `<td class="lb-name">${safeName.innerHTML} <span class="lb-you">YOU</span> ${badge}</td>`;
+                html += `<td class="lb-score">${this.player.totalScore.toLocaleString()}</td>`;
+                html += `<td class="lb-levels">${this.player.levelsCompleted || 0}</td>`;
+                html += '</tr>';
+                html += '</tbody></table>';
+            }
         }
 
         containers.forEach(c => c.innerHTML = html);

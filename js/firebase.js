@@ -243,6 +243,19 @@ export function findPlayerRank(entries) {
     return idx >= 0 ? idx + 1 : -1;
 }
 
+export async function findPlayerRankRemote(playerScore) {
+    if (!db || !playerScore) return -1;
+    try {
+        const snapshot = await db.collection('leaderboard')
+            .where('totalScore', '>', playerScore)
+            .get();
+        return snapshot.size + 1;
+    } catch (err) {
+        console.warn('Rank lookup failed:', err.message);
+        return -1;
+    }
+}
+
 // ── Cache Helpers ────────────────────────────────────────────
 function _cacheLeaderboard(entries) {
     try {
