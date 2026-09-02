@@ -248,6 +248,12 @@ class Game {
                 nameAvailable = false;
                 return;
             }
+            if (name.length < 4) {
+                status.textContent = 'Name must be at least 4 characters.';
+                status.className = 'name-status taken';
+                nameAvailable = false;
+                return;
+            }
             status.textContent = 'Checking...';
             status.className = 'name-status checking';
             nameAvailable = false;
@@ -269,7 +275,7 @@ class Game {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = input.value.trim();
-            if (!name) return;
+            if (!name || name.length < 4) return;
 
             this.player = createProfile(name);
             getPlayerId();
@@ -1272,6 +1278,11 @@ class Game {
                 nameStatus.className = 'name-status';
                 return;
             }
+            if (name.length < 4) {
+                nameStatus.textContent = 'Name must be at least 4 characters.';
+                nameStatus.className = 'name-status taken';
+                return;
+            }
             if (this.player && name.toLowerCase() === this.player.name.toLowerCase()) {
                 nameStatus.textContent = '';
                 nameStatus.className = 'name-status';
@@ -1306,7 +1317,7 @@ class Game {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const newName = nameInput.value.trim();
-            if (!newName || !this.player) return;
+            if (!newName || newName.length < 4 || !this.player) return;
 
             const nameChanged = newName !== this.player.name;
             this.player.name = newName;

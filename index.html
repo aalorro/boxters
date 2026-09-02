@@ -129,7 +129,7 @@
             <p class="tagline">Find words. Unlock modes. Master the board.</p>
             <form id="register-form" autocomplete="off">
                 <label for="player-name">Enter your name</label>
-                <input type="text" id="player-name" maxlength="20" placeholder="Stargazer" required>
+                <input type="text" id="player-name" minlength="4" maxlength="20" placeholder="Stargazer" required>
                 <div id="name-status" class="name-status"></div>
                 <button type="submit" class="btn-primary">Begin Journey</button>
             </form>
@@ -228,7 +228,7 @@
             <form id="settings-form" autocomplete="off">
                 <div class="settings-field">
                     <label for="settings-name">Username</label>
-                    <input type="text" id="settings-name" maxlength="20" required>
+                    <input type="text" id="settings-name" minlength="4" maxlength="20" required>
                     <div id="settings-name-status" class="name-status"></div>
                 </div>
                 <div class="settings-field">
@@ -365,6 +365,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    <script type="module" src="js/main.js?v=115"></script>
+    <script type="module" src="js/main.js?v=116"></script>
 </body>
 </html>

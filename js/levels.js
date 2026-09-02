@@ -117,6 +117,7 @@ const LEVEL_DATA = [
         tutorial: { message: 'Anchor cells (red rim) must be used in your words!' },
         layout: { shape: 'hex2', cellTypes: {}, anchors: 1 },
         objectives: [
+            { type: 'formWord', description: 'Form 2 words', target: 2, params: { minLength: 3 } },
             { type: 'illuminateAnchors', description: 'Must use the Anchor cell (each word)', target: 1, params: {} }
         ]
     },
@@ -144,6 +145,7 @@ const LEVEL_DATA = [
         tutorial: { message: 'With two anchors, every word must pass through at least one. Plan paths that connect them.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
         objectives: [
+            { type: 'formWord', description: 'Form 2 words of 4+ letters', target: 2, params: { minLength: 4 } },
             { type: 'illuminateAnchors', description: 'Must use both Anchors (use each in a word)', target: 2, params: {} }
         ]
     },
@@ -181,10 +183,10 @@ const LEVEL_DATA = [
         id: 'simple_11', name: 'Proving Ground', mode: 'simple', tier: 'simple',
         maxMoves: 6, twoStarTarget: 190, threeStarTarget: 280,
         tutorial: { message: 'Fewer moves means every word counts. Aim for 5+ letters on each move.' },
-        layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
             { type: 'formWord', description: 'Form 3 words of 5+ letters', target: 3, params: { minLength: 5 } },
-            { type: 'illuminateAnchors', description: 'Must use both Anchors (use each in a word)', target: 2, params: {} }
+            { type: 'illuminateAnchors', description: 'Must use all 3 Anchors (use each in a word)', target: 3, params: {} }
         ]
     },
     {
@@ -202,10 +204,10 @@ const LEVEL_DATA = [
         id: 'simple_13', name: 'Endurance', mode: 'simple', tier: 'simple',
         maxMoves: 6, twoStarTarget: 220, threeStarTarget: 340,
         tutorial: { message: 'Four words in six moves — no room for errors. Plan all your paths before you start.' },
-        layout: { shape: 'hex3', cellTypes: {}, anchors: 2 },
+        layout: { shape: 'hex3', cellTypes: {}, anchors: 3 },
         objectives: [
             { type: 'formWord', description: 'Form 4 words of 4+ letters', target: 4, params: { minLength: 4 } },
-            { type: 'illuminateAnchors', description: 'Must use both Anchors (use each in a word)', target: 2, params: {} }
+            { type: 'illuminateAnchors', description: 'Must use all 3 Anchors (use each in a word)', target: 3, params: {} }
         ]
     },
     {
