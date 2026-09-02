@@ -1,0 +1,22 @@
+{
+  "name": "Boxters",
+  "short_name": "Boxters",
+  "description": "A free hex-grid word puzzle game with five modes, 70 levels, and a global leaderboard.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050520",
+  "theme_color": "#050520",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["games", "entertainment", "education"]
+}

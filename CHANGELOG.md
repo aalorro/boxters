@@ -5,6 +5,17 @@ All notable changes to Boxters will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-09-02
+
+### Added
+- **Username minimum** — Usernames now require at least 4 characters (HTML minlength + JS validation with feedback).
+- **SEO** — Added sitemap.xml, robots.txt, web app manifest, og:image:alt, twitter:image:alt, and enhanced JSON-LD structured data.
+- **Dictionary** — Added rethaw, vax, yada.
+
+### Changed
+- **Simple mode levels** — Level 4: added "Form 2 words" objective. Level 7: added "Form 2 words of 4+ letters" objective. Levels 11 and 13: increased anchors from 2 to 3.
+- **Version footer** — Updated to v1.4.1.
+
 ## [1.4.0] - 2026-08-29
 
 ### Added
