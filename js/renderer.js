@@ -151,7 +151,7 @@ export class Renderer {
         ctx.fillText('\u00A9 2026 ArtMondo \u2014 MIT License', this.displayWidth / 2, this.displayHeight - 22);
         ctx.font = "16px 'Inter', sans-serif";
         ctx.fillStyle = COLORS.footer.version;
-        ctx.fillText('v1.4.0', this.displayWidth / 2, this.displayHeight - 6);
+        ctx.fillText('v1.4.1', this.displayWidth / 2, this.displayHeight - 6);
     }
 
     _drawBackground(ctx) {
