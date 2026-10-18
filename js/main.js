@@ -630,8 +630,8 @@ class Game {
                 return;
             }
 
-            // Check if load button was tapped
-            if (this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
+            // Check if load button was tapped (disabled when moves in progress)
+            if (!this._hasMovesInProgress() && this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
                 this.input.cancelTrace();
                 this._loadSharedBoard();
                 return;
@@ -687,7 +687,7 @@ class Game {
                 this.hoveredButton = 'forward';
             } else if (this.renderer.isShareButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'share';
-            } else if (this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
+            } else if (!this._hasMovesInProgress() && this.renderer.isLoadButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'load';
             } else if (this.renderer.isThemeButtonHit(data.pos.x, data.pos.y)) {
                 this.hoveredButton = 'theme';

@@ -102,7 +102,7 @@ export class Renderer {
         if (gameState.state === 'playing') {
             // Bottom-right stack first (always)
             this._drawShareButton(ctx);
-            this._drawLoadButton(ctx);
+            this._drawLoadButton(ctx, gameState);
             this._drawInfoButton(ctx);
             this._drawContactButton(ctx);
             // Nav buttons — stacked above contact on mobile, top-right row on desktop
@@ -1088,8 +1088,12 @@ export class Renderer {
         ctx.restore();
     }
 
-    _drawLoadButton(ctx) {
+    _drawLoadButton(ctx, gameState) {
         if (!this._shareBtnPos) return;
+        if (gameState && gameState.hasMovesInProgress) {
+            this._loadBtnPos = null;
+            return;
+        }
         const r = 14;
         const cx = this._shareBtnPos.x;
         const cy = this._shareBtnPos.y - r * 2 - 12;
@@ -1145,6 +1149,9 @@ export class Renderer {
         if (this._loadBtnPos) {
             cx = this._loadBtnPos.x;
             cy = this._loadBtnPos.y - r * 2 - 12;
+        } else if (this._shareBtnPos) {
+            cx = this._shareBtnPos.x;
+            cy = this._shareBtnPos.y - r * 2 - 12;
         } else {
             cx = this.displayWidth - 24;
             cy = this.displayHeight - 108;
