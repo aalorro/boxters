@@ -1119,8 +1119,8 @@ class Game {
             );
         }
 
-        // In illuminate mode, only show words that include at least one unlit tile
-        // and skip the minLength filter so 3/4/5-letter words are shown too
+        // In illuminate mode, only show words that include at least one unlit tile,
+        // also respecting any minLength objective requirement
         if (this.board.mode === 'illuminate') {
             solutions = solutions.filter(sol =>
                 sol.path.some(p => {
@@ -1128,6 +1128,9 @@ class Game {
                     return cell && !cell.isIlluminated;
                 })
             );
+            if (minLength > 3) {
+                solutions = solutions.filter(sol => sol.word.length >= minLength);
+            }
             // Sort by number of unlit tiles covered (most useful first)
             solutions.sort((a, b) => {
                 const unlitA = a.path.filter(p => { const c = this.board.field.getCell(p.q, p.r); return c && !c.isIlluminated; }).length;
