@@ -350,7 +350,7 @@ const LEVEL_DATA = [
     {
         id: 'clear_14', name: 'Annihilation', mode: 'clear', tier: 'clear',
         maxMoves: 8, twoStarTarget: 400, threeStarTarget: 600,
-        tutorial: { message: '8 moves, 37 tiles. You need 5+ letter words almost every turn. Scan the whole board before each move!' },
+        tutorial: { message: '8 moves, 37 tiles. You need 6+ letter words almost every turn. Scan the whole board before each move!' },
         layout: { shape: 'hex3', cellTypes: {} },
         objectives: [
             { type: 'clearAllCells', description: 'Clear all 37 cells', target: 1, params: {} },
