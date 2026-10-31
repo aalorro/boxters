@@ -1579,7 +1579,7 @@ export const WORD_LIST = [
 "guanase","guanases","guanay","guanays","guanidin","guanin","guanine","guanines","guanins","guano","guanos","guans","guar","guarani","guaranis","guaranty","guard","guardant","guarded","guarder",
 "guarders","guardian","guarding","guards","guars","guava","guavas","guayule","guayules","guck","gucks","gude","gudes","gudgeon","gudgeons","guenon","guenons","guerdon","guerdons","gueridon",
 "guerilla","guernsey","guess","guessed","guesser","guessers","guesses","guessing","guest","guested","guesting","guests","guff","guffaw","guffawed","guffaws","guffs","guggle","guggled","guggles",
-"guggling","guglet","guglets","guid","guidable","guidance","guide","guided","guider","guiders","guides","guideway","guiding","guidon","guidons","guids","guild","guilder","guilders","guilds",
+"guggling","guglet","guglets","gui","guid","guidable","guidance","guide","guided","guider","guiders","guides","guideway","guiding","guidon","guidons","guids","guild","guilder","guilders","guilds",
 "guile","guiled","guileful","guiles","guiling","guilt","guiltier","guiltily","guilts","guilty","guimpe","guimpes","guinea","guineas","guipure","guipures","guiro","guiros","guisard","guisards",
 "guise","guised","guises","guising","guitar","guitars","guitguit","gul","gulag","gulags","gular","gulch","gulches","gulden","guldens","gules","gulf","gulfed","gulfier","gulfiest",
 "gulfing","gulflike","gulfs","gulfweed","gulfy","gull","gullable","gullably","gulled","gullet","gullets","gulley","gulleys","gullible","gullibly","gullied","gullies","gulling","gulls","gully",
