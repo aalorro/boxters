@@ -418,7 +418,7 @@ const LEVEL_DATA = [
     {
         id: 'chain_07', name: 'Relentless', mode: 'chain', tier: 'chain',
         maxMoves: 9, scoreMult: 0.85, twoStarTarget: 420, threeStarTarget: 660,
-        tutorial: { message: 'Anchor tile ahead! At least one of your words must pass through the red-rimmed tile.' },
+        tutorial: { message: 'Anchor tile in play! Every word must pass through the red-rimmed tile.' },
         layout: { shape: 'hex3', cellTypes: {}, anchors: 1 },
         objectives: [
             { type: 'formWord', description: 'Form 6 words (3+ letters each)', target: 6, params: { minLength: 3 } },
